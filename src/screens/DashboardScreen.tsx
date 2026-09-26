@@ -130,6 +130,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Text style={ui.h2}>Requirements</Text>
       <Card>{lines.map((l, i) => <Bar key={l.id + i} line={l} />)}</Card>
 
+      {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Press and hold any course to delete it.</Text>}
       <Text style={ui.h2}>This cycle ({current.length})</Text>
       <Card>
         {rows.length === 0 && !loading && (
@@ -161,7 +162,6 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         <Card>{earlier.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
-      {rows.length > 0 && <Text style={[ui.hint, { textAlign: "center", marginBottom: 16 }]}>Press and hold any course to delete it.</Text>}
 
       <Text style={[ui.muted, { textAlign: "center" }]}>Signed in as {email}</Text>
       <Button kind="link" title="Sign out" onPress={() => supabase.auth.signOut()} />
