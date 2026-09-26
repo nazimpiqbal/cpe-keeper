@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError } from "../lib/supabase";
-import { Button, Card, Chip, ErrorText, Field, toIso, ui } from "../lib/ui";
+import { Button, C, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
+import type { Extracted } from "./ScanScreen";
 
 // NASBA fields of study, as printed on CPE certificates.
 export const FIELDS = [
@@ -13,13 +14,22 @@ export const FIELDS = [
 ];
 const DELIVERY = ["Group Live", "Group Internet Based", "QAS Self Study", "Nano Learning", "Blended"];
 
-export default function AddCourseScreen({ userId, onDone }: { userId: string; onDone: (saved: boolean) => void }) {
-  const [title, setTitle] = useState("");
-  const [provider, setProvider] = useState("");
-  const [date, setDate] = useState("");
-  const [hours, setHours] = useState("");
-  const [field, setField] = useState<string | null>(null);
-  const [delivery, setDelivery] = useState<string | null>(null);
+export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip }: {
+  userId: string;
+  onDone: (saved: boolean) => void;
+  initial?: Extracted;                         // pre-filled from a scanned certificate
+  certificatePath?: string | null;             // stored file this course came from
+  progress?: { index: number; total: number }; // e.g. course 2 of 5 on a transcript
+  onSkip?: () => void;
+}) {
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [provider, setProvider] = useState(initial?.provider ?? "");
+  const [date, setDate] = useState(initial?.completed_on && /^\d{4}-\d{2}-\d{2}$/.test(initial.completed_on) ? toUs(initial.completed_on) : "");
+  const [hours, setHours] = useState(initial?.hours != null ? String(initial.hours) : "");
+  const [field, setField] = useState<string | null>(initial?.field_of_study && FIELDS.includes(initial.field_of_study) ? initial.field_of_study : null);
+  const [fieldTouched, setFieldTouched] = useState(false);
+  const [delivery, setDelivery] = useState<string | null>(initial?.delivery_method && DELIVERY.includes(initial.delivery_method) ? initial.delivery_method : null);
+  const fieldGuessed = !!initial && !initial.field_confident && !fieldTouched;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +45,11 @@ export default function AddCourseScreen({ userId, onDone }: { userId: string; on
     setBusy(true);
     const { error } = await supabase.from("cpe_records").insert({
       user_id: userId, title: title.trim(), provider: provider.trim() || null, completed_on: iso,
-      hours: h, field_of_study: field, delivery_method: delivery, source: "manual",
+      hours: h, field_of_study: field, delivery_method: delivery,
+      sponsor_id: initial?.sponsor_id ?? null,
+      certificate_path: certificatePath ?? null,
+      source: certificatePath ? "certificate" : "manual",
+      needs_review: fieldGuessed,
     });
     setBusy(false);
     if (error) return setError(friendlyError(error.message));
@@ -45,8 +59,11 @@ export default function AddCourseScreen({ userId, onDone }: { userId: string; on
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 64 }]} keyboardShouldPersistTaps="handled">
-        <Text style={ui.h1}>Add a course</Text>
-        <Text style={[ui.muted, { marginBottom: 16 }]}>Copy the details from your certificate.</Text>
+        <Text style={ui.h1}>{initial ? "Check the details" : "Add a course"}</Text>
+        <Text style={[ui.muted, { marginBottom: 16 }]}>
+          {initial ? "Read from your certificate. Fix anything that looks wrong, then save." : "Copy the details from your certificate."}
+          {progress && progress.total > 1 ? `  Course ${progress.index + 1} of ${progress.total}.` : ""}
+        </Text>
         <Card>
           <Field label="Course title" value={title} onChangeText={setTitle} placeholder="e.g. Revenue Recognition Update" />
           <Field label="Provider (optional)" value={provider} onChangeText={setProvider} placeholder="e.g. Becker" />
@@ -59,15 +76,21 @@ export default function AddCourseScreen({ userId, onDone }: { userId: string; on
             </View>
           </View>
           <Text style={ui.label}>Field of study</Text>
+          {fieldGuessed && field && (
+            <Text style={[ui.hint, { color: C.warn, marginTop: -2, marginBottom: 8 }]}>
+              Not printed on the certificate — this is our best guess. Tap to confirm or change.
+            </Text>
+          )}
           <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 10 }}>
-            {FIELDS.map(f => <Chip key={f} label={f} selected={field === f} onPress={() => setField(f)} />)}
+            {FIELDS.map(f => <Chip key={f} label={f} selected={field === f} onPress={() => { setField(f); setFieldTouched(true); }} />)}
           </View>
           <Text style={ui.label}>Delivery method (optional)</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 10 }}>
             {DELIVERY.map(d => <Chip key={d} label={d} selected={delivery === d} onPress={() => setDelivery(delivery === d ? null : d)} />)}
           </View>
           <ErrorText msg={error} />
-          <Button title="Save course" onPress={save} busy={busy} />
+          <Button title={progress && progress.index + 1 < progress.total ? "Save & next" : "Save course"} onPress={save} busy={busy} />
+          {onSkip && <Button kind="secondary" title="Skip this one" onPress={onSkip} />}
           <Button kind="link" title="Cancel" onPress={() => onDone(false)} />
         </Card>
       </ScrollView>

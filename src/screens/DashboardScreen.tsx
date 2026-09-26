@@ -26,8 +26,8 @@ function Bar({ line }: { line: Line }) {
   );
 }
 
-export default function DashboardScreen({ userId, email, license, onAddCourse, onEditLicense }: {
-  userId: string; email: string; license: License; onAddCourse: () => void; onEditLicense: () => void;
+export default function DashboardScreen({ userId, email, license, onAddCourse, onScan, onEditLicense }: {
+  userId: string; email: string; license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void;
 }) {
   const [rows, setRows] = useState<CpeRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +94,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         )}
       </Card>
 
-      <Button title="+ Add a course" onPress={onAddCourse} />
+      <Button title="📄  Add from certificate" onPress={onScan} />
+      <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
 
       <Text style={ui.h2}>Requirements</Text>
@@ -104,7 +105,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Card>
         {rows.length === 0 && !loading && (
           <View>
-            <Text style={ui.muted}>No courses yet. Tap "Add a course" to log your first certificate.</Text>
+            <Text style={ui.muted}>No courses yet. Tap "Add from certificate" to log your first one.</Text>
             {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
           </View>
         )}
