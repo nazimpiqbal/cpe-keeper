@@ -5,6 +5,7 @@ import caRules from "../rules/CA.json";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { findDuplicateIds } from "../lib/duplicates";
 
 const RULES: { [state: string]: Rules } = { CA: caRules as unknown as Rules };
 const STATE_NAMES: { [s: string]: string } = { CA: "California" };
@@ -44,7 +45,10 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
   useEffect(() => { load(); }, [load]);
 
   const rules = RULES[license.state];
-  const records = useMemo(() => rows.map(toEngineRecord), [rows]);
+  const dupeIds = useMemo(() => findDuplicateIds(rows.map(r => ({ id: r.id, title: r.title, date: r.completed_on, createdAt: r.created_at }))), [rows]);
+  // Duplicates are shown but NOT counted toward requirements.
+  const counted = useMemo(() => rows.filter(r => !dupeIds.has(r.id)), [rows, dupeIds]);
+  const records = useMemo(() => counted.map(toEngineRecord), [counted]);
   const lines = useMemo(() => rules ? evaluate(records, {
     licenseExpiration: license.expiration_date, practice: license.practice,
     licenseIssued: license.license_issued ?? undefined, regulatoryReviewDue: license.regulatory_review_due ?? undefined,
@@ -109,10 +113,18 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
             {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
           </View>
         )}
+        {dupeIds.size > 0 && (
+          <View style={[s.alert, { marginTop: 0, marginBottom: 8 }]}>
+            <Text style={s.alertText}>
+              {dupeIds.size === 1 ? "1 course looks like a duplicate" : `${dupeIds.size} courses look like duplicates`} — not counted toward your hours. Press and hold to delete.
+            </Text>
+          </View>
+        )}
         {rows.map((r, i) => {
-          const rec = records[i];
+          const rec = toEngineRecord(r);
+          const isDupe = dupeIds.has(r.id);
           return (
-            <Pressable key={r.id} onLongPress={() => confirmDelete(r)} style={[s.row, i > 0 && s.rowBorder]}>
+            <Pressable key={r.id} onLongPress={() => confirmDelete(r)} style={[s.row, i > 0 && s.rowBorder, isDupe && { opacity: 0.55 }]}>
               <View style={{ flex: 1 }}>
                 <Text style={s.rowTitle}>{r.title}</Text>
                 <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
@@ -120,6 +132,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
                   {rules && categoriesOf(rec, rules).includes("technical") ? "Technical" : "Non-technical"} · {r.field_of_study}
                   {r.needs_review ? "  ⚠︎ confirm field" : ""}
                 </Text>
+                {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
               </View>
               <Text style={s.hours}>{Number(r.hours)}</Text>
             </Pressable>

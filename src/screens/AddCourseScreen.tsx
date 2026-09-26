@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-na
 import { supabase, friendlyError } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
 import type { Extracted } from "./ScanScreen";
+import { sameCourse } from "../lib/duplicates";
 
 // NASBA fields of study, as printed on CPE certificates.
 export const FIELDS = [
@@ -32,8 +33,10 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   const fieldGuessed = !!initial && !initial.field_confident && !fieldTouched;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // An already-saved course that looks like this one. User must choose before saving.
+  const [dupe, setDupe] = useState<{ title: string; completed_on: string; hours: number } | null>(null);
 
-  async function save() {
+  async function save(allowDuplicate = false) {
     setError(null);
     if (!title.trim()) return setError("Enter the course title.");
     const iso = toIso(date);
@@ -43,6 +46,13 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     if (!field) return setError("Pick the field of study printed on the certificate.");
 
     setBusy(true);
+    if (!allowDuplicate) {
+      const { data: sameDay, error: qErr } = await supabase.from("cpe_records")
+        .select("title, completed_on, hours").eq("completed_on", iso);
+      if (qErr) { setBusy(false); return setError(friendlyError(qErr.message)); }
+      const match = (sameDay ?? []).find(r => sameCourse({ title: r.title, date: r.completed_on }, { title, date: iso }));
+      if (match) { setBusy(false); return setDupe({ ...match, hours: Number(match.hours) }); }
+    }
     const { error } = await supabase.from("cpe_records").insert({
       user_id: userId, title: title.trim(), provider: provider.trim() || null, completed_on: iso,
       hours: h, field_of_study: field, delivery_method: delivery,
@@ -89,9 +99,22 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
             {DELIVERY.map(d => <Chip key={d} label={d} selected={delivery === d} onPress={() => setDelivery(delivery === d ? null : d)} />)}
           </View>
           <ErrorText msg={error} />
-          <Button title={progress && progress.index + 1 < progress.total ? "Save & next" : "Save course"} onPress={save} busy={busy} />
+          {dupe ? (
+            <View style={{ backgroundColor: "#FEF3C7", borderRadius: 10, padding: 12, marginBottom: 4 }}>
+              <Text style={{ color: "#92400E", fontWeight: "700", marginBottom: 4 }}>Already logged?</Text>
+              <Text style={{ color: "#92400E" }}>
+                You have "{dupe.title}" ({dupe.hours} credits) on {toUs(dupe.completed_on)}. Saving again would count these hours twice.
+              </Text>
+              <Button title="Don't save" onPress={() => (onSkip ? onSkip() : onDone(false))} />
+              <Button kind="link" title="Save anyway — it's a different course" onPress={() => { setDupe(null); save(true); }} />
+            </View>
+          ) : (
+          <>
+          <Button title={progress && progress.index + 1 < progress.total ? "Save & next" : "Save course"} onPress={() => save()} busy={busy} />
           {onSkip && <Button kind="secondary" title="Skip this one" onPress={onSkip} />}
           <Button kind="link" title="Cancel" onPress={() => onDone(false)} />
+          </>
+          )}
         </Card>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -34,6 +34,7 @@ export type CpeRow = {
   field_of_study: string | null;
   delivery_method: string | null;
   needs_review: boolean;
+  created_at: string;
 };
 
 export const toEngineRecord = (r: CpeRow): CpeRecord => ({
