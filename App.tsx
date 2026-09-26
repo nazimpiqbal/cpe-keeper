@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import type { Session } from "@supabase/supabase-js";
-import { supabase, friendlyError, License } from "./src/lib/supabase";
+import { supabase, friendlyError, License, CpeRow } from "./src/lib/supabase";
 import { Button, C, ui } from "./src/lib/ui";
 import AuthScreen from "./src/screens/AuthScreen";
 import SetupScreen from "./src/screens/SetupScreen";
@@ -11,7 +11,7 @@ import { cycleBounds } from "./src/engine/engine";
 import AddCourseScreen from "./src/screens/AddCourseScreen";
 import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse";
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -19,6 +19,7 @@ export default function App() {
   const [licenseError, setLicenseError] = useState<string | null>(null);
   const [view, setView] = useState<View_>("dashboard");
   const [dashKey, setDashKey] = useState(0); // bump to reload dashboard data
+  const [editing, setEditing] = useState<CpeRow | null>(null);
   // Courses read from a scanned certificate, confirmed one at a time.
   const [queue, setQueue] = useState<{ courses: Extracted[]; index: number; path: string | null; saved: number }>({ courses: [], index: 0, path: null, saved: 0 });
 
@@ -76,6 +77,10 @@ export default function App() {
       onSkip={queue.courses.length > 1 ? () => advance(false) : undefined}
       onDone={saved => saved ? advance(true) : backToDashboard(queue.saved > 0)} />
   );
+  else if (view === "editCourse" && editing) screen = (
+    <AddCourseScreen key={editing.id} userId={session.user.id} existing={editing} cycle={cycle}
+      onDone={changed => { setEditing(null); backToDashboard(changed); }} />
+  );
   else if (view === "addCourse") screen = (
     <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
@@ -83,7 +88,8 @@ export default function App() {
   else screen = (
     <DashboardScreen key={dashKey} userId={session.user.id} email={session.user.email ?? ""} license={license}
       onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
-      onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} />
+      onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")}
+      onEditCourse={row => { setEditing(row); setView("editCourse"); }} />
   );
 
   return <>{screen}<StatusBar style="dark" /></>;

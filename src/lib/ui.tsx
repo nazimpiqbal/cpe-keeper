@@ -7,7 +7,7 @@ export const C = {
 };
 
 export function Button({ title, onPress, kind = "primary", busy, disabled }: {
-  title: string; onPress: () => void; kind?: "primary" | "secondary" | "link"; busy?: boolean; disabled?: boolean;
+  title: string; onPress: () => void; kind?: "primary" | "secondary" | "link" | "danger"; busy?: boolean; disabled?: boolean;
 }) {
   const off = disabled || busy;
   return (
@@ -16,7 +16,7 @@ export function Button({ title, onPress, kind = "primary", busy, disabled }: {
       style={({ pressed }) => [ui.btn, ui[kind], (pressed || off) && { opacity: 0.6 }]}
     >
       {busy ? <ActivityIndicator color={kind === "primary" ? "#fff" : C.accent} /> :
-        <Text style={[ui.btnText, kind !== "primary" && { color: C.accent }]}>{title}</Text>}
+        <Text style={[ui.btnText, kind !== "primary" && { color: kind === "danger" ? C.danger : C.accent }]}>{title}</Text>}
     </Pressable>
   );
 }
@@ -70,6 +70,7 @@ export const ui = StyleSheet.create({
   primary: { backgroundColor: C.accent },
   secondary: { backgroundColor: "#EEF2FF" },
   link: { backgroundColor: "transparent" },
+  danger: { backgroundColor: "#FEF2F2", marginTop: 16 },
   btnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   chip: { borderWidth: 1, borderColor: C.line, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, marginRight: 8, marginBottom: 8, backgroundColor: "#fff" },
   chipOn: { backgroundColor: C.accent, borderColor: C.accent },

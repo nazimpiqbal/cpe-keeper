@@ -35,6 +35,8 @@ export type CpeRow = {
   delivery_method: string | null;
   needs_review: boolean;
   created_at: string;
+  sponsor_id?: string | null;
+  certificate_path?: string | null;
 };
 
 export const toEngineRecord = (r: CpeRow): CpeRecord => ({

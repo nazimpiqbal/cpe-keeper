@@ -27,8 +27,9 @@ function Bar({ line }: { line: Line }) {
   );
 }
 
-export default function DashboardScreen({ userId, email, license, onAddCourse, onScan, onEditLicense }: {
+export default function DashboardScreen({ userId, email, license, onAddCourse, onScan, onEditLicense, onEditCourse }: {
   userId: string; email: string; license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void;
+  onEditCourse: (row: CpeRow) => void;
 }) {
   const [rows, setRows] = useState<CpeRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     const rec = toEngineRecord(r);
     const isDupe = dupeIds.has(r.id);
     return (
-      <Pressable key={r.id} onLongPress={() => confirmDelete(r)}
+      <Pressable key={r.id} onPress={() => onEditCourse(r)} onLongPress={() => confirmDelete(r)}
         style={[s.row, i > 0 && s.rowBorder, (isDupe || outside) && { opacity: isDupe ? 0.55 : 0.75 }]}>
         <View style={{ flex: 1 }}>
           <Text style={s.rowTitle}>{r.title}</Text>
@@ -70,7 +71,10 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
           {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>Not counted in current cycle</Text>}
         </View>
-        <Text style={s.hours}>{Number(r.hours)}</Text>
+        <View style={{ alignItems: "flex-end", marginLeft: 12 }}>
+          <Text style={[s.hours, { marginLeft: 0 }]}>{Number(r.hours)}</Text>
+          <Text style={{ color: C.muted, fontSize: 18, marginTop: 2 }}>›</Text>
+        </View>
       </Pressable>
     );
   };
@@ -130,7 +134,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Text style={ui.h2}>Requirements</Text>
       <Card>{lines.map((l, i) => <Bar key={l.id + i} line={l} />)}</Card>
 
-      {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Press and hold any course to delete it.</Text>}
+      {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Tap a course to edit or delete it.</Text>}
       <Text style={ui.h2}>This cycle ({current.length})</Text>
       <Card>
         {rows.length === 0 && !loading && (
@@ -142,7 +146,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         {dupeIds.size > 0 && (
           <View style={[s.alert, { marginTop: 0, marginBottom: 8 }]}>
             <Text style={s.alertText}>
-              {dupeIds.size === 1 ? "1 course looks like a duplicate" : `${dupeIds.size} courses look like duplicates`} — not counted toward your hours. Press and hold to delete.
+              {dupeIds.size === 1 ? "1 course looks like a duplicate" : `${dupeIds.size} courses look like duplicates`} — not counted toward your hours. Tap it to delete.
             </Text>
           </View>
         )}
