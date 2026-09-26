@@ -2,6 +2,7 @@
 // The Anthropic key lives only here, as the ANTHROPIC_API_KEY secret. It never reaches the app.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { encodeBase64 } from "jsr:@std/encoding@1/base64";
+import * as XLSX from "npm:xlsx@0.18.5";
 
 const MODEL = "claude-haiku-4-5-20251001";
 
@@ -51,6 +52,27 @@ Rules:
 - delivery_method: map "Live"/"Group Live" → "Group Live", "Group Internet Based"/"Webinar"/"Virtual live" → "Group Internet Based", "QAS Self Study"/"Self-study" → "QAS Self Study".
 - Dates must be YYYY-MM-DD. Use null for anything not shown.`;
 
+const SHEET_PROMPT = `This is a CPE transcript/log exported from a spreadsheet (each sheet shown as CSV).
+Extract every completed CPE course row. Ignore instruction sheets, dropdown/lookup lists, headers, totals and blank rows.
+Rules:
+- One entry per course row. Keep course titles as written.
+- hours = credits/hours claimed for that row.
+- If the sheet only gives a broad category (e.g. "Technical Subject Areas", "Non-Technical Subject Areas", "Accounting and Attestation (A&A)", "Ethics", "Fraud"), choose the best NASBA field_of_study from the course title and that category, and set field_confident=false. Set field_confident=true only if a specific NASBA field is given.
+- "Ethics" category → "Regulatory Ethics"; "Board-Approved Regulatory Review Course" → "Regulatory Ethics"; "Accounting and Attestation" → "Accounting" or "Auditing" by title.
+- delivery_method: "Live Presentation" → "Group Live", "Group Internet-based programs" → "Group Internet Based", "Interactive Self-Study" → "QAS Self Study", "Nano Learning Program" → "Nano Learning", "Blended Learning Program" → "Blended".
+- Dates must be YYYY-MM-DD (US spreadsheets use MM/DD/YYYY). Use null for anything not shown.`;
+
+// Spreadsheets are turned into plain CSV text per sheet; the model reads them as text.
+function spreadsheetToText(bytes: Uint8Array, isCsv: boolean): string {
+  if (isCsv) return new TextDecoder().decode(bytes);
+  const wb = XLSX.read(bytes, { type: "array", cellDates: true, dateNF: "yyyy-mm-dd" });
+  return wb.SheetNames.map(name => {
+    const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name], { blankrows: false, dateNF: "yyyy-mm-dd" })
+      .split("\n").filter(l => l.replace(/,/g, "").trim()).join("\n");
+    return `### Sheet: ${name}\n${csv}`;
+  }).join("\n\n");
+}
+
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -86,11 +108,24 @@ Deno.serve(async req => {
 
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (bytes.length > 20 * 1024 * 1024) return json({ error: "File is too large (max 20 MB)." }, 413);
-    const isPdf = path.toLowerCase().endsWith(".pdf") || file.type === "application/pdf";
-    const mediaType = isPdf ? "application/pdf" : (file.type?.startsWith("image/") ? file.type : "image/jpeg");
-    const block = isPdf
-      ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: encodeBase64(bytes) } }
-      : { type: "image", source: { type: "base64", media_type: mediaType, data: encodeBase64(bytes) } };
+    const lower = path.toLowerCase();
+    const isSheet = /\.(xlsx|xls|csv)$/.test(lower);
+    const isPdf = lower.endsWith(".pdf") || file.type === "application/pdf";
+    let block: unknown;
+    let prompt = PROMPT;
+    if (isSheet) {
+      let text: string;
+      try { text = spreadsheetToText(bytes, lower.endsWith(".csv")); }
+      catch { return json({ error: "Couldn't open this spreadsheet. Try saving it as .xlsx or .csv." }, 422); }
+      if (text.length > 200_000) return json({ error: "This spreadsheet is too large. Try splitting it into smaller files." }, 413);
+      block = { type: "text", text };
+      prompt = SHEET_PROMPT;
+    } else {
+      const mediaType = isPdf ? "application/pdf" : (file.type?.startsWith("image/") ? file.type : "image/jpeg");
+      block = isPdf
+        ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: encodeBase64(bytes) } }
+        : { type: "image", source: { type: "base64", media_type: mediaType, data: encodeBase64(bytes) } };
+    }
 
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!apiKey) return json({ error: "Certificate reading isn't configured yet." }, 500);
@@ -100,10 +135,10 @@ Deno.serve(async req => {
       headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 2048,
+        max_tokens: 16000,
         tools: [TOOL],
         tool_choice: { type: "tool", name: TOOL.name },
-        messages: [{ role: "user", content: [block, { type: "text", text: PROMPT }] }],
+        messages: [{ role: "user", content: [block, { type: "text", text: prompt }] }],
       }),
     });
     if (!res.ok) {

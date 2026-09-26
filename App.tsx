@@ -10,8 +10,9 @@ import DashboardScreen, { RULES } from "./src/screens/DashboardScreen";
 import { cycleBounds } from "./src/engine/engine";
 import AddCourseScreen from "./src/screens/AddCourseScreen";
 import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
+import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk";
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -66,7 +67,7 @@ export default function App() {
   );
   else if (view === "scan") screen = (
     <ScanScreen userId={session.user.id}
-      onExtracted={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView("review"); }}
+      onExtracted={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }}
       onManual={path => { setQueue({ courses: [], index: 0, path, saved: 0 }); setView("addCourse"); }}
       onCancel={() => backToDashboard(false)} />
   );
@@ -76,6 +77,10 @@ export default function App() {
       progress={{ index: queue.index, total: queue.courses.length }}
       onSkip={queue.courses.length > 1 ? () => advance(false) : undefined}
       onDone={saved => saved ? advance(true) : backToDashboard(queue.saved > 0)} />
+  );
+  else if (view === "bulk") screen = (
+    <BulkReviewScreen userId={session.user.id} courses={queue.courses} certificatePath={queue.path} cycle={cycle}
+      onDone={imported => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(imported); }} />
   );
   else if (view === "editCourse" && editing) screen = (
     <AddCourseScreen key={editing.id} userId={session.user.id} existing={editing} cycle={cycle}

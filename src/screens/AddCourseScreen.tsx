@@ -57,7 +57,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
       const { data: sameDay, error: qErr } = await supabase.from("cpe_records")
         .select("id, title, completed_on, hours").eq("completed_on", iso);
       if (qErr) { setBusy(false); return setError(friendlyError(qErr.message)); }
-      const match = (sameDay ?? []).filter(r => r.id !== existing?.id).find(r => sameCourse({ title: r.title, date: r.completed_on }, { title, date: iso }));
+      const match = (sameDay ?? []).filter(r => r.id !== existing?.id).find(r => sameCourse({ title: r.title, date: r.completed_on, hours: r.hours }, { title, date: iso, hours: h }));
       if (match) { setBusy(false); return setDupe({ ...match, hours: Number(match.hours) }); }
     }
     const fields = {

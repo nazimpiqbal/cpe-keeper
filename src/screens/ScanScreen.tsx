@@ -12,6 +12,12 @@ export type Extracted = {
 
 type Picked = { uri: string; mimeType: string; ext: string };
 
+const SHEET_TYPES = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.ms-excel",                                          // .xls
+  "text/csv", "text/comma-separated-values",
+];
+
 const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: {
@@ -21,6 +27,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
   onCancel: () => void;
 }) {
   const [status, setStatus] = useState<"idle" | "uploading" | "reading">("idle");
+  const [isSheet, setIsSheet] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
 
@@ -43,7 +50,18 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
     await process({ uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg" });
   }
 
+  async function pickSpreadsheet() {
+    setError(null);
+    const r = await DocumentPicker.getDocumentAsync({ type: SHEET_TYPES, copyToCacheDirectory: true });
+    if (r.canceled || !r.assets?.[0]) return;
+    const a = r.assets[0];
+    const ext = (a.name.split(".").pop() ?? "").toLowerCase();
+    if (!["xlsx", "xls", "csv"].includes(ext)) return setError("Please choose an Excel (.xlsx, .xls) or CSV file.");
+    await process({ uri: a.uri, mimeType: a.mimeType ?? SHEET_TYPES[0], ext });
+  }
+
   async function process(file: Picked) {
+    setIsSheet(["xlsx", "xls", "csv"].includes(file.ext));
     try {
       setStatus("uploading");
       const body = await (await fetch(file.uri)).arrayBuffer();
@@ -69,17 +87,17 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
   const busy = status !== "idle";
   return (
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
-      <Text style={ui.h1}>Add from certificate</Text>
+      <Text style={ui.h1}>Upload certificate or transcript</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>
-        Take a photo or pick a PDF. We'll read the course details — you confirm before anything is saved.
+        Take a photo, pick a PDF, or import a spreadsheet of courses. We'll read the details — you confirm before anything is saved.
       </Text>
 
       {busy ? (
         <Card>
           <View style={{ alignItems: "center", paddingVertical: 24 }}>
             <ActivityIndicator color={C.accent} size="large" />
-            <Text style={[ui.h2, { marginTop: 16 }]}>{status === "uploading" ? "Uploading…" : "Reading certificate…"}</Text>
-            <Text style={ui.muted}>This usually takes a few seconds.</Text>
+            <Text style={[ui.h2, { marginTop: 16 }]}>{status === "uploading" ? "Uploading…" : isSheet ? "Reading spreadsheet…" : "Reading certificate…"}</Text>
+            <Text style={ui.muted}>{isSheet ? "Large transcripts can take up to a minute." : "This usually takes a few seconds."}</Text>
           </View>
         </Card>
       ) : (
@@ -91,6 +109,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
           <Button title="📷  Take a photo" onPress={() => pickPhoto(true)} />
           <Button kind="secondary" title="Choose from Photos" onPress={() => pickPhoto(false)} />
           <Button kind="secondary" title="Choose a PDF from Files" onPress={pickPdf} />
+          <Button kind="secondary" title="Import an Excel or CSV transcript" onPress={pickSpreadsheet} />
           <Button kind="link" title="Cancel" onPress={onCancel} />
         </Card>
       )}

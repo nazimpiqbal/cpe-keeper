@@ -46,7 +46,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
   useEffect(() => { load(); }, [load]);
 
   const rules = RULES[license.state];
-  const dupeIds = useMemo(() => findDuplicateIds(rows.map(r => ({ id: r.id, title: r.title, date: r.completed_on, createdAt: r.created_at }))), [rows]);
+  const dupeIds = useMemo(() => findDuplicateIds(rows.map(r => ({ id: r.id, title: r.title, date: r.completed_on, hours: Number(r.hours), createdAt: r.created_at }))), [rows]);
   // Duplicates are shown but NOT counted toward requirements.
   const counted = useMemo(() => rows.filter(r => !dupeIds.has(r.id)), [rows, dupeIds]);
   const records = useMemo(() => counted.map(toEngineRecord), [counted]);
@@ -140,7 +140,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         )}
       </Card>
 
-      <Button title="📄  Add from certificate" onPress={onScan} />
+      <Button title="📄  Upload certificate or transcript" onPress={onScan} />
       <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
 
@@ -152,7 +152,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Card>
         {rows.length === 0 && !loading && (
           <View>
-            <Text style={ui.muted}>No courses yet. Tap "Add from certificate" to log your first one.</Text>
+            <Text style={ui.muted}>No courses yet. Tap "Upload certificate or transcript" to add your first ones.</Text>
             {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
           </View>
         )}

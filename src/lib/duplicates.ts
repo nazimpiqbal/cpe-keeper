@@ -5,19 +5,21 @@
 export const normTitle = (t: string) =>
   t.toLowerCase().replace(/\(\d+\)/g, "").replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 
-export function sameCourse(a: { title: string; date: string }, b: { title: string; date: string }) {
+type Course = { title: string; date: string; hours?: number | null };
+
+export function sameCourse(a: Course, b: Course) {
   if (a.date !== b.date) return false;
   const x = normTitle(a.title), y = normTitle(b.title);
   if (!x || !y) return false;
   if (x === y) return true;
-  // Otherwise the shorter title must appear as whole words inside the longer one (≥3 words),
-  // so "Part I" never matches "Part II".
-  const [short, long] = x.length <= y.length ? [x.split(" "), y.split(" ")] : [y.split(" "), x.split(" ")];
-  if (short.length < 3) return false;
-  for (let i = 0; i + short.length <= long.length; i++) {
-    if (short.every((w, j) => long[i + j] === w)) return true;
-  }
-  return false;
+  // Looser match for the same course worded differently by different sources
+  // (e.g. "AI Empowerment Day 1 – RSM AI Fundamentals" vs "AI Empowerment Program (Day 1 of 5) RSM AI Fundamentals").
+  // Every word of the shorter title must appear in the longer one, and credits must agree when both are known.
+  // Whole words only, so "Part I" never matches "Part II" and "Day 1" never matches "Day 2".
+  if (a.hours != null && b.hours != null && Math.abs(Number(a.hours) - Number(b.hours)) > 0.001) return false;
+  const [short, long] = x.length <= y.length ? [x.split(" "), new Set(y.split(" "))] : [y.split(" "), new Set(x.split(" "))];
+  if (new Set(short).size < 3) return false;
+  return short.every(w => long.has(w));
 }
 
 // Returns the ids of records that duplicate an earlier-saved record (the later copies).
