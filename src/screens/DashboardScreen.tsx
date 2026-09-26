@@ -55,6 +55,19 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
   const earlier = rows.filter(r => r.completed_on < cycle.start);
   const later = rows.filter(r => r.completed_on > cycle.end);
 
+  // Banner shown inside each section, counting only that section's duplicates.
+  const DupeBanner = ({ rows: section }: { rows: CpeRow[] }) => {
+    const n = section.filter(r => dupeIds.has(r.id)).length;
+    if (n === 0) return null;
+    return (
+      <View style={[s.alert, { marginTop: 0, marginBottom: 8 }]}>
+        <Text style={s.alertText}>
+          {n === 1 ? "1 course here looks like a duplicate" : `${n} courses here look like duplicates`} — not counted. Tap it to delete.
+        </Text>
+      </View>
+    );
+  };
+
   const renderRow = (r: CpeRow, i: number, outside = false) => {
     const rec = toEngineRecord(r);
     const isDupe = dupeIds.has(r.id);
@@ -143,13 +156,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
             {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
           </View>
         )}
-        {dupeIds.size > 0 && (
-          <View style={[s.alert, { marginTop: 0, marginBottom: 8 }]}>
-            <Text style={s.alertText}>
-              {dupeIds.size === 1 ? "1 course looks like a duplicate" : `${dupeIds.size} courses look like duplicates`} — not counted toward your hours. Tap it to delete.
-            </Text>
-          </View>
-        )}
+        <DupeBanner rows={current} />
         {current.length === 0 && rows.length > 0 && <Text style={ui.muted}>No courses in this cycle yet.</Text>}
         {current.map((r, i) => renderRow(r, i))}
       </Card>
@@ -157,13 +164,13 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       {later.length > 0 && (<>
         <Text style={ui.h2}>After this renewal ({later.length})</Text>
         <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Dated after {fmtDate(cycle.end)} — these will count toward your next cycle.</Text>
-        <Card>{later.map((r, i) => renderRow(r, i, true))}</Card>
+        <Card><DupeBanner rows={later} />{later.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
       {earlier.length > 0 && (<>
         <Text style={ui.h2}>Earlier courses ({earlier.length})</Text>
         <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Completed before {fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.</Text>
-        <Card>{earlier.map((r, i) => renderRow(r, i, true))}</Card>
+        <Card><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
 
