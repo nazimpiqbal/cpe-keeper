@@ -1,0 +1,62 @@
+{
+  "state": "CA",
+  "board": "California Board of Accountancy",
+  "sourceUrls": [
+    "https://www.dca.ca.gov/cba/licensees/cequickref.shtml",
+    "https://www.dca.ca.gov/cba/licensees/overview-of-renewal-process.pdf"
+  ],
+  "lastVerified": "2026-09-25",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "note": "80 hours in the two-year period immediately preceding license expiration; each year of the period measured back from the expiration date."
+  },
+  "carryover": false,
+  "requirements": [
+    { "id": "total", "label": "Total CE", "hours": 80, "scope": "cycle" },
+    { "id": "annual_total", "label": "Minimum each year", "hours": 20, "scope": "each_sub_period" },
+    { "id": "technical_total", "label": "Technical subject matter", "hours": 40, "scope": "cycle", "categories": ["technical"] },
+    { "id": "technical_annual", "label": "Technical each year", "hours": 12, "scope": "each_sub_period", "categories": ["technical"] },
+    { "id": "ethics", "label": "Ethics", "hours": 4, "scope": "cycle", "categories": ["ethics"] },
+    {
+      "id": "regulatory_review",
+      "label": "Board-approved Regulatory Review course",
+      "hours": 2,
+      "scope": "lookback_years",
+      "lookbackYears": 6,
+      "categories": ["regulatory_review"],
+      "note": "Required if more than six years have lapsed since the last one. Not interchangeable with ethics. Must carry a CBA approval number (RRL-/RRS-)."
+    },
+    { "id": "aa", "label": "Accounting & auditing", "hours": 24, "scope": "cycle", "categories": ["accounting_auditing"], "when": "attest" },
+    { "id": "aa_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "attest" },
+    { "id": "gov", "label": "Governmental accounting & auditing", "hours": 24, "scope": "cycle", "categories": ["government"], "when": "government_audit" },
+    { "id": "gov_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "government_audit" },
+    { "id": "prep", "label": "Preparation engagement subject matter", "hours": 8, "scope": "cycle", "categories": ["accounting_auditing"], "when": "preparation_engagement" },
+    { "id": "prep_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "preparation_engagement" }
+  ],
+  "newLicensee": {
+    "hoursPerFullSixMonths": 20,
+    "technicalShare": 0.5,
+    "ethicsAndFraudAfterFullTwoYears": true,
+    "annualMinimumAppliesOnFirstRenewal": false
+  },
+  "fieldOfStudyMap": {
+    "technical": ["Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes", "Finance", "Economics", "Business Law", "Management Advisory Services", "Information Technology", "Specialized Knowledge", "Statistics", "Behavioral Ethics", "Regulatory Ethics"],
+    "non_technical": ["Personal Development", "Communications and Marketing", "Personnel/Human Resources", "Business Management and Organization", "Production", "Computer Software and Applications"],
+    "ethics": ["Behavioral Ethics", "Regulatory Ethics"],
+    "accounting_auditing": ["Accounting", "Auditing"],
+    "government": ["Accounting (Governmental)", "Auditing (Governmental)"]
+  },
+  "boardExport": {
+    "format": "CBA Connect CE Data Excel template",
+    "hoursIncrement": 0.5,
+    "subjectAreas": ["Accounting and Attestation (A&A)", "Ethics", "Fraud", "Board-Approved Regulatory Review Course", "Technical Subject Areas", "Non-Technical Subject Areas", "Preparation Engagement", "Government"]
+  },
+  "recordRetentionYears": 4,
+  "toVerify": [
+    "Exact CA mapping of NASBA fields of study to technical vs non-technical (esp. Business Management and Organization, Computer Software and Applications).",
+    "Whether CA counts ethics hours toward the technical minimums.",
+    "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule."
+  ]
+}
