@@ -68,6 +68,19 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     );
   };
 
+  // Red banner: courses whose field of study was a best guess and still needs the user's confirmation.
+  const ConfirmBanner = ({ rows: section }: { rows: CpeRow[] }) => {
+    const n = section.filter(r => r.needs_review && !dupeIds.has(r.id)).length;
+    if (n === 0) return null;
+    return (
+      <View style={s.confirmBox}>
+        <Text style={s.confirmText}>
+          {n === 1 ? "1 course needs" : `${n} courses need`} the field of study confirmed. Tap each one marked below — it affects whether hours count as technical.
+        </Text>
+      </View>
+    );
+  };
+
   const renderRow = (r: CpeRow, i: number, outside = false) => {
     const rec = toEngineRecord(r);
     const isDupe = dupeIds.has(r.id);
@@ -79,8 +92,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
           <Text style={s.tag}>
             {rules && categoriesOf(rec, rules).includes("technical") ? "Technical" : "Non-technical"} · {r.field_of_study}
-            {r.needs_review ? "  ⚠︎ confirm field" : ""}
           </Text>
+          {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
           {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>Not counted in current cycle</Text>}
         </View>
@@ -156,6 +169,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
             {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
           </View>
         )}
+        <ConfirmBanner rows={current} />
         <DupeBanner rows={current} />
         {current.length === 0 && rows.length > 0 && <Text style={ui.muted}>No courses in this cycle yet.</Text>}
         {current.map((r, i) => renderRow(r, i))}
@@ -164,13 +178,13 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       {later.length > 0 && (<>
         <Text style={ui.h2}>After this renewal ({later.length})</Text>
         <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Dated after {fmtDate(cycle.end)} — these will count toward your next cycle.</Text>
-        <Card><DupeBanner rows={later} />{later.map((r, i) => renderRow(r, i, true))}</Card>
+        <Card><ConfirmBanner rows={later} /><DupeBanner rows={later} />{later.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
       {earlier.length > 0 && (<>
         <Text style={ui.h2}>Earlier courses ({earlier.length})</Text>
         <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Completed before {fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.</Text>
-        <Card><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
+        <Card><ConfirmBanner rows={earlier} /><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
 
@@ -196,6 +210,9 @@ const s = StyleSheet.create({
   row: { flexDirection: "row", paddingVertical: 10 },
   rowBorder: { borderTopWidth: 1, borderTopColor: C.line },
   rowTitle: { fontWeight: "600", color: C.ink },
+  confirm: { fontSize: 12, marginTop: 3, color: C.danger, fontWeight: "800" },
+  confirmBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
+  confirmText: { color: C.danger, fontWeight: "700" },
   tag: { fontSize: 12, color: C.accent, marginTop: 3 },
   hours: { fontSize: 18, fontWeight: "700", color: C.ink, marginLeft: 12, fontVariant: ["tabular-nums"] },
 });
