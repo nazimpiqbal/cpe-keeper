@@ -6,7 +6,8 @@ import { supabase, friendlyError, License } from "./src/lib/supabase";
 import { Button, C, ui } from "./src/lib/ui";
 import AuthScreen from "./src/screens/AuthScreen";
 import SetupScreen from "./src/screens/SetupScreen";
-import DashboardScreen from "./src/screens/DashboardScreen";
+import DashboardScreen, { RULES } from "./src/screens/DashboardScreen";
+import { cycleBounds } from "./src/engine/engine";
 import AddCourseScreen from "./src/screens/AddCourseScreen";
 import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 
@@ -45,6 +46,8 @@ export default function App() {
     if (session) loadLicense(); else { setLicense(undefined); setView("dashboard"); }
   }, [session?.user.id]);
 
+  const cycle = license && RULES[license.state] ? cycleBounds(license.expiration_date, RULES[license.state]) : undefined;
+
   let screen;
   if (session === undefined) screen = <Loading />;
   else if (!session) screen = <AuthScreen />;
@@ -68,13 +71,13 @@ export default function App() {
   );
   else if (view === "review") screen = (
     <AddCourseScreen key={queue.index} userId={session.user.id}
-      initial={queue.courses[queue.index]} certificatePath={queue.path}
+      initial={queue.courses[queue.index]} certificatePath={queue.path} cycle={cycle}
       progress={{ index: queue.index, total: queue.courses.length }}
       onSkip={queue.courses.length > 1 ? () => advance(false) : undefined}
       onDone={saved => saved ? advance(true) : backToDashboard(queue.saved > 0)} />
   );
   else if (view === "addCourse") screen = (
-    <AddCourseScreen userId={session.user.id} certificatePath={queue.path}
+    <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
   else screen = (

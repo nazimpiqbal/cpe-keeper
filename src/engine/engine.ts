@@ -50,6 +50,12 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
     .map(([cat]) => cat);
 }
 
+// Current renewal cycle, e.g. CA license expiring 2028-01-31 → 2026-02-01 to 2028-01-31.
+export function cycleBounds(licenseExpiration: string, rules: Rules): { start: string; end: string } {
+  const end = d(licenseExpiration);
+  return { start: iso(addDays(addMonths(end, -rules.cycle.lengthMonths), 1)), end: iso(end) };
+}
+
 export function evaluate(records: Record[], profile: Profile, rules: Rules): Line[] {
   const end = d(profile.licenseExpiration);
   const start = addDays(addMonths(end, -rules.cycle.lengthMonths), 1);

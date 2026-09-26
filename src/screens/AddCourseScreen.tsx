@@ -15,13 +15,14 @@ export const FIELDS = [
 ];
 const DELIVERY = ["Group Live", "Group Internet Based", "QAS Self Study", "Nano Learning", "Blended"];
 
-export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip }: {
+export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip, cycle }: {
   userId: string;
   onDone: (saved: boolean) => void;
   initial?: Extracted;                         // pre-filled from a scanned certificate
   certificatePath?: string | null;             // stored file this course came from
   progress?: { index: number; total: number }; // e.g. course 2 of 5 on a transcript
   onSkip?: () => void;
+  cycle?: { start: string; end: string };      // current renewal cycle, to flag out-of-cycle dates
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [provider, setProvider] = useState(initial?.provider ?? "");
@@ -85,6 +86,20 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
               <Field label="Credits" value={hours} onChangeText={setHours} placeholder="2.0" keyboardType="decimal-pad" />
             </View>
           </View>
+          {(() => {
+            const iso = toIso(date);
+            if (!cycle || !iso) return null;
+            const msg = iso < cycle.start
+              ? `This is before your current cycle (${toUs(cycle.start)} – ${toUs(cycle.end)}). It'll be saved for your records but won't count toward current requirements.`
+              : iso > cycle.end
+              ? `This is after your current renewal (${toUs(cycle.end)}). It'll count toward your next cycle.`
+              : null;
+            return msg ? (
+              <View style={{ backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10, marginTop: -4, marginBottom: 14 }}>
+                <Text style={{ color: "#3730A3" }}>{msg}</Text>
+              </View>
+            ) : null;
+          })()}
           <Text style={ui.label}>Field of study</Text>
           {fieldGuessed && field && (
             <Text style={[ui.hint, { color: C.warn, marginTop: -2, marginBottom: 8 }]}>
