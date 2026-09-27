@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { parseDateInput } from "./dates";
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
 
 export const C = {
@@ -31,6 +32,45 @@ export function Field({ label, hint, ...props }: TextInputProps & { label: strin
   );
 }
 
+// Date input that tidies itself: type 1312028, 13128 or 1/31/28 and it becomes 01/31/2028 when you leave the field.
+// If the digits fit two real dates (e.g. 1122028), it asks which one.
+export function DateField({ label, value, onChangeText, hint, placeholder = "MM/DD/YYYY" }: {
+  label: string; value: string; onChangeText: (v: string) => void; hint?: string; placeholder?: string;
+}) {
+  const [options, setOptions] = useState<string[] | null>(null);
+  const [invalid, setInvalid] = useState(false);
+  function tidy() {
+    if (!value.trim()) { setOptions(null); setInvalid(false); return; }
+    const r = parseDateInput(value);
+    if (r && "iso" in r) { onChangeText(toUs(r.iso)); setOptions(null); setInvalid(false); }
+    else if (r) { setOptions(r.options); setInvalid(false); }
+    else { setOptions(null); setInvalid(true); }
+  }
+  return (
+    <View style={{ marginBottom: 14 }}>
+      <Text style={ui.label}>{label}</Text>
+      <TextInput
+        placeholderTextColor="#9CA3AF" style={[ui.input, invalid && { borderColor: C.danger }]}
+        value={value} placeholder={placeholder} keyboardType="numbers-and-punctuation" returnKeyType="done"
+        onChangeText={t => { onChangeText(t); setOptions(null); setInvalid(false); }}
+        onBlur={tidy} onEndEditing={tidy} onSubmitEditing={tidy}
+      />
+      {options && (
+        <View style={{ marginTop: 6 }}>
+          <Text style={[ui.hint, { color: C.warn, fontWeight: "700" }]}>That could be more than one date — which did you mean?</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 6 }}>
+            {options.map(o => (
+              <Chip key={o} label={fmtDate(o)} selected={false} onPress={() => { onChangeText(toUs(o)); setOptions(null); }} />
+            ))}
+          </View>
+        </View>
+      )}
+      {invalid && <Text style={[ui.hint, { color: C.danger, fontWeight: "700" }]}>Not a valid date — try MM/DD/YYYY.</Text>}
+      {hint && !options && !invalid ? <Text style={ui.hint}>{hint}</Text> : null}
+    </View>
+  );
+}
+
 export function Chip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} style={[ui.chip, selected && ui.chipOn]}>
@@ -43,13 +83,10 @@ export const Card = ({ children }: { children: ReactNode }) => <View style={ui.c
 export const ErrorText = ({ msg }: { msg: string | null }) => msg ? <Text style={ui.error}>{msg}</Text> : null;
 
 // Dates: users type MM/DD/YYYY, the database stores YYYY-MM-DD.
-export function toIso(us: string): string | null {
-  const m = us.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!m) return null;
-  const [, mm, dd, yyyy] = m;
-  const iso = `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-  const t = new Date(iso + "T00:00:00Z");
-  return isNaN(t.getTime()) || t.toISOString().slice(0, 10) !== iso ? null : iso;
+// Accepts any format parseDateInput understands (01/31/2028, 1312028, 13128…). Null if invalid or ambiguous.
+export function toIso(input: string): string | null {
+  const r = parseDateInput(input);
+  return r && "iso" in r ? r.iso : null;
 }
 export const toUs = (iso: string) => { const [y, m, d] = iso.split("-"); return `${m}/${d}/${y}`; };
 export const fmtDate = (iso: string) =>

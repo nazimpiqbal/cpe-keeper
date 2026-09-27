@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
-import { Button, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
+import { Button, Card, Chip, DateField, ErrorText, toIso, toUs, ui } from "../lib/ui";
 
 // States with verified rule files. Others appear as "coming soon".
 const SUPPORTED = ["CA"];
@@ -60,14 +60,11 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
           </View>
           <Text style={[ui.hint, { marginBottom: 14 }]}>More states are being added.</Text>
 
-          <Field label="License expiration date" value={expiration} onChangeText={setExpiration}
-            placeholder="MM/DD/YYYY" keyboardType="numbers-and-punctuation" />
-          <Field label="License issue date (optional)" value={issued} onChangeText={setIssued}
-            placeholder="MM/DD/YYYY" keyboardType="numbers-and-punctuation"
+          <DateField label="License expiration date" value={expiration} onChangeText={setExpiration} />
+          <DateField label="License issue date (optional)" value={issued} onChangeText={setIssued}
             hint="Used to estimate when your Regulatory Review course is due." />
           {state === "CA" && (
-            <Field label="Regulatory Review due date (optional)" value={rrDue} onChangeText={setRrDue}
-              placeholder="MM/DD/YYYY" keyboardType="numbers-and-punctuation"
+            <DateField label="Regulatory Review due date (optional)" value={rrDue} onChangeText={setRrDue}
               hint="Shown on your CBA Connect dashboard. More accurate than our estimate." />
           )}
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
-import { Button, C, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
+import { Button, C, Card, Chip, DateField, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
 import type { Extracted } from "./ScanScreen";
 import * as WebBrowser from "expo-web-browser";
 import { showUpgrade, usePremium } from "../lib/premium";
@@ -124,7 +124,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
           <Field label="Provider (optional)" value={provider} onChangeText={setProvider} placeholder="e.g. Becker" />
           <View style={{ flexDirection: "row", gap: 12 }}>
             <View style={{ flex: 1 }}>
-              <Field label="Completed on" value={date} onChangeText={setDate} placeholder="MM/DD/YYYY" keyboardType="numbers-and-punctuation" />
+              <DateField label="Completed on" value={date} onChangeText={setDate} />
             </View>
             <View style={{ width: 110 }}>
               <Field label="Credits" value={hours} onChangeText={setHours} placeholder="2.0" keyboardType="decimal-pad" />
