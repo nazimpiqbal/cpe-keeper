@@ -4,6 +4,7 @@ import { supabase, friendlyError, CpeRow } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
 import type { Extracted } from "./ScanScreen";
 import * as WebBrowser from "expo-web-browser";
+import { showUpgrade, usePremium } from "../lib/premium";
 import { sameCourse } from "../lib/duplicates";
 
 // NASBA fields of study, as printed on CPE certificates.
@@ -78,9 +79,12 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     onDone(true);
   }
 
+  const { premium } = usePremium();
+
   async function viewCertificate() {
     const path = existing?.certificate_path;
     if (!path) return;
+    if (!premium) return showUpgrade();
     const { data, error } = await supabase.storage.from("certificates").createSignedUrl(path, 600);
     if (error || !data) return setError("Couldn't open the certificate.");
     await WebBrowser.openBrowserAsync(data.signedUrl);
@@ -109,7 +113,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
           {progress && progress.total > 1 ? `  Course ${progress.index + 1} of ${progress.total}.` : ""}
         </Text>
         {existing?.certificate_path && (
-          <Button kind="secondary" title="📄  View certificate" onPress={viewCertificate} />
+          <Button kind="secondary" title={premium ? "📄  View certificate" : "🔒  Certificate on file — Premium to view"} onPress={viewCertificate} />
         )}
         {existing && !existing.certificate_path && (
           <Text style={[ui.hint, { marginBottom: 8 }]}>No certificate on file — attach one from the Certificates tab.</Text>

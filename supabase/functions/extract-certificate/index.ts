@@ -80,6 +80,17 @@ const cors = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
+// Server-only key. Used to read the uploaded file on the user's behalf, because
+// storage rules only let Premium users download — but every user's upload must be readable here.
+function secretKey() {
+  try {
+    const keys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}");
+    return keys.default ?? Object.values(keys)[0] ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  } catch {
+    return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  }
+}
+
 function publishableKey() {
   try {
     const keys = JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") ?? "{}");
@@ -102,8 +113,9 @@ Deno.serve(async req => {
     const { path } = await req.json();
     if (typeof path !== "string" || !path.startsWith(`${user.id}/`)) return json({ error: "Invalid file." }, 400);
 
-    // Download with the user's own permissions: storage rules only allow their own folder.
-    const { data: file, error: dlErr } = await supabase.storage.from("certificates").download(path);
+    // The path is already checked to be inside this user's own folder (above).
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, secretKey()!);
+    const { data: file, error: dlErr } = await admin.storage.from("certificates").download(path);
     if (dlErr || !file) return json({ error: "Couldn't open the uploaded file." }, 404);
 
     const bytes = new Uint8Array(await file.arrayBuffer());

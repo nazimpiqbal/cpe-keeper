@@ -3,9 +3,11 @@ import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } 
 import * as DocumentPicker from "expo-document-picker";
 import * as WebBrowser from "expo-web-browser";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
-import { C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { saveCertificateFile } from "../lib/uploads";
+import { showUpgrade, usePremium } from "../lib/premium";
 
-type StoredFile = { path: string; name: string; created_at: string | null; size: number | null; mimetype: string | null };
+type StoredFile = { path: string; name: string; fileName: string | null; created_at: string | null; size: number | null };
 
 const kindOf = (name: string) => {
   const ext = name.split(".").pop()?.toLowerCase();
@@ -22,19 +24,20 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const { premium } = usePremium();
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
+    // The uploads list (not storage itself) so free accounts can see what's stored.
     const [list, recs] = await Promise.all([
-      supabase.storage.from("certificates").list(userId, { limit: 1000, sortBy: { column: "created_at", order: "desc" } }),
+      supabase.from("uploads").select("*").order("created_at", { ascending: false }),
       supabase.from("cpe_records").select("*").order("completed_on", { ascending: false }),
     ]);
     setLoading(false);
     if (list.error) return setError(friendlyError(list.error.message));
     if (recs.error) return setError(friendlyError(recs.error.message));
-    setFiles((list.data ?? []).filter(f => f.id).map(f => ({
-      path: `${userId}/${f.name}`, name: f.name, created_at: f.created_at,
-      size: (f.metadata as any)?.size ?? null, mimetype: (f.metadata as any)?.mimetype ?? null,
+    setFiles((list.data ?? []).map((f: any) => ({
+      path: f.path, name: f.path.split("/").pop(), fileName: f.file_name, created_at: f.created_at, size: f.size_bytes,
     })));
     setRows(recs.data as CpeRow[]);
   }, [userId]);
@@ -52,6 +55,7 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
   const missingThisCycle = cycle ? missing.filter(r => r.completed_on >= cycle.start && r.completed_on <= cycle.end) : missing;
 
   async function open(path: string) {
+    if (!premium) return showUpgrade();
     setBusyId(path);
     const { data, error } = await supabase.storage.from("certificates").createSignedUrl(path, 600);
     setBusyId(null);
@@ -65,12 +69,11 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
     if (r.canceled || !r.assets?.[0]) return;
     const a = r.assets[0];
     const isPdf = (a.mimeType ?? "").includes("pdf") || a.name.toLowerCase().endsWith(".pdf");
-    const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${isPdf ? "pdf" : "jpg"}`;
     setBusyId(row.id);
     try {
-      const body = await (await fetch(a.uri)).arrayBuffer();
-      const up = await supabase.storage.from("certificates").upload(path, body, { contentType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg") });
-      if (up.error) throw new Error(up.error.message);
+      const path = await saveCertificateFile(userId, {
+        uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg", name: a.name,
+      });
       const { error } = await supabase.from("cpe_records").update({ certificate_path: path }).eq("id", row.id);
       if (error) throw new Error(error.message);
       await load();
@@ -85,8 +88,12 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
     Alert.alert("Delete this file?", "It isn't linked to any course. This can't be undone.", [
       { text: "Cancel", style: "cancel" },
       { text: "Delete", style: "destructive", onPress: async () => {
-        const { error } = await supabase.storage.from("certificates").remove([f.path]);
-        if (error) setError(friendlyError(error.message)); else load();
+        const { error } = await supabase.functions.invoke("delete-upload", { body: { path: f.path } });
+        if (error) {
+          let msg = "Couldn't delete the file.";
+          try { msg = (await (error as any).context?.json())?.error ?? msg; } catch {}
+          setError(msg);
+        } else load();
       } },
     ]);
   }
@@ -104,12 +111,12 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
           <Text style={ui.muted}>
             {courses.length === 1 ? `${courses[0].provider ? courses[0].provider + " · " : ""}${fmtDate(courses[0].completed_on)} · ${Number(courses[0].hours)} hrs`
               : courses.length > 1 ? `${Math.round(courses.reduce((a, c) => a + Number(c.hours), 0) * 100) / 100} hrs total`
-              : f.created_at ? `Uploaded ${fmtDate(f.created_at.slice(0, 10))}` : ""}
+              : `${f.fileName ? f.fileName + " · " : ""}${f.created_at ? `Uploaded ${fmtDate(f.created_at.slice(0, 10))}` : ""}`}
             {f.size ? ` · ${fmtSize(f.size)}` : ""}
           </Text>
           {courses.length > 1 && <Text style={s.sub} numberOfLines={3}>{courses.map(c => c.title).join(" · ")}</Text>}
         </View>
-        <Text style={s.open}>Open ›</Text>
+        <Text style={[s.open, !premium && { color: C.muted }]}>{premium ? "Open ›" : "🔒"}</Text>
       </Pressable>
     );
   };
@@ -122,6 +129,14 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
         Your proof of completion for a board audit. Boards can ask for certificates for several years — California requires you keep them 4 years.
       </Text>
       <ErrorText msg={error} />
+
+      {!premium && files.length > 0 && (
+        <View style={s.lockBox}>
+          <Text style={s.lockTitle}>🔒 {files.length} certificate{files.length > 1 ? "s" : ""} safely stored</Text>
+          <Text style={s.lockText}>Every upload is saved automatically. Upgrade to Premium to open, download and share them — for example if the board audits you.</Text>
+          <Button title="Unlock with Premium" onPress={showUpgrade} />
+        </View>
+      )}
 
       {missing.length > 0 && (<>
         <Text style={ui.h2}>No certificate on file ({missing.length})</Text>
@@ -171,6 +186,9 @@ const s = StyleSheet.create({
   open: { color: C.accent, fontWeight: "700" },
   attach: { backgroundColor: C.accent, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8 },
   attachText: { color: "#fff", fontWeight: "700" },
+  lockBox: { backgroundColor: "#EEF2FF", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#C7D2FE" },
+  lockTitle: { color: "#3730A3", fontWeight: "800", fontSize: 16, marginBottom: 4 },
+  lockText: { color: "#3730A3" },
   warnBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
   warnText: { color: C.danger, fontWeight: "700" },
 });

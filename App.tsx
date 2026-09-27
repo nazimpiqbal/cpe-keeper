@@ -12,6 +12,7 @@ import AddCourseScreen from "./src/screens/AddCourseScreen";
 import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 import CertificatesScreen from "./src/screens/CertificatesScreen";
+import { PremiumProvider } from "./src/lib/premium";
 
 type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates";
 
@@ -105,7 +106,12 @@ export default function App() {
     </Tabs>
   );
 
-  return <>{screen}<StatusBar style="dark" /></>;
+  return (
+    <>
+      {session ? <PremiumProvider key={session.user.id} userId={session.user.id}>{screen}</PremiumProvider> : screen}
+      <StatusBar style="dark" />
+    </>
+  );
 }
 
 // Bottom tab bar shown on the two main screens.

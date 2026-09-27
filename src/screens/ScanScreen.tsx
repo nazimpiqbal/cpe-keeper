@@ -3,6 +3,7 @@ import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "../lib/supabase";
+import { saveCertificateFile } from "../lib/uploads";
 import { Button, C, Card, ErrorText, ui } from "../lib/ui";
 
 export type Extracted = {
@@ -10,7 +11,7 @@ export type Extracted = {
   hours: number | null; field_of_study: string | null; field_confident: boolean; delivery_method: string | null;
 };
 
-type Picked = { uri: string; mimeType: string; ext: string };
+type Picked = { uri: string; mimeType: string; ext: string; name?: string };
 
 const SHEET_TYPES = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
@@ -18,7 +19,6 @@ const SHEET_TYPES = [
   "text/csv", "text/comma-separated-values",
 ];
 
-const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: {
   userId: string;
@@ -38,7 +38,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
     const opts: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], quality: 0.7 };
     const r = fromCamera ? await ImagePicker.launchCameraAsync(opts) : await ImagePicker.launchImageLibraryAsync(opts);
     if (r.canceled || !r.assets?.[0]) return;
-    await process({ uri: r.assets[0].uri, mimeType: "image/jpeg", ext: "jpg" });
+    await process({ uri: r.assets[0].uri, mimeType: "image/jpeg", ext: "jpg", name: r.assets[0].fileName ?? (fromCamera ? "Camera photo" : "Photo") });
   }
 
   async function pickPdf() {
@@ -47,7 +47,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
     if (r.canceled || !r.assets?.[0]) return;
     const a = r.assets[0];
     const isPdf = (a.mimeType ?? "").includes("pdf") || a.name.toLowerCase().endsWith(".pdf");
-    await process({ uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg" });
+    await process({ uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg", name: a.name });
   }
 
   async function pickSpreadsheet() {
@@ -57,17 +57,14 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
     const a = r.assets[0];
     const ext = (a.name.split(".").pop() ?? "").toLowerCase();
     if (!["xlsx", "xls", "csv"].includes(ext)) return setError("Please choose an Excel (.xlsx, .xls) or CSV file.");
-    await process({ uri: a.uri, mimeType: a.mimeType ?? SHEET_TYPES[0], ext });
+    await process({ uri: a.uri, mimeType: a.mimeType ?? SHEET_TYPES[0], ext, name: a.name });
   }
 
   async function process(file: Picked) {
     setIsSheet(["xlsx", "xls", "csv"].includes(file.ext));
     try {
       setStatus("uploading");
-      const body = await (await fetch(file.uri)).arrayBuffer();
-      const path = `${userId}/${newId()}.${file.ext}`;
-      const up = await supabase.storage.from("certificates").upload(path, body, { contentType: file.mimeType });
-      if (up.error) throw new Error("Upload failed: " + up.error.message);
+      const path = await saveCertificateFile(userId, file);
       setUploadedPath(path);
 
       setStatus("reading");
@@ -111,6 +108,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
           <Button kind="secondary" title="Choose a PDF from Files" onPress={pickPdf} />
           <Button kind="secondary" title="Import an Excel or CSV transcript" onPress={pickSpreadsheet} />
           <Button kind="link" title="Cancel" onPress={onCancel} />
+          <Text style={[ui.hint, { textAlign: "center", marginTop: 6 }]}>Every file you upload is saved to your Certificates tab automatically.</Text>
         </Card>
       )}
     </ScrollView>
