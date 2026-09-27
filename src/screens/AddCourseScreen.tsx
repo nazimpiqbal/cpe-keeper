@@ -3,6 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "r
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, Field, toIso, toUs, ui } from "../lib/ui";
 import type { Extracted } from "./ScanScreen";
+import * as WebBrowser from "expo-web-browser";
 import { sameCourse } from "../lib/duplicates";
 
 // NASBA fields of study, as printed on CPE certificates.
@@ -77,6 +78,14 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     onDone(true);
   }
 
+  async function viewCertificate() {
+    const path = existing?.certificate_path;
+    if (!path) return;
+    const { data, error } = await supabase.storage.from("certificates").createSignedUrl(path, 600);
+    if (error || !data) return setError("Couldn't open the certificate.");
+    await WebBrowser.openBrowserAsync(data.signedUrl);
+  }
+
   function confirmDelete() {
     if (!existing) return;
     Alert.alert("Delete this course?", existing.title, [
@@ -99,6 +108,13 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
           {existing ? "Update anything that's wrong, then save." : initial ? "Read from your certificate. Fix anything that looks wrong, then save." : "Copy the details from your certificate."}
           {progress && progress.total > 1 ? `  Course ${progress.index + 1} of ${progress.total}.` : ""}
         </Text>
+        {existing?.certificate_path && (
+          <Button kind="secondary" title="📄  View certificate" onPress={viewCertificate} />
+        )}
+        {existing && !existing.certificate_path && (
+          <Text style={[ui.hint, { marginBottom: 8 }]}>No certificate on file — attach one from the Certificates tab.</Text>
+        )}
+        <View style={{ height: 8 }} />
         <Card>
           <Field label="Course title" value={title} onChangeText={setTitle} placeholder="e.g. Revenue Recognition Update" />
           <Field label="Provider (optional)" value={provider} onChangeText={setProvider} placeholder="e.g. Becker" />

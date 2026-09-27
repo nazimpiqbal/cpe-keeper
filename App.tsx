@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, friendlyError, License, CpeRow } from "./src/lib/supabase";
@@ -11,8 +11,9 @@ import { cycleBounds } from "./src/engine/engine";
 import AddCourseScreen from "./src/screens/AddCourseScreen";
 import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 import BulkReviewScreen from "./src/screens/BulkReviewScreen";
+import CertificatesScreen from "./src/screens/CertificatesScreen";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates";
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -90,15 +91,48 @@ export default function App() {
     <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
+  else if (view === "certificates") screen = (
+    <Tabs active="certificates" onChange={setView}>
+      <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle} />
+    </Tabs>
+  );
   else screen = (
+    <Tabs active="dashboard" onChange={setView}>
     <DashboardScreen key={dashKey} userId={session.user.id} email={session.user.email ?? ""} license={license}
       onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
       onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")}
       onEditCourse={row => { setEditing(row); setView("editCourse"); }} />
+    </Tabs>
   );
 
   return <>{screen}<StatusBar style="dark" /></>;
 }
+
+// Bottom tab bar shown on the two main screens.
+function Tabs({ active, onChange, children }: { active: "dashboard" | "certificates"; onChange: (v: View_) => void; children: React.ReactNode }) {
+  const tab = (id: "dashboard" | "certificates", icon: string, label: string) => (
+    <Pressable key={id} onPress={() => onChange(id)} style={t.tab} accessibilityRole="tab" accessibilityState={{ selected: active === id }}>
+      <Text style={[t.icon, active !== id && { opacity: 0.45 }]}>{icon}</Text>
+      <Text style={[t.label, active === id && { color: C.accent, fontWeight: "700" }]}>{label}</Text>
+    </Pressable>
+  );
+  return (
+    <View style={{ flex: 1, backgroundColor: C.bg }}>
+      <View style={{ flex: 1 }}>{children}</View>
+      <View style={t.bar}>
+        {tab("dashboard", "📊", "Dashboard")}
+        {tab("certificates", "🗂️", "Certificates")}
+      </View>
+    </View>
+  );
+}
+
+const t = StyleSheet.create({
+  bar: { flexDirection: "row", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: "#fff", paddingBottom: 26, paddingTop: 8 },
+  tab: { flex: 1, alignItems: "center" },
+  icon: { fontSize: 20 },
+  label: { fontSize: 11, color: C.muted, marginTop: 2 },
+});
 
 const Loading = () => (
   <View style={[ui.screen, { justifyContent: "center", alignItems: "center" }]}>
