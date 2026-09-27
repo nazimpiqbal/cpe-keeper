@@ -23,14 +23,14 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   const [items, setItems] = useState<BulkItem[]>(() => courses.map(course => ({ course, saved: false })));
   const [editing, setEditing] = useState<number | null>(null);
   const initialized = useRef(false);
-  const [existing, setExisting] = useState<{ title: string; completed_on: string; hours: number }[] | null>(null);
+  const [existing, setExisting] = useState<{ id: string; title: string; completed_on: string; hours: number; certificate_path: string | null }[] | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Load what's already saved, to spot duplicates.
   useEffect(() => {
-    supabase.from("cpe_records").select("title, completed_on, hours").then(({ data, error }) => {
+    supabase.from("cpe_records").select("id, title, completed_on, hours, certificate_path").then(({ data, error }) => {
       if (error) setError(friendlyError(error.message));
       setExisting(data ?? []);
     });
@@ -40,11 +40,14 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   const flags = useMemo(() => items.map((it, i) => {
     const c = it.course;
     const key = { title: c.title ?? "", date: c.completed_on ?? "", hours: c.hours };
-    const alreadyLogged = !!existing?.some(e => sameCourse({ title: e.title, date: e.completed_on, hours: e.hours }, key));
+    const loggedAs = existing?.find(e => sameCourse({ title: e.title, date: e.completed_on, hours: e.hours }, key)) ?? null;
+    const alreadyLogged = !!loggedAs;
+    // Already-logged course without a certificate: this file will be attached to it on import.
+    const willAttach = !!loggedAs && !loggedAs.certificate_path && !!certificatePath;
     const repeatInFile = items.slice(0, i).some(o => sameCourse({ title: o.course.title ?? "", date: o.course.completed_on ?? "", hours: o.course.hours }, key));
     const incomplete = !complete(c);
     const outside = !!cycle && validDate(c.completed_on) && (c.completed_on! < cycle.start || c.completed_on! > cycle.end);
-    return { alreadyLogged, repeatInFile, incomplete, outside, guessed: !c.field_confident };
+    return { alreadyLogged, loggedAs, willAttach, repeatInFile, incomplete, outside, guessed: !c.field_confident };
   }), [items, existing, cycle]);
 
   // Default selection (once): everything importable that isn't a duplicate.
@@ -78,16 +81,25 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
       delivery_method: c.delivery_method, sponsor_id: c.sponsor_id,
       certificate_path: certificatePath, source: "import", needs_review: !c.field_confident,
     }));
-    if (!rows.length) return onDone(items.some(it => it.saved));
+    // Existing courses (no certificate yet) that this file covers.
+    const attachIds = [...new Set(flags.filter(f => f.willAttach).map(f => f.loggedAs!.id))];
+    if (!rows.length && !attachIds.length) return onDone(items.some(it => it.saved));
     setBusy(true);
-    const { error } = await supabase.from("cpe_records").insert(rows);
+    if (rows.length) {
+      const { error } = await supabase.from("cpe_records").insert(rows);
+      if (error) { setBusy(false); return setError(friendlyError(error.message)); }
+    }
+    if (attachIds.length) {
+      const { error } = await supabase.from("cpe_records").update({ certificate_path: certificatePath }).in("id", attachIds);
+      if (error) { setBusy(false); return setError(friendlyError(error.message)); }
+    }
     setBusy(false);
-    if (error) return setError(friendlyError(error.message));
     onDone(true);
   }
 
   const savedCount = items.filter(it => it.saved).length;
   const totalHours = [...selected].reduce((a, i) => a + (items[i].course.hours ?? 0), 0);
+  const attachCount = new Set(flags.filter(f => f.willAttach).map(f => f.loggedAs!.id)).size;
 
   return (
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
@@ -106,7 +118,8 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
             const notes: { text: string; color: string }[] = [];
             if (it.saved) notes.push({ text: "Saved ✓", color: C.ok });
             else {
-              if (f.alreadyLogged) notes.push({ text: "Already logged — skipped", color: C.warn });
+              if (f.willAttach) notes.push({ text: "Already logged — this file will be attached as its certificate", color: C.ok });
+              else if (f.alreadyLogged) notes.push({ text: "Already logged — skipped", color: C.warn });
               if (f.repeatInFile) notes.push({ text: "Appears twice in this file — skipped", color: C.warn });
               if (f.incomplete) notes.push({ text: "Missing details — tap to complete", color: C.danger });
               if (f.outside) notes.push({ text: "Outside current cycle — won't count", color: C.muted });
@@ -137,7 +150,9 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
 
       <ErrorText msg={error} />
       <Button
-        title={selected.size ? `Import ${selected.size} course${selected.size > 1 ? "s" : ""} (${Math.round(totalHours * 100) / 100} hrs)` : "Done"}
+        title={selected.size
+          ? `Import ${selected.size} course${selected.size > 1 ? "s" : ""} (${Math.round(totalHours * 100) / 100} hrs)${attachCount ? ` + attach to ${attachCount}` : ""}`
+          : attachCount ? `Attach certificate to ${attachCount} existing course${attachCount > 1 ? "s" : ""}` : "Done"}
         onPress={importSelected} busy={busy} disabled={!existing} />
       <Button kind="link" title="Cancel" onPress={() => onDone(savedCount > 0)} />
 

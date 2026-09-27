@@ -4,7 +4,9 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "../lib/supabase";
 import { saveCertificateFile } from "../lib/uploads";
-import { Button, C, Card, ErrorText, ui } from "../lib/ui";
+import { readCertificate } from "../lib/extract";
+import { matchCertificate } from "../lib/duplicates";
+import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 
 export type Extracted = {
   title: string; provider: string | null; sponsor_id: string | null; completed_on: string | null;
@@ -20,8 +22,9 @@ const SHEET_TYPES = [
 ];
 
 
-export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: {
+export default function ScanScreen({ userId, onExtracted, onManual, onCancel, onAttached }: {
   userId: string;
+  onAttached: (courseTitle: string) => void;   // certificate linked to an existing course
   onExtracted: (courses: Extracted[], certificatePath: string) => void;
   onManual: (certificatePath: string | null) => void;
   onCancel: () => void;
@@ -68,13 +71,32 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel }: 
       setUploadedPath(path);
 
       setStatus("reading");
-      const { data, error } = await supabase.functions.invoke("extract-certificate", { body: { path } });
-      if (error) {
-        let msg = "Couldn't read this certificate.";
-        try { msg = (await (error as any).context?.json())?.error ?? msg; } catch {}
-        throw new Error(msg);
+      const courses = await readCertificate(path);
+
+      // One course: is it one the user already has? Offer to attach instead of adding a copy.
+      // (Multi-course files go to the review list, which handles existing courses itself.)
+      if (courses.length === 1) {
+        const { data: saved } = await supabase.from("cpe_records").select("id, title, completed_on, hours, certificate_path");
+        const m = matchCertificate(courses, saved ?? []);
+        if (m) {
+          const has = !!m.row.certificate_path;
+          const when = m.row.completed_on ? ` (${fmtDate(m.row.completed_on)})` : "";
+          const choice = await ask("Already in your courses",
+            `This is the certificate for "${m.row.title}"${when}, which you've already logged.${has ? " It already has a certificate attached." : ""}`,
+            [
+              { text: has ? "Replace its certificate" : "Attach to that course", value: "attach" },
+              { text: "Add as a new course anyway", value: "new" },
+              { text: "Cancel", value: "cancel", style: "cancel" },
+            ]);
+          if (choice === "attach") {
+            const { error } = await supabase.from("cpe_records").update({ certificate_path: path }).eq("id", m.row.id);
+            if (error) throw new Error(error.message);
+            return onAttached(m.row.title);
+          }
+          if (choice === "cancel") return onCancel();
+        }
       }
-      onExtracted(data.courses as Extracted[], path);
+      onExtracted(courses, path);
     } catch (e: any) {
       setError(e.message ?? String(e));
       setStatus("idle");

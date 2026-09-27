@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
 
 export const C = {
   bg: "#F6F7F9", card: "#FFFFFF", ink: "#14213D", muted: "#6B7280", line: "#E5E7EB",
@@ -77,3 +77,9 @@ export const ui = StyleSheet.create({
   chipText: { color: C.ink, fontSize: 14 },
   error: { color: C.danger, marginBottom: 10, fontWeight: "600" },
 });
+
+// Shows an alert and waits for the user's choice, so multi-step flows read top-to-bottom.
+export function ask(title: string, message: string, options: { text: string; value: string; style?: "cancel" | "destructive" }[]) {
+  return new Promise<string>(resolve =>
+    Alert.alert(title, message, options.map(o => ({ text: o.text, style: o.style, onPress: () => resolve(o.value) })), { cancelable: false }));
+}

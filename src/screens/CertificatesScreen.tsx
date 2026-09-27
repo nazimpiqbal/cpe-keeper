@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
-import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { pickCertificate, saveCertificateFile } from "../lib/uploads";
 import { showUpgrade, usePremium } from "../lib/premium";
 import { readCertificate } from "../lib/extract";
@@ -19,12 +19,6 @@ const kindOf = (name: string) => {
 };
 const icon = (k: string) => (k === "PDF" ? "📄" : k === "Spreadsheet" ? "📊" : "🖼️");
 const fmtSize = (b: number | null) => (b == null ? "" : b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`);
-
-// Promise wrapper so the checking flow reads top-to-bottom.
-function ask(title: string, message: string, options: { text: string; value: string; style?: "cancel" | "destructive" }[]) {
-  return new Promise<string>(resolve =>
-    Alert.alert(title, message, options.map(o => ({ text: o.text, style: o.style, onPress: () => resolve(o.value) })), { cancelable: false }));
-}
 
 export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   userId: string;

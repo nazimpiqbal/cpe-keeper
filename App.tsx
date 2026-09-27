@@ -71,7 +71,8 @@ export default function App() {
     <ScanScreen userId={session.user.id}
       onExtracted={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }}
       onManual={path => { setQueue({ courses: [], index: 0, path, saved: 0 }); setView("addCourse"); }}
-      onCancel={() => backToDashboard(false)} />
+      onCancel={() => backToDashboard(false)}
+      onAttached={() => backToDashboard(true)} />
   );
   else if (view === "review") screen = (
     <AddCourseScreen key={queue.index} userId={session.user.id}
