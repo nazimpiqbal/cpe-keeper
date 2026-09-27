@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 import * as WebBrowser from "expo-web-browser";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
-import { saveCertificateFile } from "../lib/uploads";
+import { pickCertificate, saveCertificateFile } from "../lib/uploads";
 import { showUpgrade, usePremium } from "../lib/premium";
 import { readCertificate } from "../lib/extract";
 import { matchCertificate } from "../lib/duplicates";
@@ -135,17 +134,16 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
     if (choice === "target" && target) await link(target.id, path);
   }
 
-  // Attach a certificate (PDF or photo) to a course that doesn't have one — checked first.
+  // Attach a certificate (camera, photo or file) to a course that doesn't have one — checked first.
   async function attach(row: CpeRow) {
-    const r = await DocumentPicker.getDocumentAsync({ type: ["application/pdf", "image/*"], copyToCacheDirectory: true });
-    if (r.canceled || !r.assets?.[0]) return;
-    const a = r.assets[0];
-    const isPdf = (a.mimeType ?? "").includes("pdf") || a.name.toLowerCase().endsWith(".pdf");
-    setBusyId(row.id); setBusyLabel("Uploading…"); setError(null);
+    setError(null);
+    let file;
+    try { file = await pickCertificate(); }
+    catch (e: any) { return setError(e.message); }
+    if (!file) return;
+    setBusyId(row.id); setBusyLabel("Uploading…");
     try {
-      const path = await saveCertificateFile(userId, {
-        uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg", name: a.name,
-      });
+      const path = await saveCertificateFile(userId, file);
       await checkAndLink(path, row);
     } catch (e: any) {
       setError("Couldn't attach the certificate: " + friendlyError(e.message ?? String(e)));
