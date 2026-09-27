@@ -45,4 +45,13 @@ const tt = h.find(l => l.id === "technical_total")!;
 console.log(`\nHeavy Year 1: technical ${tt.earned}/${tt.required} (logged ${tt.logged}, ${tt.remaining} to go, reserved ${tt.reserved?.hours} for ${tt.reserved?.label})`);
 assert(tt.logged === 28.5 && tt.earned === 28 && tt.remaining === 12, "technical total capped at 28 with 12 to go");
 assert(h.filter(l => l.id === "technical_annual")[0].earned === 28.5, "Year 1 technical still shows 28.5");
+
+// Non-technical is a ceiling: 12.3 of max 40 in the base records; over 40 is excluded from Total CE.
+const nt = lines.find(l => l.id === "non_technical_max")!;
+assert(nt.kind === "max" && nt.earned === 12.3 && nt.met && nt.remaining === 0, "non-technical 12.3 of max 40, never 'to go'");
+const lotsNonTech: Record[] = [...records, { title: "Soft skills marathon", provider: "X", date: "2026-05-01", hours: 35, fieldOfStudy: "Personal Development" }];
+const ln = evaluate(lotsNonTech, { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules);
+const lnNt = ln.find(l => l.id === "non_technical_max")!, lnTot = ln.find(l => l.id === "total")!;
+console.log(`Lots of non-technical: non-tech ${lnNt.earned} (over ${lnNt.over}), total counts ${lnTot.earned}`);
+assert(lnNt.over === 7.3 && lnTot.earned === 48.5, "7.3 non-technical hrs over the 40 ceiling don't count toward 80");
 console.log("\nAll assertions passed.");

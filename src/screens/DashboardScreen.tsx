@@ -14,6 +14,21 @@ const daysUntil = (iso: string) => Math.ceil((new Date(iso + "T00:00:00Z").getTi
 
 function Bar({ line }: { line: Line }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
+  if (line.kind === "max") {
+    // A ceiling, not a goal: grey bar, no "to go", no checkmark.
+    return (
+      <View style={[s.req, s.maxBox]}>
+        <View style={s.reqTop}>
+          <Text style={[s.reqLabel, { color: C.muted }]}>{line.label}</Text>
+          <Text style={[s.reqNum, { color: C.muted }]}>{line.earned} of max {line.required}</Text>
+        </View>
+        <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
+        <Text style={s.reqPeriod}>Up to {line.required} non-technical hours can count toward the total. You don't need to reach it.</Text>
+        <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : "#9CA3AF" }]} /></View>
+        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{line.over} hrs over the maximum — they won't count toward the total</Text>}
+      </View>
+    );
+  }
   return (
     <View style={s.req}>
       <View style={s.reqTop}>
@@ -83,6 +98,58 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           {n === 1 ? "1 course needs" : `${n} courses need`} the field of study confirmed. Tap each one marked below — it affects whether hours count as technical.
         </Text>
       </View>
+    );
+  };
+
+  // "How your hours add up": ties the course list (This cycle) to the Total CE requirement.
+  const Reconciliation = () => {
+    const r2 = (n: number) => Math.round(n * 100) / 100;
+    const counted = current.filter(r => !dupeIds.has(r.id));
+    const logged = r2(current.reduce((a, r) => a + Number(r.hours), 0));
+    const dupHrs = r2(current.filter(r => dupeIds.has(r.id)).reduce((a, r) => a + Number(r.hours), 0));
+    const byCat = (cat: string) => r2(counted.filter(r => rules && categoriesOf(toEngineRecord(r), rules).includes(cat))
+      .reduce((a, r) => a + Number(r.hours), 0));
+    const tech = byCat("technical"), nonTech = byCat("non_technical");
+    const countedHrs = r2(logged - dupHrs);
+    const other = r2(countedHrs - tech - nonTech);
+    const total = lines.find(l => l.id === "total");
+    const techLine = lines.find(l => l.id === "technical_total");
+    const ntLine = lines.find(l => l.kind === "max");
+    const over = ntLine?.over ?? 0;
+    const totalShown = total ? (total.logged ?? total.earned) : 0;
+    const expected = r2(countedHrs - over);
+    const matches = Math.abs(expected - totalShown) < 0.01;
+    const Row = ({ label, value, strong, indent, muted, hint }: { label: string; value: string; strong?: boolean; indent?: boolean; muted?: boolean; hint?: string }) => (
+      <View style={{ marginBottom: 6 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={[{ color: muted ? C.muted : C.ink }, strong && { fontWeight: "700" }, indent && { paddingLeft: 14 }]}>{label}</Text>
+          <Text style={[{ color: muted ? C.muted : C.ink, fontVariant: ["tabular-nums"] }, strong && { fontWeight: "700" }]}>{value}</Text>
+        </View>
+        {hint ? <Text style={[ui.hint, { marginTop: 1 }, indent && { paddingLeft: 14 }]}>{hint}</Text> : null}
+      </View>
+    );
+    return (
+      <>
+        <Text style={ui.h2}>How your hours add up</Text>
+        <Card>
+          <Row label={`This cycle's courses (${current.length})`} value={`${logged} hrs`} />
+          {dupHrs > 0 && <Row label="Less duplicates (not counted)" value={`−${dupHrs}`} muted />}
+          {dupHrs > 0 && <Row label="Hours counted" value={`${countedHrs}`} strong />}
+          <Row label="Technical" value={`${tech}`} indent
+            hint={techLine?.logged != null ? `${techLine.earned} count toward the 40 technical for now (Year 2 still owes ${techLine.reserved?.hours}). All ${tech} still count toward the ${total?.required}.` : undefined} />
+          <Row label="Non-technical" value={`${nonTech}`} indent muted hint={`Maximum ${ntLine?.required ?? 40} can count`} />
+          {other > 0 && <Row label="No field of study" value={`${other}`} indent muted hint="Counts toward the total only — edit the course to set a field." />}
+          {over > 0 && <Row label="Less non-technical over the maximum" value={`−${over}`} muted />}
+          <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
+          <Row label="Counted toward Total CE" value={`${expected}`} strong />
+          <Text style={[ui.hint, { color: matches ? C.ok : C.danger, fontWeight: "700" }]}>
+            {matches ? `✓ Matches Total CE above (${totalShown} / ${total?.required})` : `⚠ Doesn't match Total CE above (${totalShown}) — please report this`}
+          </Text>
+          {total?.logged != null && total.reserved && (
+            <Text style={ui.hint}>Total CE shows {total.earned} for now because {total.reserved.hours} hrs must still come from {total.reserved.label}.</Text>
+          )}
+        </Card>
+      </>
     );
   };
 
@@ -165,6 +232,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Text style={ui.h2}>Requirements</Text>
       <Card>{lines.map((l, i) => <Bar key={l.id + i} line={l} />)}</Card>
 
+      {current.length > 0 && <Reconciliation />}
+
       {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Tap a course to edit or delete it.</Text>}
       <Text style={ui.h2}>This cycle ({current.length})</Text>
       <Card>
@@ -218,6 +287,9 @@ const s = StyleSheet.create({
   confirm: { fontSize: 12, marginTop: 3, color: C.danger, fontWeight: "800" },
   confirmBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
   confirmText: { color: C.danger, fontWeight: "700" },
+  maxBox: { backgroundColor: "#F9FAFB", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line, borderStyle: "dashed" },
+  maxTag: { fontSize: 10, fontWeight: "800", color: C.muted, letterSpacing: 0.8, marginTop: 2 },
+  maxTrack: { backgroundColor: "#EEF0F3" },
   tag: { fontSize: 12, color: C.accent, marginTop: 3 },
   hours: { fontSize: 18, fontWeight: "700", color: C.ink, marginLeft: 12, fontVariant: ["tabular-nums"] },
 });

@@ -23,6 +23,7 @@ type Req = {
   id: string; label: string; hours: number;
   scope: "cycle" | "each_sub_period" | "lookback_years";
   lookbackYears?: number; categories?: string[]; when?: string; note?: string;
+  kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
 };
 
 export type Rules = {
@@ -37,6 +38,8 @@ export type Line = {
   required: number; earned: number; remaining: number; met: boolean; note?: string;
   deadline: string; // YYYY-MM-DD — when this requirement must be met
   logged?: number;  // set when more hours were logged than can count yet (see capByAnnualMinimums)
+  kind?: "min" | "max";
+  over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
 };
 
@@ -100,14 +103,36 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules): Lin
       [{ name: `Last ${q.lookbackYears} years`, s: addMonths(end, -12 * (q.lookbackYears ?? 0)), e: end }];
     for (const w of windows) {
       const earned = sum(w.s, w.e, q.categories);
+      if (q.kind === "max") {
+        // A ceiling: never "to go"; anything above it is excluded from the total.
+        lines.push({
+          id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",
+          over: round(Math.max(0, earned - q.hours)), remaining: 0, met: true, note: q.note, deadline: iso(w.e),
+        });
+        continue;
+      }
       lines.push({
         id: q.id, label: q.label, period: w.name, required: q.hours, earned,
         remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
       });
     }
   }
+  applyMaximums(lines, rules);
   capByAnnualMinimums(lines, rules);
   return lines;
+}
+
+// Hours above a "max" line (e.g. more than 40 non-technical) don't count toward the cycle total.
+function applyMaximums(lines: Line[], rules: Rules) {
+  const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when);
+  const total = totalReq && lines.find(l => l.id === totalReq.id);
+  if (!total) return;
+  const excess = round(lines.filter(l => l.kind === "max").reduce((a, l) => a + (l.over ?? 0), 0));
+  if (excess > 0) {
+    total.earned = round(total.earned - excess);
+    total.remaining = round(Math.max(0, total.required - total.earned));
+    total.met = total.remaining === 0;
+  }
 }
 
 // A cycle total with a per-year minimum in the same subjects (e.g. CA: 40 technical, at least 12 each year)

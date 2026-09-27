@@ -14,26 +14,127 @@
   },
   "carryover": false,
   "requirements": [
-    { "id": "total", "label": "Total CE", "hours": 80, "scope": "cycle" },
-    { "id": "annual_total", "label": "Minimum each year", "hours": 20, "scope": "each_sub_period" },
-    { "id": "technical_total", "label": "Technical subject matter", "hours": 40, "scope": "cycle", "categories": ["technical"] },
-    { "id": "technical_annual", "label": "Technical each year", "hours": 12, "scope": "each_sub_period", "categories": ["technical"] },
-    { "id": "ethics", "label": "Ethics", "hours": 4, "scope": "cycle", "categories": ["ethics"] },
+    {
+      "id": "total",
+      "label": "Total CE",
+      "hours": 80,
+      "scope": "cycle"
+    },
+    {
+      "id": "annual_total",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "each_sub_period"
+    },
+    {
+      "id": "technical_total",
+      "label": "Technical subject matter",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ]
+    },
+    {
+      "id": "technical_annual",
+      "label": "Technical each year",
+      "hours": 12,
+      "scope": "each_sub_period",
+      "categories": [
+        "technical"
+      ]
+    },
+    {
+      "id": "non_technical_max",
+      "label": "Non-technical",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "non_technical"
+      ],
+      "kind": "max",
+      "note": "Maximum, not a target. Because 40 of the 80 hours must be technical, at most 40 non-technical hours can count toward the 80."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ]
+    },
     {
       "id": "regulatory_review",
       "label": "Board-approved Regulatory Review course",
       "hours": 2,
       "scope": "lookback_years",
       "lookbackYears": 6,
-      "categories": ["regulatory_review"],
+      "categories": [
+        "regulatory_review"
+      ],
       "note": "Required if more than six years have lapsed since the last one. Not interchangeable with ethics. Must carry a CBA approval number (RRL-/RRS-)."
     },
-    { "id": "aa", "label": "Accounting & auditing", "hours": 24, "scope": "cycle", "categories": ["accounting_auditing"], "when": "attest" },
-    { "id": "aa_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "attest" },
-    { "id": "gov", "label": "Governmental accounting & auditing", "hours": 24, "scope": "cycle", "categories": ["government"], "when": "government_audit" },
-    { "id": "gov_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "government_audit" },
-    { "id": "prep", "label": "Preparation engagement subject matter", "hours": 8, "scope": "cycle", "categories": ["accounting_auditing"], "when": "preparation_engagement" },
-    { "id": "prep_fraud", "label": "Fraud", "hours": 4, "scope": "cycle", "categories": ["fraud"], "when": "preparation_engagement" }
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "attest"
+    },
+    {
+      "id": "aa_fraud",
+      "label": "Fraud",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "fraud"
+      ],
+      "when": "attest"
+    },
+    {
+      "id": "gov",
+      "label": "Governmental accounting & auditing",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "government"
+      ],
+      "when": "government_audit"
+    },
+    {
+      "id": "gov_fraud",
+      "label": "Fraud",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "fraud"
+      ],
+      "when": "government_audit"
+    },
+    {
+      "id": "prep",
+      "label": "Preparation engagement subject matter",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "preparation_engagement"
+    },
+    {
+      "id": "prep_fraud",
+      "label": "Fraud",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "fraud"
+      ],
+      "when": "preparation_engagement"
+    }
   ],
   "newLicensee": {
     "hoursPerFullSixMonths": 20,
@@ -42,16 +143,56 @@
     "annualMinimumAppliesOnFirstRenewal": false
   },
   "fieldOfStudyMap": {
-    "technical": ["Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes", "Finance", "Economics", "Business Law", "Management Advisory Services", "Information Technology", "Specialized Knowledge", "Statistics", "Behavioral Ethics", "Regulatory Ethics"],
-    "non_technical": ["Personal Development", "Communications and Marketing", "Personnel/Human Resources", "Business Management and Organization", "Production", "Computer Software and Applications"],
-    "ethics": ["Behavioral Ethics", "Regulatory Ethics"],
-    "accounting_auditing": ["Accounting", "Auditing"],
-    "government": ["Accounting (Governmental)", "Auditing (Governmental)"]
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Finance",
+      "Economics",
+      "Business Law",
+      "Management Advisory Services",
+      "Information Technology",
+      "Specialized Knowledge",
+      "Statistics",
+      "Behavioral Ethics",
+      "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Personal Development",
+      "Communications and Marketing",
+      "Personnel/Human Resources",
+      "Business Management and Organization",
+      "Production",
+      "Computer Software and Applications"
+    ],
+    "ethics": [
+      "Behavioral Ethics",
+      "Regulatory Ethics"
+    ],
+    "accounting_auditing": [
+      "Accounting",
+      "Auditing"
+    ],
+    "government": [
+      "Accounting (Governmental)",
+      "Auditing (Governmental)"
+    ]
   },
   "boardExport": {
     "format": "CBA Connect CE Data Excel template",
     "hoursIncrement": 0.5,
-    "subjectAreas": ["Accounting and Attestation (A&A)", "Ethics", "Fraud", "Board-Approved Regulatory Review Course", "Technical Subject Areas", "Non-Technical Subject Areas", "Preparation Engagement", "Government"]
+    "subjectAreas": [
+      "Accounting and Attestation (A&A)",
+      "Ethics",
+      "Fraud",
+      "Board-Approved Regulatory Review Course",
+      "Technical Subject Areas",
+      "Non-Technical Subject Areas",
+      "Preparation Engagement",
+      "Government"
+    ]
   },
   "recordRetentionYears": 4,
   "toVerify": [
