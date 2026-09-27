@@ -50,12 +50,19 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
     return { alreadyLogged, loggedAs, willAttach, repeatInFile, incomplete, outside, guessed: !c.field_confident };
   }), [items, existing, cycle]);
 
-  // Default selection (once): everything importable that isn't a duplicate.
+  // Default selection (once).
+  // For a NEW course, ticked = import it. For an ALREADY-LOGGED course, ticked = attach this file to it
+  // (it is never imported again). Rows that can do neither can't be ticked.
+  const selectable = (i: number) => {
+    const f = flags[i];
+    if (items[i].saved || f.repeatInFile) return false;
+    if (f.alreadyLogged) return f.willAttach;
+    return !f.incomplete;
+  };
   useEffect(() => {
     if (!existing || initialized.current) return;
     initialized.current = true;
-    setSelected(new Set(items.map((_, i) => i).filter(i =>
-      !items[i].saved && !flags[i].alreadyLogged && !flags[i].repeatInFile && !flags[i].incomplete)));
+    setSelected(new Set(items.map((_, i) => i).filter(selectable)));
   }, [existing]);
 
   // A course saved through the full form is done: mark it and take it out of the batch.
@@ -75,14 +82,22 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
 
   async function importSelected() {
     setError(null);
-    const rows = [...selected].map(i => items[i].course).map(c => ({
+    const chosen = [...selected].filter(selectable);
+    // New courses only — already-logged ones are never inserted again.
+    const newOnes = chosen.filter(i => !flags[i].alreadyLogged).map(i => items[i].course);
+    // Safety net: re-check against the latest saved courses right before inserting.
+    const { data: latest, error: qErr } = await supabase.from("cpe_records").select("title, completed_on, hours");
+    if (qErr) return setError(friendlyError(qErr.message));
+    const fresh = newOnes.filter(c => !(latest ?? []).some(e =>
+      sameCourse({ title: e.title, date: e.completed_on, hours: Number(e.hours) }, { title: c.title, date: c.completed_on ?? "", hours: c.hours })));
+    const rows = fresh.map(c => ({
       user_id: userId, title: c.title.trim(), provider: c.provider?.trim() || null,
       completed_on: c.completed_on, hours: c.hours, field_of_study: c.field_of_study,
       delivery_method: c.delivery_method, sponsor_id: c.sponsor_id,
       certificate_path: certificatePath, source: "import", needs_review: !c.field_confident,
     }));
-    // Existing courses (no certificate yet) that this file covers.
-    const attachIds = [...new Set(flags.filter(f => f.willAttach).map(f => f.loggedAs!.id))];
+    // Existing courses (no certificate yet) the user chose to attach this file to.
+    const attachIds = [...new Set(chosen.filter(i => flags[i].willAttach).map(i => flags[i].loggedAs!.id))];
     if (!rows.length && !attachIds.length) return onDone(items.some(it => it.saved));
     setBusy(true);
     if (rows.length) {
@@ -98,8 +113,9 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   }
 
   const savedCount = items.filter(it => it.saved).length;
-  const totalHours = [...selected].reduce((a, i) => a + (items[i].course.hours ?? 0), 0);
-  const attachCount = new Set(flags.filter(f => f.willAttach).map(f => f.loggedAs!.id)).size;
+  const newSel = [...selected].filter(i => !flags[i].alreadyLogged);
+  const totalHours = newSel.reduce((a, i) => a + (items[i].course.hours ?? 0), 0);
+  const attachCount = new Set([...selected].filter(i => flags[i].willAttach).map(i => flags[i].loggedAs!.id)).size;
 
   return (
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
@@ -118,8 +134,9 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
             const notes: { text: string; color: string }[] = [];
             if (it.saved) notes.push({ text: "Saved ✓", color: C.ok });
             else {
-              if (f.willAttach) notes.push({ text: "Already logged — this file will be attached as its certificate", color: C.ok });
-              else if (f.alreadyLogged) notes.push({ text: "Already logged — skipped", color: C.warn });
+              if (f.willAttach && on) notes.push({ text: "Already logged — certificate will be attached (no new course)", color: C.ok });
+              else if (f.willAttach) notes.push({ text: "Already logged — tick to attach this certificate to it", color: C.warn });
+              else if (f.alreadyLogged) notes.push({ text: "Already logged, with a certificate — skipped", color: C.warn });
               if (f.repeatInFile) notes.push({ text: "Appears twice in this file — skipped", color: C.warn });
               if (f.incomplete) notes.push({ text: "Missing details — tap to complete", color: C.danger });
               if (f.outside) notes.push({ text: "Outside current cycle — won't count", color: C.muted });
@@ -128,13 +145,13 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
             return (
               <View key={i} style={[s.row, i > 0 && s.border, it.saved && { opacity: 0.6 }]}>
                 <Pressable
-                  onPress={() => !it.saved && !f.incomplete && toggle(i)}
+                  onPress={() => selectable(i) && toggle(i)}
                   hitSlop={8}
-                  style={[s.box, on && s.boxOn, (it.saved || f.incomplete) && { opacity: 0.3 }]}
+                  style={[s.box, on && s.boxOn, !selectable(i) && { opacity: 0.3 }]}
                 >
                   {on && <Text style={s.tick}>✓</Text>}
                 </Pressable>
-                <Pressable style={{ flex: 1 }} onPress={() => !it.saved && setEditing(i)}>
+                <Pressable style={{ flex: 1 }} onPress={() => it.saved ? undefined : f.alreadyLogged ? (selectable(i) && toggle(i)) : setEditing(i)}>
                   <Text style={s.title}>{c.title || "Untitled course"}</Text>
                   <Text style={ui.muted}>
                     {c.provider ? `${c.provider} · ` : ""}{validDate(c.completed_on) ? fmtDate(c.completed_on!) : "No date"} · {c.field_of_study ?? "No field"}
@@ -150,9 +167,11 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
 
       <ErrorText msg={error} />
       <Button
-        title={selected.size
-          ? `Import ${selected.size} course${selected.size > 1 ? "s" : ""} (${Math.round(totalHours * 100) / 100} hrs)${attachCount ? ` + attach to ${attachCount}` : ""}`
-          : attachCount ? `Attach certificate to ${attachCount} existing course${attachCount > 1 ? "s" : ""}` : "Done"}
+        title={newSel.length || attachCount
+          ? [newSel.length ? `Import ${newSel.length} course${newSel.length > 1 ? "s" : ""} (${Math.round(totalHours * 100) / 100} hrs)` : "",
+             attachCount ? `${newSel.length ? "+ attach" : "Attach certificate"} to ${attachCount}${newSel.length ? "" : ` existing course${attachCount > 1 ? "s" : ""}`}` : ""]
+              .filter(Boolean).join(" ")
+          : "Done"}
         onPress={importSelected} busy={busy} disabled={!existing} />
       <Button kind="link" title="Cancel" onPress={() => onDone(savedCount > 0)} />
 
