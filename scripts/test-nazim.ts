@@ -54,4 +54,15 @@ const ln = evaluate(lotsNonTech, { licenseExpiration: "2028-01-31", practice: []
 const lnNt = ln.find(l => l.id === "non_technical_max")!, lnTot = ln.find(l => l.id === "total")!;
 console.log(`Lots of non-technical: non-tech ${lnNt.earned} (over ${lnNt.over}), total counts ${lnTot.earned}`);
 assert(lnNt.over === 7.3 && lnTot.earned === 48.5, "7.3 non-technical hrs over the 40 ceiling don't count toward 80");
+
+// Fraud shows once no matter how many activities; prep's 8 A&A hrs fold into A&A's 24.
+const all3 = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest", "government_audit", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
+assert(all3.filter(l => l.label === "Fraud").length === 1, "one Fraud line for A&A + government + prep");
+assert(!all3.some(l => l.id === "prep") && all3.some(l => l.id === "aa") && all3.some(l => l.id === "gov"), "prep folded into A&A; government still separate");
+const prepOnly = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
+assert(prepOnly.some(l => l.id === "prep") && prepOnly.filter(l => l.label === "Fraud").length === 1, "prep-only: prep 8 hrs + one Fraud line");
+assert(!lines.some(l => l.label === "Fraud"), "no fraud line when no practice selected");
+const withFraud: Record[] = [...records, { title: "Fraud Risk in Revenue Recognition", provider: "X", date: "2026-07-01", hours: 2, fieldOfStudy: "Auditing" }];
+const wf = evaluate(withFraud, { licenseExpiration: "2028-01-31", practice: ["attest"], licenseIssued: "2022-04-01" }, rules);
+assert(wf.find(l => l.label === "Fraud")!.earned === 2 && wf.find(l => l.id === "aa")!.earned >= 2, "fraud-titled Auditing course counts toward Fraud and A&A");
 console.log("\nAll assertions passed.");

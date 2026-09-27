@@ -24,6 +24,8 @@ type Req = {
   scope: "cycle" | "each_sub_period" | "lookback_years";
   lookbackYears?: number; categories?: string[]; when?: string; note?: string;
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
+  whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
+  unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)
 };
 
 export type Rules = {
@@ -31,6 +33,8 @@ export type Rules = {
   cycle: { lengthMonths: number; subPeriods: number };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
+  // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
+  titleKeywordMap?: { [category: string]: string[] };
 };
 
 export type Line = {
@@ -50,9 +54,14 @@ const addDays = (x: Date, n: number) => new Date(x.getTime() + n * 86400000);
 const round = (n: number) => Math.round(n * 100) / 100;
 
 export function categoriesOf(rec: Record, rules: Rules): string[] {
-  return Object.entries(rules.fieldOfStudyMap)
+  const byField = Object.entries(rules.fieldOfStudyMap)
     .filter(([, fields]) => fields.includes(rec.fieldOfStudy))
     .map(([cat]) => cat);
+  const title = rec.title.toLowerCase();
+  const byTitle = Object.entries(rules.titleKeywordMap ?? {})
+    .filter(([, words]) => words.some(w => title.includes(w)))
+    .map(([cat]) => cat);
+  return [...new Set([...byField, ...byTitle])];
 }
 
 // Current renewal cycle, e.g. CA license expiring 2028-01-31 → 2026-02-01 to 2028-01-31.
@@ -79,6 +88,8 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules): Lin
   const lines: Line[] = [];
   for (const q of rules.requirements) {
     if (q.when && !profile.practice.includes(q.when)) continue;
+    if (q.whenAny && !q.whenAny.some(p => profile.practice.includes(p))) continue;
+    if (q.unless && profile.practice.includes(q.unless)) continue;
     if (q.scope === "lookback_years") {
       // Due date: board-portal date if given, else last course (or licensure) + N years.
       const base = profile.lastRegulatoryReview ?? profile.licenseIssued;

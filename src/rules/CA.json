@@ -86,32 +86,12 @@
       "when": "attest"
     },
     {
-      "id": "aa_fraud",
-      "label": "Fraud",
-      "hours": 4,
-      "scope": "cycle",
-      "categories": [
-        "fraud"
-      ],
-      "when": "attest"
-    },
-    {
       "id": "gov",
       "label": "Governmental accounting & auditing",
       "hours": 24,
       "scope": "cycle",
       "categories": [
         "government"
-      ],
-      "when": "government_audit"
-    },
-    {
-      "id": "gov_fraud",
-      "label": "Fraud",
-      "hours": 4,
-      "scope": "cycle",
-      "categories": [
-        "fraud"
       ],
       "when": "government_audit"
     },
@@ -123,17 +103,24 @@
       "categories": [
         "accounting_auditing"
       ],
-      "when": "preparation_engagement"
+      "when": "preparation_engagement",
+      "unless": "attest",
+      "note": "8 hours in preparation engagement subject matter. Covered by the 24 A&A hours if you also do audit/attest work."
     },
     {
-      "id": "prep_fraud",
+      "id": "fraud",
       "label": "Fraud",
       "hours": 4,
       "scope": "cycle",
       "categories": [
         "fraud"
       ],
-      "when": "preparation_engagement"
+      "whenAny": [
+        "attest",
+        "government_audit",
+        "preparation_engagement"
+      ],
+      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements \u2014 one requirement, not one per activity."
     }
   ],
   "newLicensee": {
@@ -199,5 +186,10 @@
     "Exact CA mapping of NASBA fields of study to technical vs non-technical (esp. Business Management and Organization, Computer Software and Applications).",
     "Whether CA counts ethics hours toward the technical minimums.",
     "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule."
-  ]
+  ],
+  "titleKeywordMap": {
+    "fraud": [
+      "fraud"
+    ]
+  }
 }
