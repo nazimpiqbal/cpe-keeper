@@ -120,14 +120,112 @@
         "government_audit",
         "preparation_engagement"
       ],
-      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements \u2014 one requirement, not one per activity."
+      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements — one requirement, not one per activity."
     }
   ],
   "newLicensee": {
     "hoursPerFullSixMonths": 20,
-    "technicalShare": 0.5,
-    "ethicsAndFraudAfterFullTwoYears": true,
-    "annualMinimumAppliesOnFirstRenewal": false
+    "source": "https://www.dca.ca.gov/cba/licensees/cequickref.shtml",
+    "note": "First renewal only: 20 hours for each full six months from license issue to first expiration (none if under six full months). Half technical, including the 2-hour Regulatory Review. No yearly minimums. Ethics and fraud apply only once the full 80 hours is required.",
+    "requirements": [
+      {
+        "id": "total",
+        "label": "Total CE",
+        "per20": 20,
+        "scope": "cycle"
+      },
+      {
+        "id": "technical_total",
+        "label": "Technical subject matter",
+        "per20": 10,
+        "scope": "cycle",
+        "categories": [
+          "technical",
+          "regulatory_review"
+        ],
+        "note": "Half of your hours must be technical. The Regulatory Review course counts toward this."
+      },
+      {
+        "id": "non_technical_max",
+        "label": "Non-technical",
+        "per20": 10,
+        "scope": "cycle",
+        "categories": [
+          "non_technical"
+        ],
+        "kind": "max",
+        "note": "Maximum, not a target. Because half your hours must be technical, only this many non-technical hours can count."
+      },
+      {
+        "id": "regulatory_review",
+        "label": "Board-approved Regulatory Review course",
+        "hours": 2,
+        "scope": "cycle",
+        "categories": [
+          "regulatory_review"
+        ],
+        "note": "Required for every new licensee's first renewal. Must carry a CBA approval number (RRL-/RRS-)."
+      },
+      {
+        "id": "ethics",
+        "label": "Ethics",
+        "hours": 4,
+        "scope": "cycle",
+        "categories": [
+          "ethics"
+        ],
+        "minTotal": 80
+      },
+      {
+        "id": "aa",
+        "label": "Accounting & auditing",
+        "per20": 6,
+        "scope": "cycle",
+        "categories": [
+          "accounting_auditing"
+        ],
+        "when": "attest",
+        "note": "6 hours for every 20 hours required."
+      },
+      {
+        "id": "gov",
+        "label": "Governmental accounting & auditing",
+        "per20": 6,
+        "scope": "cycle",
+        "categories": [
+          "government"
+        ],
+        "when": "government_audit",
+        "note": "6 hours for every 20 hours required."
+      },
+      {
+        "id": "prep",
+        "label": "Preparation engagement subject matter",
+        "per20": 2,
+        "scope": "cycle",
+        "categories": [
+          "accounting_auditing"
+        ],
+        "when": "preparation_engagement",
+        "unless": "attest",
+        "note": "2 hours for every 20 hours required. Covered by the A&A hours if you also do audit/attest work."
+      },
+      {
+        "id": "fraud",
+        "label": "Fraud",
+        "hours": 4,
+        "scope": "cycle",
+        "categories": [
+          "fraud"
+        ],
+        "whenAny": [
+          "attest",
+          "government_audit",
+          "preparation_engagement"
+        ],
+        "minTotal": 80
+      }
+    ]
   },
   "fieldOfStudyMap": {
     "technical": [
@@ -190,6 +288,9 @@
   "titleKeywordMap": {
     "fraud": [
       "fraud"
+    ],
+    "regulatory_review": [
+      "regulatory review"
     ]
   }
 }

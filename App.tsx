@@ -51,7 +51,7 @@ export default function App() {
     if (session) loadLicense(); else { setLicense(undefined); setView("dashboard"); }
   }, [session?.user.id]);
 
-  const cycle = license && RULES[license.state] ? cycleBounds(license.expiration_date, RULES[license.state]) : undefined;
+  const cycle = license && RULES[license.state] ? cycleBounds(license.expiration_date, RULES[license.state], { licenseIssued: license.license_issued ?? undefined, firstRenewal: !!license.first_renewal }) : undefined;
 
   let screen;
   if (session === undefined) screen = <Loading />;

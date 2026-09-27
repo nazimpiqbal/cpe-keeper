@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
-import { evaluate, categoriesOf, cycleBounds, Line, Rules } from "../engine/engine";
+import { evaluate, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import caRules from "../rules/CA.json";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
@@ -70,7 +70,13 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
   // Duplicates are shown but NOT counted toward requirements.
   const counted = useMemo(() => rows.filter(r => !dupeIds.has(r.id)), [rows, dupeIds]);
   const records = useMemo(() => counted.map(toEngineRecord), [counted]);
-  const cycle = rules ? cycleBounds(license.expiration_date, rules) : { start: "0000-01-01", end: "9999-12-31" };
+  const profile: Profile = {
+    licenseExpiration: license.expiration_date, practice: license.practice,
+    licenseIssued: license.license_issued ?? undefined, regulatoryReviewDue: license.regulatory_review_due ?? undefined,
+    firstRenewal: !!license.first_renewal,
+  };
+  const plan = rules ? newLicenseePlan(profile, rules) : null;
+  const cycle = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
   const current = rows.filter(r => r.completed_on >= cycle.start && r.completed_on <= cycle.end);
   const earlier = rows.filter(r => r.completed_on < cycle.start);
   const later = rows.filter(r => r.completed_on > cycle.end);
@@ -136,8 +142,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           {dupHrs > 0 && <Row label="Less duplicates (not counted)" value={`−${dupHrs}`} muted />}
           {dupHrs > 0 && <Row label="Hours counted" value={`${countedHrs}`} strong />}
           <Row label="Technical" value={`${tech}`} indent
-            hint={techLine?.logged != null ? `${techLine.earned} count toward the 40 technical for now (Year 2 still owes ${techLine.reserved?.hours}). All ${tech} still count toward the ${total?.required}.` : undefined} />
-          <Row label="Non-technical" value={`${nonTech}`} indent muted hint={`Maximum ${ntLine?.required ?? 40} can count`} />
+            hint={techLine?.logged != null ? `${techLine.earned} count toward the ${techLine.required} technical for now (${techLine.reserved?.label} still owes ${techLine.reserved?.hours}). All ${tech} still count toward the ${total?.required}.` : undefined} />
+          <Row label="Non-technical" value={`${nonTech}`} indent muted hint={`Maximum ${ntLine?.required} can count`} />
           {other > 0 && <Row label="No field of study" value={`${other}`} indent muted hint="Counts toward the total only — edit the course to set a field." />}
           {over > 0 && <Row label="Less non-technical over the maximum" value={`−${over}`} muted />}
           <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
@@ -176,10 +182,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       </Pressable>
     );
   };
-  const lines = useMemo(() => rules ? evaluate(records, {
-    licenseExpiration: license.expiration_date, practice: license.practice,
-    licenseIssued: license.license_issued ?? undefined, regulatoryReviewDue: license.regulatory_review_due ?? undefined,
-  }, rules) : [], [records, license, rules]);
+  const lines = useMemo(() => rules ? evaluate(records, profile, rules) : [], [records, license, rules]);
 
   const urgent = lines.filter(l => !l.met && l.remaining > 0)
     .sort((a, b) => a.deadline.localeCompare(b.deadline) || a.remaining - b.remaining)[0];
@@ -216,6 +219,16 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         </View>
         <Text style={s.title}>Renews {fmtDate(license.expiration_date)}</Text>
         <Text style={ui.muted}>{daysUntil(license.expiration_date)} days left in this cycle</Text>
+        {plan && (
+          <View style={s.firstBox}>
+            <Text style={s.firstTitle}>First renewal · new-licensee rules</Text>
+            <Text style={s.firstText}>
+              {plan.totalHours === 0
+                ? `Licensed ${fmtDate(plan.start)} — less than six full months before your first expiration, so no CE is required this time.`
+                : `Licensed ${fmtDate(plan.start)}: ${plan.fullPeriods} full six-month period${plan.fullPeriods > 1 ? "s" : ""} × 20 = ${plan.totalHours} hours, counted from your issue date. No yearly minimum.`}
+            </Text>
+          </View>
+        )}
         {urgent && (
           <View style={s.alert}>
             <Text style={s.alertText}>
@@ -269,6 +282,9 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
 }
 
 const s = StyleSheet.create({
+  firstBox: { marginTop: 10, backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10 },
+  firstTitle: { color: C.accent, fontWeight: "700", marginBottom: 2 },
+  firstText: { color: C.ink, fontSize: 13 },
   kicker: { fontSize: 12, fontWeight: "700", color: C.muted, letterSpacing: 1 },
   title: { fontSize: 22, fontWeight: "700", color: C.ink, marginTop: 4 },
   alert: { backgroundColor: "#FEF3C7", borderRadius: 10, padding: 10, marginTop: 12 },

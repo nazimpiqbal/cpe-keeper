@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
 import { Button, Card, Chip, DateField, ErrorText, toIso, toUs, ui } from "../lib/ui";
@@ -20,6 +20,17 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
   const [issued, setIssued] = useState(existing?.license_issued ? toUs(existing.license_issued) : "");
   const [rrDue, setRrDue] = useState(existing?.regulatory_review_due ? toUs(existing.regulatory_review_due) : "");
   const [practice, setPractice] = useState<string[]>(existing?.practice ?? []);
+  // First renewal since licensure → new-licensee rules. Pre-filled from the dates until the user answers.
+  const [firstRenewal, setFirstRenewal] = useState<boolean>(existing?.first_renewal ?? false);
+  const [firstTouched, setFirstTouched] = useState(existing?.first_renewal != null);
+  useEffect(() => {
+    if (firstTouched) return;
+    const exp = toIso(expiration), iss = toIso(issued);
+    if (!exp || !iss) return;
+    const twoYearsBack = new Date(exp + "T00:00:00Z");
+    twoYearsBack.setUTCFullYear(twoYearsBack.getUTCFullYear() - 2);
+    setFirstRenewal(iss > twoYearsBack.toISOString().slice(0, 10)); // licensed within the last two years → likely first renewal
+  }, [expiration, issued, firstTouched]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,9 +44,11 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
     if (issued && !iss) return setError("License issue date must be MM/DD/YYYY.");
     const rr = rrDue ? toIso(rrDue) : null;
     if (rrDue && !rr) return setError("Regulatory Review due date must be MM/DD/YYYY.");
+    if (iss && iss >= exp) return setError("License issue date must be before the expiration date.");
+    if (firstRenewal && !iss) return setError("Enter your license issue date — first-renewal hours are based on it.");
 
     setBusy(true);
-    const row = { user_id: userId, state, expiration_date: exp, license_issued: iss, regulatory_review_due: rr, practice };
+    const row = { user_id: userId, state, expiration_date: exp, license_issued: iss, regulatory_review_due: rr, practice, first_renewal: firstRenewal };
     const { error } = existing
       ? await supabase.from("licenses").update(row).eq("id", existing.id)
       : await supabase.from("licenses").insert(row);
@@ -63,6 +76,17 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
           <DateField label="License expiration date" value={expiration} onChangeText={setExpiration} />
           <DateField label="License issue date (optional)" value={issued} onChangeText={setIssued}
             hint="Used to estimate when your Regulatory Review course is due." />
+
+          <Text style={ui.label}>Is this your first renewal since you were licensed?</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <Chip label="No, I've renewed before" selected={!firstRenewal} onPress={() => { setFirstRenewal(false); setFirstTouched(true); }} />
+            <Chip label="Yes, first renewal" selected={firstRenewal} onPress={() => { setFirstRenewal(true); setFirstTouched(true); }} />
+          </View>
+          <Text style={[ui.hint, { marginBottom: 14 }]}>
+            {firstRenewal
+              ? "New licensees have different rules: 20 hours for each full six months since your issue date, half technical (including the 2-hour Regulatory Review), and no yearly minimum."
+              : "Standard rules: 80 hours over two years, with yearly minimums."}
+          </Text>
           {state === "CA" && (
             <DateField label="Regulatory Review due date (optional)" value={rrDue} onChangeText={setRrDue}
               hint="Shown on your CBA Connect dashboard. More accurate than our estimate." />

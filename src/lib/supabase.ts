@@ -23,6 +23,7 @@ export type License = {
   license_issued: string | null;
   regulatory_review_due: string | null;
   practice: string[];
+  first_renewal?: boolean;
 };
 
 export type CpeRow = {
