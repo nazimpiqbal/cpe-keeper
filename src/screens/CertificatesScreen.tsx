@@ -71,6 +71,16 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   }
 
   // Attach a certificate (PDF or photo) to a course that doesn't have one.
+  async function deleteUpload(path: string) {
+    const { error } = await supabase.functions.invoke("delete-upload", { body: { path } });
+    if (error) {
+      let msg = "Couldn't delete the file.";
+      try { msg = (await (error as any).context?.json())?.error ?? msg; } catch {}
+      setError(msg);
+    }
+  }
+  const DELETE = { text: "Delete this upload", value: "delete", style: "destructive" as const };
+
   const link = async (courseId: string, path: string) => {
     const { error } = await supabase.from("cpe_records").update({ certificate_path: path }).eq("id", courseId);
     if (error) throw new Error(error.message);
@@ -88,8 +98,9 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
     } catch {
       if (!target) { setError("Couldn't read this file to match it. You can attach it from a course's Attach button instead."); return; }
       const choice = await ask("Couldn't check this certificate", `We couldn't read it to confirm it's for ${describe(target)}. Attach it anyway?`,
-        [{ text: "Attach anyway", value: "attach" }, { text: "Cancel", value: "cancel", style: "cancel" }]);
+        [{ text: "Attach anyway", value: "attach" }, DELETE, { text: "Cancel", value: "cancel", style: "cancel" }]);
       if (choice === "attach") await link(target.id, path);
+      if (choice === "delete") await deleteUpload(path);
       return;
     }
 
@@ -103,6 +114,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
       const opts = [
         { text: hasCert ? "Replace that course's certificate" : "Attach to that course", value: "other" },
         ...(target ? [{ text: "Attach here anyway", value: "target" }] : []),
+        DELETE,
         { text: "Cancel", value: "cancel", style: "cancel" as const },
       ];
       const choice = await ask(
@@ -111,6 +123,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
         opts);
       if (choice === "other") await link(other.row.id, path);
       if (choice === "target" && target) await link(target.id, path);
+      if (choice === "delete") await deleteUpload(path);
       return;
     }
 
@@ -122,10 +135,12 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
       [
         { text: read.length > 1 ? "Add these courses" : "Add as a new course", value: "add" },
         ...(target ? [{ text: `Attach to ${target.title.length > 30 ? "this course" : `"${target.title}"`} anyway`, value: "target" }] : []),
+        DELETE,
         { text: "Cancel", value: "cancel", style: "cancel" as const },
       ]);
     if (choice === "add") return onAddCourses(read, path);
     if (choice === "target" && target) await link(target.id, path);
+    if (choice === "delete") await deleteUpload(path);
   }
 
   // Attach a certificate (camera, photo or file) to a course that doesn't have one — checked first.
@@ -167,14 +182,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   function removeFile(f: StoredFile) {
     Alert.alert("Delete this file?", "It isn't linked to any course. This can't be undone.", [
       { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: async () => {
-        const { error } = await supabase.functions.invoke("delete-upload", { body: { path: f.path } });
-        if (error) {
-          let msg = "Couldn't delete the file.";
-          try { msg = (await (error as any).context?.json())?.error ?? msg; } catch {}
-          setError(msg);
-        } else load();
-      } },
+      { text: "Delete", style: "destructive", onPress: async () => { await deleteUpload(f.path); load(); } },
     ]);
   }
 
