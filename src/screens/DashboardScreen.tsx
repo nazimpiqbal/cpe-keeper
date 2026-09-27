@@ -21,6 +21,11 @@ function Bar({ line }: { line: Line }) {
         <Text style={s.reqNum}>{line.required ? `${line.earned} / ${line.required}` : "Not due"}</Text>
       </View>
       <Text style={s.reqPeriod}>{line.period}</Text>
+      {line.logged != null && line.reserved && (
+        <Text style={s.reqPeriod}>
+          {line.logged} logged · {line.reserved.hours} must still come from {line.reserved.label}
+        </Text>
+      )}
       <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : C.accent }]} /></View>
       {!line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
     </View>

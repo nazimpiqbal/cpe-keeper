@@ -36,6 +36,8 @@ export type Line = {
   id: string; label: string; period: string;
   required: number; earned: number; remaining: number; met: boolean; note?: string;
   deadline: string; // YYYY-MM-DD — when this requirement must be met
+  logged?: number;  // set when more hours were logged than can count yet (see capByAnnualMinimums)
+  reserved?: { hours: number; label: string }; // hours that must still come from specific years
 };
 
 const d = (s: string) => new Date(s + "T00:00:00Z");
@@ -104,5 +106,31 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules): Lin
       });
     }
   }
+  capByAnnualMinimums(lines, rules);
   return lines;
+}
+
+// A cycle total with a per-year minimum in the same subjects (e.g. CA: 40 technical, at least 12 each year)
+// can't be finished early: hours still owed to a later year are reserved. So what counts toward the total
+// right now is capped at (total required − hours still owed to the yearly minimums).
+// Example: 28.5 technical in Year 1, 0 in Year 2 → Year 2 still owes 12 → 28 / 40 counts, 12 to go.
+function capByAnnualMinimums(lines: Line[], rules: Rules) {
+  const sameCats = (a?: string[], b?: string[]) => JSON.stringify([...(a ?? [])].sort()) === JSON.stringify([...(b ?? [])].sort());
+  for (const q of rules.requirements.filter(r => r.scope === "cycle")) {
+    const annual = rules.requirements.find(r => r.scope === "each_sub_period" && sameCats(r.categories, q.categories) && r.when === q.when);
+    if (!annual) continue;
+    const total = lines.find(l => l.id === q.id);
+    const years = lines.filter(l => l.id === annual.id);
+    if (!total || !years.length) continue;
+    const owed = round(years.reduce((a, y) => a + y.remaining, 0));
+    const countable = round(Math.max(0, Math.min(total.earned, total.required - owed)));
+    if (countable < total.earned) {
+      const owing = years.filter(y => y.remaining > 0).map(y => y.period.split(" (")[0]).join(" and ");
+      total.logged = total.earned;
+      total.reserved = { hours: owed, label: owing };
+      total.earned = countable;
+      total.remaining = round(Math.max(0, total.required - countable));
+      total.met = total.remaining === 0;
+    }
+  }
 }

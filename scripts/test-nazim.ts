@@ -37,4 +37,12 @@ assert(get("technical_annual", 0).earned === 8.5, "year-1 technical should be 8.
 assert(get("annual_total", 0).met === true, "year-1 20-hour minimum met");
 assert(!lines.some(l => l.id === "aa"), "attest reqs excluded for non-attest");
 assert(get("regulatory_review").met === true, "reg review not due this cycle (licensed Apr 2022)");
+
+// Scenario from the phone: 28.5 technical hrs all in Year 1 → only 28 can count toward 40 (Year 2 owes 12).
+const heavy: Record[] = [...records, { title: "Big technical course", provider: "X", date: "2026-08-01", hours: 20, fieldOfStudy: "Accounting" }];
+const h = evaluate(heavy, { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules);
+const tt = h.find(l => l.id === "technical_total")!;
+console.log(`\nHeavy Year 1: technical ${tt.earned}/${tt.required} (logged ${tt.logged}, ${tt.remaining} to go, reserved ${tt.reserved?.hours} for ${tt.reserved?.label})`);
+assert(tt.logged === 28.5 && tt.earned === 28 && tt.remaining === 12, "technical total capped at 28 with 12 to go");
+assert(h.filter(l => l.id === "technical_annual")[0].earned === 28.5, "Year 1 technical still shows 28.5");
 console.log("\nAll assertions passed.");
