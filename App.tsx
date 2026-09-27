@@ -94,7 +94,8 @@ export default function App() {
   );
   else if (view === "certificates") screen = (
     <Tabs active="certificates" onChange={setView}>
-      <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle} />
+      <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle}
+        onAddCourses={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }} />
     </Tabs>
   );
   else screen = (

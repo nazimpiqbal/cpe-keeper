@@ -43,7 +43,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // An already-saved course that looks like this one. User must choose before saving.
-  const [dupe, setDupe] = useState<{ title: string; completed_on: string; hours: number } | null>(null);
+  const [dupe, setDupe] = useState<{ id: string; title: string; completed_on: string; hours: number; certificate_path: string | null } | null>(null);
 
   async function save(allowDuplicate = false) {
     setError(null);
@@ -57,7 +57,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     setBusy(true);
     if (!allowDuplicate) {
       const { data: sameDay, error: qErr } = await supabase.from("cpe_records")
-        .select("id, title, completed_on, hours").eq("completed_on", iso);
+        .select("id, title, completed_on, hours, certificate_path").eq("completed_on", iso);
       if (qErr) { setBusy(false); return setError(friendlyError(qErr.message)); }
       const match = (sameDay ?? []).filter(r => r.id !== existing?.id).find(r => sameCourse({ title: r.title, date: r.completed_on, hours: r.hours }, { title, date: iso, hours: h }));
       if (match) { setBusy(false); return setDupe({ ...match, hours: Number(match.hours) }); }
@@ -164,7 +164,16 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
               <Text style={{ color: "#92400E" }}>
                 You have "{dupe.title}" ({dupe.hours} credits) on {toUs(dupe.completed_on)}. Saving again would count these hours twice.
               </Text>
-              <Button title="Don't save" onPress={() => (onSkip ? onSkip() : onDone(false))} />
+              {certificatePath && !existing && (
+                <Button title={dupe.certificate_path ? "Replace its certificate with this one" : "Attach this certificate to it"} onPress={async () => {
+                  setBusy(true);
+                  const { error } = await supabase.from("cpe_records").update({ certificate_path: certificatePath }).eq("id", dupe.id);
+                  setBusy(false);
+                  if (error) return setError(friendlyError(error.message));
+                  onDone(true);
+                }} />
+              )}
+              <Button kind={certificatePath && !existing ? "secondary" : "primary"} title="Don't save" onPress={() => (onSkip ? onSkip() : onDone(false))} />
               <Button kind="link" title="Save anyway — it's a different course" onPress={() => { setDupe(null); save(true); }} />
             </View>
           ) : (

@@ -31,3 +31,30 @@ export function findDuplicateIds<T extends { id: string; title: string; date: st
   });
   return dupes;
 }
+
+// Which saved course does a certificate belong to?
+// "strong" = same date + same course (as sameCourse); "title" = same course title but date/credits
+// unreadable or different (e.g. certificate date printed differently). Returns the best match or null.
+type Saved = { id: string; title: string; completed_on: string; hours: number | string };
+type Read = { title: string; completed_on: string | null; hours: number | null };
+
+function titleMatch(a: string, b: string) {
+  const x = normTitle(a), y = normTitle(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const [short, long] = x.length <= y.length ? [x.split(" "), new Set(y.split(" "))] : [y.split(" "), new Set(x.split(" "))];
+  return new Set(short).size >= 3 && short.every(w => long.has(w));
+}
+
+export function matchCertificate<T extends Saved>(read: Read[], saved: T[]): { row: T; strength: "strong" | "title"; read: Read } | null {
+  for (const r of read) {
+    const strong = saved.find(s => r.completed_on && sameCourse(
+      { title: s.title, date: s.completed_on, hours: Number(s.hours) }, { title: r.title, date: r.completed_on, hours: r.hours }));
+    if (strong) return { row: strong, strength: "strong", read: r };
+  }
+  for (const r of read) {
+    const t = saved.find(s => titleMatch(s.title, r.title));
+    if (t) return { row: t, strength: "title", read: r };
+  }
+  return null;
+}

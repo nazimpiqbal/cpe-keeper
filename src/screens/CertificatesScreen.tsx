@@ -6,6 +6,9 @@ import { supabase, friendlyError, CpeRow } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { saveCertificateFile } from "../lib/uploads";
 import { showUpgrade, usePremium } from "../lib/premium";
+import { readCertificate } from "../lib/extract";
+import { matchCertificate } from "../lib/duplicates";
+import type { Extracted } from "./ScanScreen";
 
 type StoredFile = { path: string; name: string; fileName: string | null; created_at: string | null; size: number | null };
 
@@ -18,12 +21,23 @@ const kindOf = (name: string) => {
 const icon = (k: string) => (k === "PDF" ? "📄" : k === "Spreadsheet" ? "📊" : "🖼️");
 const fmtSize = (b: number | null) => (b == null ? "" : b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`);
 
-export default function CertificatesScreen({ userId, cycle }: { userId: string; cycle?: { start: string; end: string } }) {
+// Promise wrapper so the checking flow reads top-to-bottom.
+function ask(title: string, message: string, options: { text: string; value: string; style?: "cancel" | "destructive" }[]) {
+  return new Promise<string>(resolve =>
+    Alert.alert(title, message, options.map(o => ({ text: o.text, style: o.style, onPress: () => resolve(o.value) })), { cancelable: false }));
+}
+
+export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
+  userId: string;
+  cycle?: { start: string; end: string };
+  onAddCourses: (courses: Extracted[], certificatePath: string) => void; // open review screen, pre-filled
+}) {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [rows, setRows] = useState<CpeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyLabel, setBusyLabel] = useState("");
   const { premium } = usePremium();
 
   const load = useCallback(async () => {
@@ -64,24 +78,98 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
   }
 
   // Attach a certificate (PDF or photo) to a course that doesn't have one.
+  const link = async (courseId: string, path: string) => {
+    const { error } = await supabase.from("cpe_records").update({ certificate_path: path }).eq("id", courseId);
+    if (error) throw new Error(error.message);
+  };
+  const describe = (c: { title: string; completed_on: string | null }) =>
+    `"${c.title}"${c.completed_on && /^\d{4}-\d{2}-\d{2}$/.test(c.completed_on) ? ` (${fmtDate(c.completed_on)})` : ""}`;
+
+  // Reads an uploaded file and decides where it belongs, asking the user when it isn't the expected course.
+  // target = the course the user tried to attach it to (null when matching an unlinked upload).
+  async function checkAndLink(path: string, target: CpeRow | null) {
+    setBusyLabel("Checking…");
+    let read: Extracted[];
+    try {
+      read = await readCertificate(path);
+    } catch {
+      if (!target) { setError("Couldn't read this file to match it. You can attach it from a course's Attach button instead."); return; }
+      const choice = await ask("Couldn't check this certificate", `We couldn't read it to confirm it's for ${describe(target)}. Attach it anyway?`,
+        [{ text: "Attach anyway", value: "attach" }, { text: "Cancel", value: "cancel", style: "cancel" }]);
+      if (choice === "attach") await link(target.id, path);
+      return;
+    }
+
+    // Is it the course the user picked?
+    if (target && matchCertificate(read, [target])) return link(target.id, path);
+
+    // Does it belong to another saved course?
+    const other = matchCertificate(read, rows.filter(r => r.id !== target?.id));
+    if (other) {
+      const hasCert = !!other.row.certificate_path;
+      const opts = [
+        { text: hasCert ? "Replace that course's certificate" : "Attach to that course", value: "other" },
+        ...(target ? [{ text: "Attach here anyway", value: "target" }] : []),
+        { text: "Cancel", value: "cancel", style: "cancel" as const },
+      ];
+      const choice = await ask(
+        target ? "This looks like a different course" : "Found a matching course",
+        `This certificate looks like it's for ${describe(other.row)}${target ? `, not ${describe(target)}` : ""}.${hasCert ? " That course already has a certificate." : ""}`,
+        opts);
+      if (choice === "other") await link(other.row.id, path);
+      if (choice === "target" && target) await link(target.id, path);
+      return;
+    }
+
+    // Not one of the user's courses — offer to add it.
+    const first = read[0];
+    const what = read.length > 1 ? `${read.length} courses (e.g. ${describe(first)})` : describe(first);
+    const choice = await ask("Course not in your records",
+      `This file is for ${what}, which ${read.length > 1 ? "aren't" : "isn't"} in your courses. Add ${read.length > 1 ? "them" : "it"} with this certificate attached?`,
+      [
+        { text: read.length > 1 ? "Add these courses" : "Add as a new course", value: "add" },
+        ...(target ? [{ text: `Attach to ${target.title.length > 30 ? "this course" : `"${target.title}"`} anyway`, value: "target" }] : []),
+        { text: "Cancel", value: "cancel", style: "cancel" as const },
+      ]);
+    if (choice === "add") return onAddCourses(read, path);
+    if (choice === "target" && target) await link(target.id, path);
+  }
+
+  // Attach a certificate (PDF or photo) to a course that doesn't have one — checked first.
   async function attach(row: CpeRow) {
     const r = await DocumentPicker.getDocumentAsync({ type: ["application/pdf", "image/*"], copyToCacheDirectory: true });
     if (r.canceled || !r.assets?.[0]) return;
     const a = r.assets[0];
     const isPdf = (a.mimeType ?? "").includes("pdf") || a.name.toLowerCase().endsWith(".pdf");
-    setBusyId(row.id);
+    setBusyId(row.id); setBusyLabel("Uploading…"); setError(null);
     try {
       const path = await saveCertificateFile(userId, {
         uri: a.uri, mimeType: isPdf ? "application/pdf" : (a.mimeType ?? "image/jpeg"), ext: isPdf ? "pdf" : "jpg", name: a.name,
       });
-      const { error } = await supabase.from("cpe_records").update({ certificate_path: path }).eq("id", row.id);
-      if (error) throw new Error(error.message);
-      await load();
+      await checkAndLink(path, row);
     } catch (e: any) {
       setError("Couldn't attach the certificate: " + friendlyError(e.message ?? String(e)));
     } finally {
       setBusyId(null);
+      await load();
     }
+  }
+
+  // Unlinked upload: find which course it belongs to (or add one).
+  async function matchUnlinked(f: StoredFile) {
+    setBusyId(f.path); setError(null);
+    try { await checkAndLink(f.path, null); }
+    catch (e: any) { setError(friendlyError(e.message ?? String(e))); }
+    finally { setBusyId(null); await load(); }
+  }
+
+  function unlinkedActions(f: StoredFile) {
+    Alert.alert("Unlinked upload", f.fileName ?? "This file isn't attached to any course.", [
+      { text: "Match to a course", onPress: () => matchUnlinked(f) },
+      ...(premium ? [{ text: "Open", onPress: () => open(f.path) }] : []),
+      { text: "Delete", style: "destructive" as const, onPress: () => removeFile(f) },
+      { text: "Cancel", style: "cancel" as const },
+    ]);
   }
 
   function removeFile(f: StoredFile) {
@@ -98,11 +186,11 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
     ]);
   }
 
-  const FileRow = ({ f, i, onLong }: { f: StoredFile; i: number; onLong?: () => void }) => {
+  const FileRow = ({ f, i, onLong, onTap }: { f: StoredFile; i: number; onLong?: () => void; onTap?: () => void }) => {
     const courses = coursesByFile.get(f.path) ?? [];
     const k = kindOf(f.name);
     return (
-      <Pressable onPress={() => open(f.path)} onLongPress={onLong} style={[s.row, i > 0 && s.border, busyId === f.path && { opacity: 0.5 }]}>
+      <Pressable onPress={onTap ?? (() => open(f.path))} onLongPress={onLong} style={[s.row, i > 0 && s.border, busyId === f.path && { opacity: 0.5 }]}>
         <Text style={s.icon}>{icon(k)}</Text>
         <View style={{ flex: 1 }}>
           <Text style={s.title} numberOfLines={2}>
@@ -116,7 +204,9 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
           </Text>
           {courses.length > 1 && <Text style={s.sub} numberOfLines={3}>{courses.map(c => c.title).join(" · ")}</Text>}
         </View>
-        <Text style={[s.open, !premium && { color: C.muted }]}>{premium ? "Open ›" : "🔒"}</Text>
+        <Text style={[s.open, !premium && !onTap && { color: C.muted }]}>
+          {busyId === f.path ? "Checking…" : onTap ? "Match ›" : premium ? "Open ›" : "🔒"}
+        </Text>
       </Pressable>
     );
   };
@@ -155,7 +245,7 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
                 <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)} · {Number(r.hours)} hrs</Text>
               </View>
               <Pressable onPress={() => attach(r)} disabled={busyId === r.id} style={[s.attach, busyId === r.id && { opacity: 0.5 }]}>
-                <Text style={s.attachText}>{busyId === r.id ? "Uploading…" : "Attach"}</Text>
+                <Text style={s.attachText}>{busyId === r.id ? busyLabel : "Attach"}</Text>
               </Pressable>
             </View>
           ))}
@@ -170,8 +260,8 @@ export default function CertificatesScreen({ userId, cycle }: { userId: string; 
 
       {unlinked.length > 0 && (<>
         <Text style={ui.h2}>Not linked to a course ({unlinked.length})</Text>
-        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Uploads where no course was saved. Press and hold to delete.</Text>
-        <Card>{unlinked.map((f, i) => <FileRow key={f.path} f={f} i={i} onLong={() => removeFile(f)} />)}</Card>
+        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Uploads where no course was saved. Tap one to match it to a course, add it as a new course, or delete it.</Text>
+        <Card>{unlinked.map((f, i) => <FileRow key={f.path} f={f} i={i} onTap={() => unlinkedActions(f)} onLong={() => removeFile(f)} />)}</Card>
       </>)}
     </ScrollView>
   );
