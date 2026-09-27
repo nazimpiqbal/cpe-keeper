@@ -4,6 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "../lib/supabase";
 import { saveCertificateFile } from "../lib/uploads";
+import { useCropper } from "../lib/crop";
 import { readCertificate } from "../lib/extract";
 import { matchCertificate } from "../lib/duplicates";
 import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
@@ -31,6 +32,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel, on
 }) {
   const [status, setStatus] = useState<"idle" | "uploading" | "reading">("idle");
   const [isSheet, setIsSheet] = useState(false);
+  const crop = useCropper();
   const [error, setError] = useState<string | null>(null);
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
 
@@ -41,7 +43,10 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel, on
     const opts: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], quality: 0.7 };
     const r = fromCamera ? await ImagePicker.launchCameraAsync(opts) : await ImagePicker.launchImageLibraryAsync(opts);
     if (r.canceled || !r.assets?.[0]) return;
-    await process({ uri: r.assets[0].uri, mimeType: "image/jpeg", ext: "jpg", name: r.assets[0].fileName ?? (fromCamera ? "Camera photo" : "Photo") });
+    const asset = r.assets[0];
+    const uri = await crop({ uri: asset.uri, width: asset.width, height: asset.height });
+    if (!uri) return; // cancelled on the crop screen
+    await process({ uri, mimeType: "image/jpeg", ext: "jpg", name: asset.fileName ?? (fromCamera ? "Camera photo" : "Photo") });
   }
 
   async function pickPdf() {

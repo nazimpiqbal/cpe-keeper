@@ -13,6 +13,7 @@ import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 import CertificatesScreen from "./src/screens/CertificatesScreen";
 import { PremiumProvider } from "./src/lib/premium";
+import { CropProvider } from "./src/lib/crop";
 
 type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates";
 
@@ -110,7 +111,9 @@ export default function App() {
 
   return (
     <>
-      {session ? <PremiumProvider key={session.user.id} userId={session.user.id}>{screen}</PremiumProvider> : screen}
+      <CropProvider>
+        {session ? <PremiumProvider key={session.user.id} userId={session.user.id}>{screen}</PremiumProvider> : screen}
+      </CropProvider>
       <StatusBar style="dark" />
     </>
   );

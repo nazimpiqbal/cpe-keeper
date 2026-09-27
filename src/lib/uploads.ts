@@ -32,7 +32,8 @@ const chooseSource = () => new Promise<Source | null>(resolve =>
     { text: "Cancel", style: "cancel", onPress: () => resolve(null) },
   ], { cancelable: true, onDismiss: () => resolve(null) }));
 
-export async function pickCertificate(): Promise<PickedFile | null> {
+// crop: optional crop step for photos (from useCropper). Returns null if the user cancels it.
+export async function pickCertificate(crop?: (p: { uri: string; width: number; height: number }) => Promise<string | null>): Promise<PickedFile | null> {
   const source = await chooseSource();
   if (!source) return null;
 
@@ -52,5 +53,8 @@ export async function pickCertificate(): Promise<PickedFile | null> {
   const opts: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], quality: 0.7 };
   const r = camera ? await ImagePicker.launchCameraAsync(opts) : await ImagePicker.launchImageLibraryAsync(opts);
   if (r.canceled || !r.assets?.[0]) return null;
-  return { uri: r.assets[0].uri, mimeType: "image/jpeg", ext: "jpg", name: r.assets[0].fileName ?? (camera ? "Camera photo" : "Photo") };
+  const asset = r.assets[0];
+  const uri = crop ? await crop({ uri: asset.uri, width: asset.width, height: asset.height }) : asset.uri;
+  if (!uri) return null;
+  return { uri, mimeType: "image/jpeg", ext: "jpg", name: asset.fileName ?? (camera ? "Camera photo" : "Photo") };
 }

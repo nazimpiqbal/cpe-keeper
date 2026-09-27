@@ -4,6 +4,7 @@ import * as WebBrowser from "expo-web-browser";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
 import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { pickCertificate, saveCertificateFile } from "../lib/uploads";
+import { useCropper } from "../lib/crop";
 import { showUpgrade, usePremium } from "../lib/premium";
 import { readCertificate } from "../lib/extract";
 import { matchCertificate } from "../lib/duplicates";
@@ -32,6 +33,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [busyLabel, setBusyLabel] = useState("");
   const { premium } = usePremium();
+  const crop = useCropper();
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
@@ -147,7 +149,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   async function attach(row: CpeRow) {
     setError(null);
     let file;
-    try { file = await pickCertificate(); }
+    try { file = await pickCertificate(crop); }
     catch (e: any) { return setError(e.message); }
     if (!file) return;
     setBusyId(row.id); setBusyLabel("Uploading…");
