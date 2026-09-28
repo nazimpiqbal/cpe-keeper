@@ -348,5 +348,7 @@
       "id": "special",
       "label": "Special requirements"
     }
-  ]
+  ],
+  "renewalMonths": 24,
+  "expiresEndOfMonth": true
 }

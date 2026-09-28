@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
 import { Button, Card, Chip, DateField, ErrorText, toIso, toUs, ui } from "../lib/ui";
-import { RULES, LAUNCH_STATES } from "../rules";
+import { RULES, LAUNCH_STATES, STATE_NAMES } from "../rules";
+import { checkExpiration } from "../engine/engine";
 
 // States with verified rule files. Others appear as "coming soon".
 const SUPPORTED = Object.keys(RULES);
@@ -47,6 +48,8 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
     setError(null);
     const exp = toIso(expiration);
     if (!exp) return setError("Enter your license expiration date as MM/DD/YYYY.");
+    const expProblem = rules ? checkExpiration(exp, rules, STATE_NAMES[state] ?? state) : null;
+    if (expProblem) return setError(expProblem);
     const iss = issued ? toIso(issued) : null;
     if (issued && !iss) return setError("License issue date must be MM/DD/YYYY.");
     const rr = rrDue ? toIso(rrDue) : null;

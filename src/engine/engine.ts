@@ -63,6 +63,8 @@ export type Rules = {
   tagCategories?: string[]; // categories shown on each course and in "How your hours add up", in order
   licenseDateLabel?: string;
   licenseDateHint?: string;
+  renewalMonths?: number;      // how far ahead an expiration can be (TX 12, CA 24, NY 36)
+  expiresEndOfMonth?: boolean; // licenses expire on the last day of the birth month (CA, TX)
   issueDateHint?: string;
   requirementGroups?: { id: string; label: string }[];
 };
@@ -392,4 +394,17 @@ function capByAnnualMinimums(lines: Line[], rules: Rules) {
       total.met = total.remaining === 0;
     }
   }
+}
+
+// Catches expiration dates that can't be right for the state — e.g. a Texas license (renewed yearly) set two years out.
+export function checkExpiration(licenseExpiration: string, rules: Rules, stateName: string, asOf: string = today()): string | null {
+  const e = d(licenseExpiration);
+  if (rules.renewalMonths && e > addMonthsClamped(d(asOf), rules.renewalMonths)) {
+    const every = rules.renewalMonths === 12 ? "every year" : `every ${rules.renewalMonths / 12} years`;
+    return `${stateName} licenses renew ${every}, so the expiration date can't be more than ${rules.renewalMonths} months away. Check the date on your license.`;
+  }
+  if (rules.expiresEndOfMonth && addDays(e, 1).getUTCDate() !== 1) {
+    return `${stateName} licenses expire on the last day of your birth month — e.g. 03/31. Check the date on your license.`;
+  }
+  return null;
 }

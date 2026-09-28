@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
-import { evaluate, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
+import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
@@ -298,6 +298,16 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         <Text style={ui.muted}>{cycle.calendarYear
           ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours (no carryforward)`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
+        {rules && (() => {
+          // A saved date that can't be right for this state (e.g. a Texas license set two years out).
+          const problem = checkExpiration(license.expiration_date, rules, STATE_NAMES[license.state] ?? license.state);
+          return problem ? (
+            <Pressable onPress={onEditLicense} style={s.dateProblem}>
+              <Text style={s.dateProblemText}>⚠︎ {problem} Requirements below may be wrong until it's fixed.</Text>
+              <Text style={[s.dateProblemText, { textDecorationLine: "underline", marginTop: 4 }]}>Fix the date</Text>
+            </Pressable>
+          ) : null;
+        })()}
         {plan && (
           <View style={s.firstBox}>
             <Text style={s.firstTitle}>First renewal · new-licensee rules</Text>
@@ -365,6 +375,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
 
 const s = StyleSheet.create({
   altBox: { marginTop: 2 },
+  dateProblem: { marginTop: 10, backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: "#FECACA" },
+  dateProblemText: { color: C.danger, fontWeight: "700", fontSize: 13 },
   yearBlock: { borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, paddingBottom: 0, marginTop: 4, marginBottom: 12 },
   yearNow: { borderColor: C.accent, backgroundColor: "#F8FAFF" },
   yearHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },

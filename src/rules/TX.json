@@ -157,5 +157,7 @@
     "Business Law, Statistics and Specialized Knowledge treated as technical, and Personal Development, Personnel/HR and Production as non-technical — the rule lists examples, not every NASBA field.",
     "Non-technical cap during the phase-in years: we apply 50% of that year's required total (e.g. 30 of 60).",
     "Ethics timing: modelled as a TSBPA-approved course in the 24 months before renewal, from the second full license year after initial licensure on."
-  ]
+  ],
+  "renewalMonths": 12,
+  "expiresEndOfMonth": true
 }

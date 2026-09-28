@@ -71,3 +71,14 @@ assert.equal(get(evaluate([], { licenseExpiration: exp, practice: [] }, rules), 
 
 for (const l of evaluate(recs, vet, rules)) console.log(`${l.met ? "✅" : "⬜"} ${l.label.padEnd(36)} ${l.period.padEnd(44)} ${String(l.earned).padStart(5)} / ${l.required}`);
 console.log("\nTX tests passed");
+
+// Expiration sanity check (Texas renews yearly on the last day of the birth month).
+import { checkExpiration } from "../src/engine/engine";
+assert.equal(checkExpiration("2027-01-31", rules, "Texas", "2026-09-28"), null);
+assert.match(checkExpiration("2028-01-31", rules, "Texas", "2026-09-28")!, /every year/);   // 16 months out
+assert.match(checkExpiration("2027-01-15", rules, "Texas", "2026-09-28")!, /last day/);
+const caRules: Rules = JSON.parse(readFileSync(__dirname + "/../src/rules/CA.json", "utf8"));
+assert.equal(checkExpiration("2028-01-31", caRules, "California", "2026-09-28"), null);     // Nazim's CA date is fine
+assert.equal(checkExpiration("2028-02-29", caRules, "California", "2026-09-28"), null);     // leap-year month end
+assert.match(checkExpiration("2029-01-31", caRules, "California", "2026-09-28")!, /every 2 years/);
+console.log("expiration checks passed");
