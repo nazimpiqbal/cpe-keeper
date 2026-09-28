@@ -25,7 +25,11 @@ type Req = {
   // cycle: the renewal cycle (or, for calendar-year states, the current year)
   // prior_calendar_years: the N full calendar years before the registration renewal year (e.g. NY ethics)
   // calendar_years_or_current: N prior calendar years, or the current year on its own (e.g. NY attest)
-  scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current";
+  // trailing_months: the N months ending at license expiration (e.g. TX: 20 hrs in the last 12, ethics in the last 24)
+  scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current" | "trailing_months";
+  months?: number; subLabel?: string; // trailing_months: window length, and a year-block label for the dashboard
+  role?: "total" | "annual" | "max_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
+  minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   orConcentrated?: { hours: number; categories: string[] };
@@ -37,7 +41,7 @@ type Req = {
 
 export type Rules = {
   state: string;
-  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string };
+  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
@@ -49,6 +53,8 @@ export type Rules = {
     requirements?: (Req & { per20?: number; minTotal?: number })[];
     // NY-style: nothing is due until the first January 1 after licensure.
     exemptUntilFirstJanuary?: boolean;
+    // TX-style: stage N applies when renewing into the Nth full license year (index 0 = first full year).
+    phaseIn?: { none?: boolean; total?: number; annual?: number; months?: number; note?: string }[];
     note?: string;
   };
   // Display helpers for the app.
@@ -56,6 +62,8 @@ export type Rules = {
   categoryLabels?: { [category: string]: string };
   tagCategories?: string[]; // categories shown on each course and in "How your hours add up", in order
   licenseDateLabel?: string;
+  licenseDateHint?: string;
+  issueDateHint?: string;
   requirementGroups?: { id: string; label: string }[];
 };
 
@@ -88,7 +96,8 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
     .map(([cat]) => cat);
   const title = rec.title.toLowerCase();
   const byTitle = Object.entries(rules.titleKeywordMap ?? {})
-    .filter(([, words]) => words.some(w => title.includes(w)))
+    // "texas+ethics" = the title must contain both words.
+    .filter(([, words]) => words.some(w => w.split("+").every(part => title.includes(part))))
     .map(([cat]) => cat);
   return [...new Set([...byField, ...byTitle])];
 }
@@ -102,10 +111,38 @@ export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: P
     const y = asOf.slice(0, 4);
     return { start: `${y}-01-01`, end: `${y}-12-31`, calendarYear: true };
   }
-  const plan = profile ? newLicenseePlan({ licenseExpiration, practice: [], ...profile }, rules) : null;
+  const full: Profile = { licenseExpiration, practice: [], ...profile };
+  const plan = profile ? newLicenseePlan(full, rules) : null;
   if (plan) return { start: plan.start, end: plan.end };
+  const ph = profile ? phaseStage(full, rules) : null;
+  if (ph?.stage.months) {
+    const end = d(licenseExpiration);
+    return { start: iso(addDays(addMonths(end, -ph.stage.months), 1)), end: iso(end) };
+  }
   const end = d(licenseExpiration);
   return { start: iso(addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1)), end: iso(end) };
+}
+
+// Full license years completed by this renewal, for states that phase CPE in (TX).
+// Licenses run to the last day of the birth month: the first partial period ends at the first expiration on or after the
+// issue date; each renewal after that starts another full year. 0 = this renewal starts the first full year.
+export function fullYearsIntoLicense(licenseIssued: string, licenseExpiration: string): number {
+  const e = d(licenseExpiration), issued = d(licenseIssued);
+  let k = 0;
+  while (true) {
+    const prev = addMonthsClamped(e, -12 * (k + 1));
+    const prevEnd = new Date(Date.UTC(prev.getUTCFullYear(), prev.getUTCMonth() + 1, 0)); // month-end
+    if (prevEnd < issued) return k;
+    k++;
+  }
+}
+
+type PhaseStage = NonNullable<NonNullable<Rules["newLicensee"]>["phaseIn"]>[number];
+function phaseStage(profile: Profile, rules: Rules): { n: number; stage: PhaseStage } | null {
+  const stages = rules.newLicensee?.phaseIn;
+  if (!stages || !profile.licenseIssued || profile.licenseIssued >= profile.licenseExpiration) return null;
+  const n = fullYearsIntoLicense(profile.licenseIssued, profile.licenseExpiration);
+  return n < stages.length ? { n, stage: stages[n] } : null;
 }
 
 // Adds months without spilling over (Aug 31 + 6 months = Feb 28/29, not Mar 3).
@@ -143,9 +180,11 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
   }
   const plan = newLicenseePlan(profile, rules);
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
+  const ph = phaseStage(profile, rules);
+  if (ph) return evaluatePhaseIn(records, profile, rules, ph.n, ph.stage);
   const end = d(profile.licenseExpiration);
   const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
-  return evaluateWindow(records, profile, rules, start, end, "Cycle");
+  return evaluateWindow(records, profile, rules, start, end, rules.cycle.label ?? "Cycle");
 }
 
 // First renewal: requirements scaled to the hours owed, measured from the issue date. No yearly minimums.
@@ -166,6 +205,29 @@ function evaluateFirstRenewal(records: Record[], profile: Profile, rules: Rules,
   const lines = evaluateWindow(records, profile, effective, d(plan.start), d(plan.end), "Since licensed");
   const total = lines.find(l => l.id === "total");
   if (total) total.note = `First renewal: ${nl.hoursPerFullSixMonths} hours for each full six months since you were licensed (${plan.fullPeriods} × ${nl.hoursPerFullSixMonths} = ${plan.totalHours}). No yearly minimum.`;
+  return lines;
+}
+
+// TX-style phase-in: early license years need fewer hours over a shorter look-back.
+function evaluatePhaseIn(records: Record[], profile: Profile, rules: Rules, n: number, stage: PhaseStage): Line[] {
+  const end = d(profile.licenseExpiration);
+  if (stage.none) {
+    return [{
+      id: "total", label: "Total CPE", period: `Renewal on ${iso(end)}`, required: 0, earned: 0, remaining: 0, met: true,
+      deadline: iso(end), group: "overall", note: stage.note ?? "No CPE required yet.",
+    }];
+  }
+  const requirements: Req[] = rules.requirements
+    .filter(q => !(q.role === "total" && stage.total == null))
+    .filter(q => !(q.minRenewal && n < q.minRenewal))
+    .map(q =>
+      q.role === "total" ? { ...q, hours: stage.total!, label: `Total CPE (last ${stage.months} months)` } :
+      q.role === "annual" ? { ...q, hours: stage.annual ?? q.hours } :
+      q.role === "max_share" ? { ...q, hours: round((q.share ?? 0.5) * (stage.total ?? stage.annual ?? q.hours)) } : q);
+  const start = addDays(addMonths(end, -(stage.months ?? 12)), 1);
+  const lines = evaluateWindow(records, profile, { ...rules, requirements }, start, end, `Last ${stage.months ?? 12} months`);
+  const first = lines.find(l => l.group === "overall") ?? lines[0];
+  if (first && stage.note) first.note = `New licensee: ${stage.note}`;
   return lines;
 }
 
@@ -220,6 +282,17 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         id: q.id, label: q.label, period: `${renewalYear - (q.years ?? 0)}–${renewalYear - 1} (for your ${renewalYear} renewal)`,
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(e),
+      });
+      continue;
+    }
+    if (q.scope === "trailing_months") {
+      const s = addDays(addMonths(end, -(q.months ?? 12)), 1);
+      const earned = sum(s, end, q.categories);
+      lines.push({
+        id: q.id, label: q.label, period: `Last ${q.months} months (${iso(s)} – ${iso(end)})`,
+        required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
+        note: q.note, deadline: iso(end),
+        sub: q.subLabel ? { index: 1, label: q.subLabel, start: iso(s), end: iso(end) } : undefined,
       });
       continue;
     }

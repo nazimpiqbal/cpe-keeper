@@ -81,11 +81,11 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
           <Text style={[ui.hint, { marginBottom: 14 }]}>More states are being added.</Text>
 
           <DateField label={rules?.licenseDateLabel ?? "License expiration date"} value={expiration} onChangeText={setExpiration}
-            hint={calendarYear ? "Your three-year registration end date. Your yearly CPE runs January–December regardless." : undefined} />
+            hint={rules?.licenseDateHint ?? (calendarYear ? "Your three-year registration end date. Your yearly CPE runs January–December regardless." : undefined)} />
           <DateField label="License issue date (optional)" value={issued} onChangeText={setIssued}
-            hint={calendarYear
+            hint={rules?.issueDateHint ?? (calendarYear
               ? "New licensees don't need CPE until the first January 1 after they're licensed."
-              : "Used to estimate when your Regulatory Review course is due."} />
+              : "Used to estimate when your Regulatory Review course is due.")} />
 
           {hasFirstRenewalRules && (<>
           <Text style={ui.label}>Is this your first renewal since you were licensed?</Text>

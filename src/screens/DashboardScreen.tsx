@@ -14,6 +14,14 @@ const daysUntil = (iso: string) => Math.ceil((new Date(iso + "T00:00:00Z").getTi
 // Inside a Year block the year and dates are in the block header, so the label drops "each year" and the period is hidden.
 const shortLabel = (l: Line) => l.sub ? l.label.replace(/ each year$/, "") : l.label;
 
+// "7 hrs of technical for Year 1", "12 hrs for this reporting year", "55 hrs".
+function deadlineText(l: Line) {
+  const name = shortLabel(l).replace(/\s*\(.*\)$/, "");
+  const what = /^total/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
+  const when = l.sub ? ` for ${l.sub.label.startsWith("Year") ? l.sub.label : l.sub.label.toLowerCase()}` : "";
+  return `${l.remaining} hrs${what}${when}`;
+}
+
 function Bar({ line }: { line: Line }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
   if (line.kind === "max") {
@@ -253,7 +261,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
   const lines = useMemo(() => rules ? evaluate(records, profile, rules) : [], [records, license, rules]);
 
   const urgent = lines.filter(l => !l.met && l.remaining > 0)
-    .sort((a, b) => a.deadline.localeCompare(b.deadline) || a.remaining - b.remaining)[0];
+    // Earliest deadline first; on the same date, the biggest shortfall (meeting it usually covers the smaller ones).
+    .sort((a, b) => a.deadline.localeCompare(b.deadline) || b.remaining - a.remaining)[0];
 
   async function loadTestRecords() {
     const { error } = await supabase.from("cpe_records").insert(sampleRecords.map(r => ({
@@ -304,9 +313,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
             <Text style={s.alertText}>
               Next deadline: {urgent.alt && urgent.alt.remaining < (urgent.mainRemaining ?? Infinity)
                 ? `${urgent.alt.remaining} more hrs of ${urgent.alt.area} (or ${urgent.mainRemaining} in any subject)`
-                : urgent.sub
-                ? `${urgent.remaining} hrs of ${shortLabel(urgent).toLowerCase()} for ${urgent.sub.label}`
-                : `${urgent.remaining} hrs of ${urgent.label.toLowerCase()}`} by {fmtDate(urgent.deadline)}
+                : deadlineText(urgent)} by {fmtDate(urgent.deadline)}
             </Text>
           </View>
         )}

@@ -1,0 +1,161 @@
+{
+  "state": "TX",
+  "board": "Texas State Board of Public Accountancy (TSBPA)",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-112",
+    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-118",
+    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-130",
+    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-102",
+    "https://www.tsbpa.texas.gov/cpas/renewal/",
+    "https://www.nasbaregistry.org/cpe-requirements/texas"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "note": "Licenses renew every year on the last day of your birth month. Each renewal looks back 36 months (120 hours) and 12 months (20 hours). No carryover.",
+    "label": "Last 36 months"
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "role": "total",
+      "label": "Total CPE (last 36 months)",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "annual_total",
+      "role": "annual",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "trailing_months",
+      "months": 12,
+      "subLabel": "This reporting year",
+      "group": "overall"
+    },
+    {
+      "id": "non_technical_max",
+      "role": "max_share",
+      "share": 0.5,
+      "label": "Non-technical",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "non_technical"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than half of the required hours can be non-technical."
+    },
+    {
+      "id": "ethics",
+      "label": "Board-approved Texas ethics course",
+      "hours": 4,
+      "scope": "trailing_months",
+      "months": 24,
+      "categories": [
+        "tx_ethics"
+      ],
+      "minRenewal": 2,
+      "group": "special",
+      "note": "A 4-hour TSBPA-approved ethics course every two years. We count courses with \"Texas\" and \"ethics\" (or \"TSBPA\") in the title — edit the title if yours isn't picked up. Out-of-state licensees with no Texas clients may meet their home state's ethics rule instead."
+    }
+  ],
+  "newLicensee": {
+    "note": "Texas phases CPE in over your first years of licensure (Rule 523.112).",
+    "phaseIn": [
+      {
+        "none": true,
+        "note": "No CPE is required for your first partial license period or your first full 12-month license period."
+      },
+      {
+        "annual": 20,
+        "months": 12,
+        "note": "Second full license year: 20 hours in the 12 months before renewal."
+      },
+      {
+        "total": 60,
+        "annual": 20,
+        "months": 24,
+        "note": "Third full license year: 60 hours in the 24 months before renewal, at least 20 in the last 12."
+      },
+      {
+        "total": 100,
+        "annual": 20,
+        "months": 36,
+        "note": "Fourth full license year: 100 hours in the 36 months before renewal, at least 20 in the last 12."
+      }
+    ]
+  },
+  "practiceOptions": [],
+  "licenseDateHint": "Texas licenses renew every year on the last day of your birth month.",
+  "issueDateHint": "Needed if you were licensed in the last four years — Texas phases CPE in for new licensees.",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Regulatory Ethics",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Behavioral Ethics",
+      "Business Management and Organization",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Production"
+    ]
+  },
+  "titleKeywordMap": {
+    "tx_ethics": [
+      "texas+ethics",
+      "tsbpa"
+    ]
+  },
+  "limitsNotTracked": [
+    "Nano-learning: max 50% of required hours in three years.",
+    "Certification programs (CFP, CIA, CFE…): max 50% in three years.",
+    "Instruction credit: max 20 hours a year."
+  ],
+  "recordRetentionYears": 5,
+  "toVerify": [
+    "Business Law, Statistics and Specialized Knowledge treated as technical, and Personal Development, Personnel/HR and Production as non-technical — the rule lists examples, not every NASBA field.",
+    "Non-technical cap during the phase-in years: we apply 50% of that year's required total (e.g. 30 of 60).",
+    "Ethics timing: modelled as a TSBPA-approved course in the 24 months before renewal, from the second full license year after initial licensure on."
+  ]
+}

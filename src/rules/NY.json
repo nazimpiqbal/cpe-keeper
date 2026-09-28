@@ -148,5 +148,7 @@
       "id": "special",
       "label": "Special requirements"
     }
-  ]
+  ],
+  "licenseDateHint": "Your three-year registration end date. Your yearly CPE runs January–December regardless.",
+  "issueDateHint": "New licensees don't need CPE until the first January 1 after they're licensed."
 }
