@@ -22,8 +22,13 @@ export type Profile = {
 
 type Req = {
   id: string; label: string; hours: number;
-  scope: "cycle" | "each_sub_period" | "lookback_years";
-  lookbackYears?: number; categories?: string[]; when?: string; note?: string;
+  // cycle: the renewal cycle (or, for calendar-year states, the current year)
+  // prior_calendar_years: the N full calendar years before the registration renewal year (e.g. NY ethics)
+  // calendar_years_or_current: N prior calendar years, or the current year on its own (e.g. NY attest)
+  scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current";
+  lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
+  // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
+  orConcentrated?: { hours: number; categories: string[] };
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)
@@ -31,18 +36,25 @@ type Req = {
 
 export type Rules = {
   state: string;
-  cycle: { lengthMonths: number; subPeriods: number };
+  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
   titleKeywordMap?: { [category: string]: string[] };
   // First-renewal rules (e.g. CA): hours scale with full six-month periods from issue date to first expiration.
   newLicensee?: {
-    hoursPerFullSixMonths: number;
+    // CA-style: hours scale with full six-month periods; per20 = hours for every 20 required, minTotal = only once total reaches it.
+    hoursPerFullSixMonths?: number;
+    requirements?: (Req & { per20?: number; minTotal?: number })[];
+    // NY-style: nothing is due until the first January 1 after licensure.
+    exemptUntilFirstJanuary?: boolean;
     note?: string;
-    // per20: hours for every 20 required (scaled); hours: fixed; minTotal: only once the total reaches this.
-    requirements: (Req & { per20?: number; minTotal?: number })[];
   };
+  // Display helpers for the app.
+  practiceOptions?: { id: string; label: string }[];
+  categoryLabels?: { [category: string]: string };
+  tagCategories?: string[]; // categories shown on each course and in "How your hours add up", in order
+  licenseDateLabel?: string;
 };
 
 export type Line = {
@@ -53,6 +65,9 @@ export type Line = {
   kind?: "min" | "max";
   over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
+  // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
+  alt?: { label: string; area: string; earned: number; required: number; remaining: number };
+  mainRemaining?: number; // hours to go on the main (e.g. 40-hour) path, when alt is set
 };
 
 const d = (s: string) => new Date(s + "T00:00:00Z");
@@ -60,6 +75,8 @@ const iso = (x: Date) => x.toISOString().slice(0, 10);
 const addMonths = (x: Date, m: number) => { const y = new Date(x); y.setUTCMonth(y.getUTCMonth() + m); return y; };
 const addDays = (x: Date, n: number) => new Date(x.getTime() + n * 86400000);
 const round = (n: number) => Math.round(n * 100) / 100;
+const today = () => new Date().toISOString().slice(0, 10);
+const isCalendarYear = (rules: Rules) => rules.cycle.type === "calendar_year";
 
 export function categoriesOf(rec: Record, rules: Rules): string[] {
   const byField = Object.entries(rules.fieldOfStudyMap)
@@ -74,11 +91,17 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
 
 // Current renewal cycle, e.g. CA license expiring 2028-01-31 → 2026-02-01 to 2028-01-31.
 // On a first renewal under new-licensee rules, the cycle runs from the issue date instead.
-export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: Partial<Profile>): { start: string; end: string } {
+// Calendar-year states (NY): the current calendar year.
+export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: Partial<Profile>, asOf: string = today()):
+  { start: string; end: string; calendarYear?: boolean } {
+  if (isCalendarYear(rules)) {
+    const y = asOf.slice(0, 4);
+    return { start: `${y}-01-01`, end: `${y}-12-31`, calendarYear: true };
+  }
   const plan = profile ? newLicenseePlan({ licenseExpiration, practice: [], ...profile }, rules) : null;
   if (plan) return { start: plan.start, end: plan.end };
   const end = d(licenseExpiration);
-  return { start: iso(addDays(addMonths(end, -rules.cycle.lengthMonths), 1)), end: iso(end) };
+  return { start: iso(addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1)), end: iso(end) };
 }
 
 // Adds months without spilling over (Aug 31 + 6 months = Feb 28/29, not Mar 3).
@@ -102,24 +125,28 @@ export type NewLicenseePlan = { start: string; end: string; fullPeriods: number;
 
 // Null unless this is a first renewal, the issue date is known, and the state has new-licensee rules.
 export function newLicenseePlan(profile: Profile, rules: Rules): NewLicenseePlan | null {
-  if (!profile.firstRenewal || !profile.licenseIssued || !rules.newLicensee) return null;
+  if (!profile.firstRenewal || !profile.licenseIssued || !rules.newLicensee?.hoursPerFullSixMonths) return null;
   if (profile.licenseIssued >= profile.licenseExpiration) return null;
   const fullPeriods = fullSixMonthPeriods(profile.licenseIssued, profile.licenseExpiration);
   return { start: profile.licenseIssued, end: profile.licenseExpiration, fullPeriods,
     totalHours: fullPeriods * rules.newLicensee.hoursPerFullSixMonths };
 }
 
-export function evaluate(records: Record[], profile: Profile, rules: Rules): Line[] {
+export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf: string = today()): Line[] {
+  if (isCalendarYear(rules)) {
+    const { start, end } = cycleBounds(profile.licenseExpiration, rules, profile, asOf);
+    return evaluateWindow(records, profile, rules, d(start), d(end), start.slice(0, 4), asOf);
+  }
   const plan = newLicenseePlan(profile, rules);
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
   const end = d(profile.licenseExpiration);
-  const start = addDays(addMonths(end, -rules.cycle.lengthMonths), 1);
+  const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
   return evaluateWindow(records, profile, rules, start, end, "Cycle");
 }
 
 // First renewal: requirements scaled to the hours owed, measured from the issue date. No yearly minimums.
 function evaluateFirstRenewal(records: Record[], profile: Profile, rules: Rules, plan: NewLicenseePlan): Line[] {
-  const nl = rules.newLicensee!;
+  const nl = rules.newLicensee as Required<Pick<NonNullable<Rules["newLicensee"]>, "hoursPerFullSixMonths" | "requirements">>;
   if (plan.totalHours === 0) {
     return [{
       id: "total", label: "Total CE", period: `Licensed ${plan.start} – first renewal ${plan.end}`,
@@ -138,13 +165,19 @@ function evaluateFirstRenewal(records: Record[], profile: Profile, rules: Rules,
   return lines;
 }
 
-function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start: Date, end: Date, cycleName: string): Line[] {
-  const subLen = rules.cycle.lengthMonths / rules.cycle.subPeriods;
-  const subs = Array.from({ length: rules.cycle.subPeriods }, (_, i) => {
+function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start: Date, end: Date, cycleName: string, asOf: string = today()): Line[] {
+  const subCount = rules.cycle.subPeriods ?? 0;
+  const subLen = subCount ? (rules.cycle.lengthMonths ?? 0) / subCount : 0;
+  const subs = Array.from({ length: subCount }, (_, i) => {
     const s = addMonths(start, i * subLen);
     const e = addDays(addMonths(start, (i + 1) * subLen), -1);
     return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e };
   });
+
+  const label = (cat: string) => rules.categoryLabels?.[cat] ?? cat;
+  const yearStart = (y: number) => d(`${y}-01-01`), yearEnd = (y: number) => d(`${y}-12-31`);
+  // NY-style: licensed after Jan 1 of this cycle's year → nothing due in the "cycle" this year.
+  const exemptThisCycle = !!rules.newLicensee?.exemptUntilFirstJanuary && !!profile.licenseIssued && d(profile.licenseIssued) > start;
 
   const sum = (s: Date, e: Date, cats?: string[]) => round(records
     .filter(r => d(r.date) >= s && d(r.date) <= e)
@@ -174,6 +207,31 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       });
       continue;
     }
+    if (q.scope === "prior_calendar_years") {
+      // The N full calendar years before the registration renewal year.
+      const renewalYear = Number(profile.licenseExpiration.slice(0, 4));
+      const s = yearStart(renewalYear - (q.years ?? 0)), e = yearEnd(renewalYear - 1);
+      const earned = sum(s, e, q.categories);
+      lines.push({
+        id: q.id, label: q.label, period: `${renewalYear - (q.years ?? 0)}–${renewalYear - 1} (for your ${renewalYear} renewal)`,
+        required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
+        note: q.note, deadline: iso(e),
+      });
+      continue;
+    }
+    if (q.scope === "calendar_years_or_current") {
+      // Met by the N prior calendar years together, or by the current year alone — whichever has more.
+      const y = Number(asOf.slice(0, 4)), n = q.years ?? 0;
+      const prior = sum(yearStart(y - n), yearEnd(y - 1), q.categories);
+      const current = sum(yearStart(y), yearEnd(y), q.categories);
+      const earned = Math.max(prior, current);
+      lines.push({
+        id: q.id, label: q.label, period: `${y - n}–${y - 1}, or ${y} on its own`,
+        required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
+        note: q.note, deadline: iso(yearEnd(y)),
+      });
+      continue;
+    }
     const windows =
       q.scope === "cycle" ? [{ name: `${cycleName} (${iso(start)} – ${iso(end)})`, s: start, e: end }] :
       q.scope === "each_sub_period" ? subs :
@@ -188,10 +246,29 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         });
         continue;
       }
-      lines.push({
+      if (q.scope === "cycle" && exemptThisCycle) {
+        lines.push({
+          id: q.id, label: q.label, period: w.name, required: 0, earned, remaining: 0, met: true, deadline: iso(w.e),
+          note: rules.newLicensee?.note ?? "Not required yet — you were licensed during this period.",
+        });
+        continue;
+      }
+      const line: Line = {
         id: q.id, label: q.label, period: w.name, required: q.hours, earned,
         remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
-      });
+      };
+      if (q.orConcentrated) {
+        // Best single area, e.g. 22 hrs of Taxation toward the 24-hour option.
+        const best = q.orConcentrated.categories
+          .map(c => ({ c, h: sum(w.s, w.e, [c]) }))
+          .sort((a, b) => b.h - a.h)[0];
+        const altRem = round(Math.max(0, q.orConcentrated.hours - best.h));
+        line.alt = { label: `${q.orConcentrated.hours} in one subject`, area: label(best.c), earned: best.h, required: q.orConcentrated.hours, remaining: altRem };
+        line.mainRemaining = line.remaining;
+        line.met = line.met || altRem === 0;
+        line.remaining = line.met ? 0 : Math.min(line.remaining, altRem);
+      }
+      lines.push(line);
     }
   }
   applyMaximums(lines, rules);

@@ -23,7 +23,7 @@ const fmtSize = (b: number | null) => (b == null ? "" : b > 1e6 ? `${(b / 1e6).t
 
 export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   userId: string;
-  cycle?: { start: string; end: string };
+  cycle?: { start: string; end: string; calendarYear?: boolean };
   onAddCourses: (courses: Extracted[], certificatePath: string) => void; // open review screen, pre-filled
 }) {
   const [files, setFiles] = useState<StoredFile[]>([]);
@@ -235,7 +235,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
         <View style={s.warnBox}>
           <Text style={s.warnText}>
             {missingThisCycle.length > 0
-              ? `${missingThisCycle.length} course${missingThisCycle.length > 1 ? "s" : ""} in this cycle ${missingThisCycle.length > 1 ? "have" : "has"} no certificate. If you're audited you'll need one for each.`
+              ? `${missingThisCycle.length} course${missingThisCycle.length > 1 ? "s" : ""} in ${cycle?.calendarYear ? cycle.start.slice(0, 4) : "this cycle"} ${missingThisCycle.length > 1 ? "have" : "has"} no certificate. If you're audited you'll need one for each.`
               : "These courses have no certificate attached."}
           </Text>
         </View>

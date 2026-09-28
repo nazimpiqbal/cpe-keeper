@@ -292,5 +292,27 @@
     "regulatory_review": [
       "regulatory review"
     ]
-  }
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Audit / attest (A&A)"
+    },
+    {
+      "id": "government_audit",
+      "label": "Government audits"
+    },
+    {
+      "id": "preparation_engagement",
+      "label": "Preparation engagements"
+    }
+  ],
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical"
+  ]
 }

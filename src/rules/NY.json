@@ -1,0 +1,135 @@
+{
+  "state": "NY",
+  "board": "New York State Education Department — State Board for Public Accountancy",
+  "sourceUrls": [
+    "https://www.op.nysed.gov/professions/certified-public-accountants/laws-rules-regulations/part-70",
+    "https://www.op.nysed.gov/professions/certified-public-accountants/mce-questions-answers",
+    "https://www.op.nysed.gov/professions/certified-public-accountants/descriptions-cpe-subject-areas-mandatory",
+    "https://www.nasbaregistry.org/cpe-requirements/new-york"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "CPE is tracked January 1 – December 31 each year. No credits carry forward to the next year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "orConcentrated": {
+        "hours": 24,
+        "categories": [
+          "accounting",
+          "attest",
+          "auditing",
+          "taxation",
+          "advisory",
+          "specialized"
+        ]
+      },
+      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). No carryforward."
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 4,
+      "scope": "prior_calendar_years",
+      "years": 3,
+      "categories": [
+        "ethics"
+      ],
+      "note": "4 hours in the three calendar years before your registration renews. If your principal place of business is in New York, it must be a New York State-specific ethics course."
+    },
+    {
+      "id": "attest",
+      "label": "Attest competency (accounting, auditing & attest)",
+      "hours": 40,
+      "scope": "calendar_years_or_current",
+      "years": 3,
+      "categories": [
+        "accounting",
+        "auditing",
+        "attest"
+      ],
+      "when": "attest",
+      "note": "If you supervise attest or compilation work or sign reports: 40 hours in accounting, auditing or attest in the prior three calendar years, or in the year you do the work. Separate from the 24-hour option."
+    }
+  ],
+  "newLicensee": {
+    "exemptUntilFirstJanuary": true,
+    "note": "New licensees start on the first January 1 that falls in their first registration period."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Supervise attest/compilation or sign reports"
+    }
+  ],
+  "licenseDateLabel": "Registration expiration date",
+  "categoryLabels": {
+    "accounting": "Accounting",
+    "auditing": "Auditing",
+    "attest": "Attest",
+    "taxation": "Taxation",
+    "advisory": "Advisory services",
+    "specialized": "Specialized knowledge",
+    "ethics": "Ethics"
+  },
+  "tagCategories": [
+    "accounting",
+    "auditing",
+    "taxation",
+    "advisory",
+    "specialized",
+    "ethics"
+  ],
+  "fieldOfStudyMap": {
+    "accounting": [
+      "Accounting",
+      "Accounting (Governmental)"
+    ],
+    "auditing": [
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "taxation": [
+      "Taxes"
+    ],
+    "advisory": [
+      "Behavioral Ethics",
+      "Business Law",
+      "Business Management and Organization",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Management Advisory Services",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Production",
+      "Statistics"
+    ],
+    "specialized": [
+      "Specialized Knowledge"
+    ],
+    "ethics": [
+      "Regulatory Ethics"
+    ]
+  },
+  "creditRules": {
+    "minutesPerHour": 50,
+    "halfCreditsAfterFirstHour": true,
+    "maxTeachingAndWritingShare": 0.5
+  },
+  "recordRetentionYears": 5,
+  "toVerify": [
+    "Ethics window: we use the three full calendar years before the registration renewal year. Confirm whether ethics taken earlier in the renewal year also counts.",
+    "Whether NY treats NASBA 'Behavioral Ethics' strictly as Advisory Services (per the NYSED Q&A) — it does not count toward the 4 ethics hours.",
+    "Courses on marketing professional services or firm profitability get no NY credit; Communications and Marketing courses are counted as advisory unless the user changes them.",
+    "The New York State-specific ethics requirement (principal place of business in NY) can't be verified from a certificate — shown as a reminder only."
+  ]
+}

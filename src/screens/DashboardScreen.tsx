@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { evaluate, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
-import caRules from "../rules/CA.json";
+import { RULES, STATE_NAMES } from "../rules";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { findDuplicateIds } from "../lib/duplicates";
 
-export const RULES: { [state: string]: Rules } = { CA: caRules as unknown as Rules };
-const STATE_NAMES: { [s: string]: string } = { CA: "California" };
+export { RULES };
 
 const daysUntil = (iso: string) => Math.ceil((new Date(iso + "T00:00:00Z").getTime() - Date.now()) / 86400000);
 
@@ -23,7 +22,7 @@ function Bar({ line }: { line: Line }) {
           <Text style={[s.reqNum, { color: C.muted }]}>{line.earned} of max {line.required}</Text>
         </View>
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
-        <Text style={s.reqPeriod}>Up to {line.required} non-technical hours can count toward the total. You don't need to reach it.</Text>
+        <Text style={s.reqPeriod}>Up to {line.required} {line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.</Text>
         <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : "#9CA3AF" }]} /></View>
         {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{line.over} hrs over the maximum — they won't count toward the total</Text>}
       </View>
@@ -42,7 +41,18 @@ function Bar({ line }: { line: Line }) {
         </Text>
       )}
       <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : C.accent }]} /></View>
-      {!line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
+      {line.alt ? (
+        // Two ways to meet it (NY): 40 in any areas, or 24 in one.
+        <View style={s.altBox}>
+          <Text style={s.altText}>
+            Or {line.alt.required} in one subject — closest: {line.alt.area} {line.alt.earned} / {line.alt.required}
+          </Text>
+          {line.met
+            ? <Text style={[s.need, { color: C.ok }]}>{line.mainRemaining === 0 ? `Met with ${line.earned} hrs` : `Met with ${line.alt.earned} hrs of ${line.alt.area}`}</Text>
+            : <Text style={s.need}>{line.mainRemaining} hrs to go — or {line.alt.remaining} more of {line.alt.area}</Text>}
+        </View>
+      ) : !line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
+      {line.required === 0 && line.note ? <Text style={s.reqPeriod}>{line.note}</Text> : null}
     </View>
   );
 }
@@ -76,7 +86,16 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     firstRenewal: !!license.first_renewal,
   };
   const plan = rules ? newLicenseePlan(profile, rules) : null;
-  const cycle = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
+  const cycle: { start: string; end: string; calendarYear?: boolean } = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
+  const year = cycle.start.slice(0, 4);
+  const tagCats = rules?.tagCategories ?? [];
+  const catLabel = (c: string) => rules?.categoryLabels?.[c] ?? c;
+  // The subject area a course counts as, e.g. "Technical" (CA) or "Taxation" (NY).
+  const tagOf = (r: CpeRow) => {
+    const cats = rules ? categoriesOf(toEngineRecord(r), rules) : [];
+    const hit = tagCats.find(c => cats.includes(c));
+    return hit ? catLabel(hit) : "No subject area";
+  };
   const current = rows.filter(r => r.completed_on >= cycle.start && r.completed_on <= cycle.end);
   const earlier = rows.filter(r => r.completed_on < cycle.start);
   const later = rows.filter(r => r.completed_on > cycle.end);
@@ -115,9 +134,11 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     const dupHrs = r2(current.filter(r => dupeIds.has(r.id)).reduce((a, r) => a + Number(r.hours), 0));
     const byCat = (cat: string) => r2(counted.filter(r => rules && categoriesOf(toEngineRecord(r), rules).includes(cat))
       .reduce((a, r) => a + Number(r.hours), 0));
-    const tech = byCat("technical"), nonTech = byCat("non_technical");
+    const tech = byCat("technical");
     const countedHrs = r2(logged - dupHrs);
-    const other = r2(countedHrs - tech - nonTech);
+    // Each course counts under its first matching subject area, so the rows add up to the hours counted.
+    const byTag = tagCats.map(c => ({ c, h: r2(counted.filter(r => tagOf(r) === catLabel(c)).reduce((a, r) => a + Number(r.hours), 0)) }));
+    const other = r2(countedHrs - byTag.reduce((a, x) => a + x.h, 0));
     const total = lines.find(l => l.id === "total");
     const techLine = lines.find(l => l.id === "technical_total");
     const ntLine = lines.find(l => l.kind === "max");
@@ -138,12 +159,15 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <>
         <Text style={ui.h2}>How your hours add up</Text>
         <Card>
-          <Row label={`This cycle's courses (${current.length})`} value={`${logged} hrs`} />
+          <Row label={`${cycle.calendarYear ? `${year}'s` : "This cycle's"} courses (${current.length})`} value={`${logged} hrs`} />
           {dupHrs > 0 && <Row label="Less duplicates (not counted)" value={`−${dupHrs}`} muted />}
           {dupHrs > 0 && <Row label="Hours counted" value={`${countedHrs}`} strong />}
-          <Row label="Technical" value={`${tech}`} indent
-            hint={techLine?.logged != null ? `${techLine.earned} count toward the ${techLine.required} technical for now (${techLine.reserved?.label} still owes ${techLine.reserved?.hours}). All ${tech} still count toward the ${total?.required}.` : undefined} />
-          <Row label="Non-technical" value={`${nonTech}`} indent muted hint={`Maximum ${ntLine?.required} can count`} />
+          {byTag.map(({ c, h }) => (
+            <Row key={c} label={catLabel(c)} value={`${h}`} indent muted={c === "non_technical"}
+              hint={c === "technical" && techLine?.logged != null
+                ? `${techLine.earned} count toward the ${techLine.required} technical for now (${techLine.reserved?.label} still owes ${techLine.reserved?.hours}). All ${tech} still count toward the ${total?.required}.`
+                : c === "non_technical" && ntLine ? `Maximum ${ntLine.required} can count` : undefined} />
+          ))}
           {other > 0 && <Row label="No field of study" value={`${other}`} indent muted hint="Counts toward the total only — edit the course to set a field." />}
           {over > 0 && <Row label="Less non-technical over the maximum" value={`−${over}`} muted />}
           <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
@@ -169,11 +193,11 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.rowTitle}>{r.title}</Text>
           <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
           <Text style={s.tag}>
-            {rules && categoriesOf(rec, rules).includes("technical") ? "Technical" : "Non-technical"} · {r.field_of_study}
+            {tagOf(r)} · {r.field_of_study}
           </Text>
           {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
-          {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>Not counted in current cycle</Text>}
+          {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>{cycle.calendarYear ? `Not counted toward ${year}'s hours` : "Not counted in current cycle"}</Text>}
         </View>
         <View style={{ alignItems: "flex-end", marginLeft: 12 }}>
           <Text style={[s.hours, { marginLeft: 0 }]}>{Number(r.hours)}</Text>
@@ -217,8 +241,10 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
           <Pressable onPress={onEditLicense}><Text style={{ color: C.accent, fontWeight: "600" }}>Edit</Text></Pressable>
         </View>
-        <Text style={s.title}>Renews {fmtDate(license.expiration_date)}</Text>
-        <Text style={ui.muted}>{daysUntil(license.expiration_date)} days left in this cycle</Text>
+        <Text style={s.title}>{cycle.calendarYear ? "Registration renews" : "Renews"} {fmtDate(license.expiration_date)}</Text>
+        <Text style={ui.muted}>{cycle.calendarYear
+          ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours (no carryforward)`
+          : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
         {plan && (
           <View style={s.firstBox}>
             <Text style={s.firstTitle}>First renewal · new-licensee rules</Text>
@@ -232,7 +258,9 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         {urgent && (
           <View style={s.alert}>
             <Text style={s.alertText}>
-              Next deadline: {urgent.remaining} hrs of {urgent.label.replace(" each year", "").toLowerCase()} by {fmtDate(urgent.deadline)}
+              Next deadline: {urgent.alt && urgent.alt.remaining < (urgent.mainRemaining ?? Infinity)
+                ? `${urgent.alt.remaining} more hrs of ${urgent.alt.area} (or ${urgent.mainRemaining} in any subject)`
+                : `${urgent.remaining} hrs of ${urgent.label.replace(" each year", "").toLowerCase()}`} by {fmtDate(urgent.deadline)}
             </Text>
           </View>
         )}
@@ -248,7 +276,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       {current.length > 0 && <Reconciliation />}
 
       {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Tap a course to edit or delete it.</Text>}
-      <Text style={ui.h2}>This cycle ({current.length})</Text>
+      <Text style={ui.h2}>{cycle.calendarYear ? `This year — ${year}` : "This cycle"} ({current.length})</Text>
       <Card>
         {rows.length === 0 && !loading && (
           <View>
@@ -258,19 +286,21 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         )}
         <ConfirmBanner rows={current} />
         <DupeBanner rows={current} />
-        {current.length === 0 && rows.length > 0 && <Text style={ui.muted}>No courses in this cycle yet.</Text>}
+        {current.length === 0 && rows.length > 0 && <Text style={ui.muted}>No courses in {cycle.calendarYear ? year : "this cycle"} yet.</Text>}
         {current.map((r, i) => renderRow(r, i))}
       </Card>
 
       {later.length > 0 && (<>
-        <Text style={ui.h2}>After this renewal ({later.length})</Text>
-        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Dated after {fmtDate(cycle.end)} — these will count toward your next cycle.</Text>
+        <Text style={ui.h2}>{cycle.calendarYear ? "Next year" : "After this renewal"} ({later.length})</Text>
+        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Dated after {fmtDate(cycle.end)} — these will count toward your next {cycle.calendarYear ? "year" : "cycle"}.</Text>
         <Card><ConfirmBanner rows={later} /><DupeBanner rows={later} />{later.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
       {earlier.length > 0 && (<>
-        <Text style={ui.h2}>Earlier courses ({earlier.length})</Text>
-        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Completed before {fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.</Text>
+        <Text style={ui.h2}>{cycle.calendarYear ? "Earlier years" : "Earlier courses"} ({earlier.length})</Text>
+        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>{cycle.calendarYear
+          ? `Completed before ${fmtDate(cycle.start)} — they don't count toward ${year}'s hours, but can still count toward multi-year requirements like ethics.`
+          : `Completed before ${fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.`}</Text>
         <Card><ConfirmBanner rows={earlier} /><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}
 
@@ -282,6 +312,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
 }
 
 const s = StyleSheet.create({
+  altBox: { marginTop: 2 },
+  altText: { color: C.muted, fontSize: 12, marginTop: 2 },
   firstBox: { marginTop: 10, backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10 },
   firstTitle: { color: C.accent, fontWeight: "700", marginBottom: 2 },
   firstText: { color: C.ink, fontSize: 13 },
