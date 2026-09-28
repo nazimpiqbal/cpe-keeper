@@ -29,6 +29,7 @@ type Req = {
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   orConcentrated?: { hours: number; categories: string[] };
+  group?: string; // dashboard section, e.g. "overall" | "subject" | "special"
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)
@@ -55,6 +56,7 @@ export type Rules = {
   categoryLabels?: { [category: string]: string };
   tagCategories?: string[]; // categories shown on each course and in "How your hours add up", in order
   licenseDateLabel?: string;
+  requirementGroups?: { id: string; label: string }[];
 };
 
 export type Line = {
@@ -68,6 +70,8 @@ export type Line = {
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
   alt?: { label: string; area: string; earned: number; required: number; remaining: number };
   mainRemaining?: number; // hours to go on the main (e.g. 40-hour) path, when alt is set
+  group?: string;          // dashboard section (from the rule file)
+  sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
 };
 
 const d = (s: string) => new Date(s + "T00:00:00Z");
@@ -171,7 +175,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   const subs = Array.from({ length: subCount }, (_, i) => {
     const s = addMonths(start, i * subLen);
     const e = addDays(addMonths(start, (i + 1) * subLen), -1);
-    return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e };
+    return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: `Year ${i + 1}`, start: iso(s), end: iso(e) } };
   });
 
   const label = (cat: string) => rules.categoryLabels?.[cat] ?? cat;
@@ -232,7 +236,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       });
       continue;
     }
-    const windows =
+    const windows: { name: string; s: Date; e: Date; sub?: Line["sub"] }[] =
       q.scope === "cycle" ? [{ name: `${cycleName} (${iso(start)} – ${iso(end)})`, s: start, e: end }] :
       q.scope === "each_sub_period" ? subs :
       [{ name: `Last ${q.lookbackYears} years`, s: addMonths(end, -12 * (q.lookbackYears ?? 0)), e: end }];
@@ -242,7 +246,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         // A ceiling: never "to go"; anything above it is excluded from the total.
         lines.push({
           id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",
-          over: round(Math.max(0, earned - q.hours)), remaining: 0, met: true, note: q.note, deadline: iso(w.e),
+          over: round(Math.max(0, earned - q.hours)), remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub,
         });
         continue;
       }
@@ -255,7 +259,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       const line: Line = {
         id: q.id, label: q.label, period: w.name, required: q.hours, earned,
-        remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
+        remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e), sub: w.sub,
       };
       if (q.orConcentrated) {
         // Best single area, e.g. 22 hrs of Taxation toward the 24-hour option.
@@ -271,6 +275,9 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       lines.push(line);
     }
   }
+  // Tag each line with its dashboard section, and per-year lines with their year.
+  const groupOf = new Map(rules.requirements.map(q => [q.id, q.group]));
+  for (const l of lines) l.group = groupOf.get(l.id);
   applyMaximums(lines, rules);
   capByAnnualMinimums(lines, rules);
   return lines;

@@ -11,6 +11,9 @@ export { RULES };
 
 const daysUntil = (iso: string) => Math.ceil((new Date(iso + "T00:00:00Z").getTime() - Date.now()) / 86400000);
 
+// Inside a Year block the year and dates are in the block header, so the label drops "each year" and the period is hidden.
+const shortLabel = (l: Line) => l.sub ? l.label.replace(/ each year$/, "") : l.label;
+
 function Bar({ line }: { line: Line }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
   if (line.kind === "max") {
@@ -31,10 +34,10 @@ function Bar({ line }: { line: Line }) {
   return (
     <View style={s.req}>
       <View style={s.reqTop}>
-        <Text style={s.reqLabel}>{line.met ? "✓ " : ""}{line.label}</Text>
+        <Text style={s.reqLabel}>{line.met ? "✓ " : ""}{shortLabel(line)}</Text>
         <Text style={s.reqNum}>{line.required ? `${line.earned} / ${line.required}` : "Not due"}</Text>
       </View>
-      <Text style={s.reqPeriod}>{line.period}</Text>
+      {!line.sub && <Text style={s.reqPeriod}>{line.period}</Text>}
       {line.logged != null && line.reserved && (
         <Text style={s.reqPeriod}>
           {line.logged} logged · {line.reserved.hours} must still come from {line.reserved.label}
@@ -54,6 +57,47 @@ function Bar({ line }: { line: Line }) {
       ) : !line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
       {line.required === 0 && line.note ? <Text style={s.reqPeriod}>{line.note}</Text> : null}
     </View>
+  );
+}
+
+// Requirements split into sections (Overall / Subject / Special). Within a section, whole-cycle lines come first,
+// then one block per year (CA Year 1 / Year 2), each with its dates and whether it's the current year.
+function Requirements({ lines, groups }: { lines: Line[]; groups?: { id: string; label: string }[] }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const sections = groups?.length ? groups : [{ id: "", label: "Requirements" }];
+  const inSection = (g: string) => lines.filter(l => !groups?.length || (l.group ?? "overall") === g);
+  return (
+    <>
+      {sections.map(g => {
+        const ls = inSection(g.id);
+        if (!ls.length) return null;
+        const whole = ls.filter(l => !l.sub);
+        const years = [...new Set(ls.filter(l => l.sub).map(l => l.sub!.index))].sort();
+        return (
+          <View key={g.id}>
+            <Text style={ui.h2}>{g.label}</Text>
+            <Card>
+              {whole.map((l, i) => <Bar key={l.id + i} line={l} />)}
+              {years.map(n => {
+                const yl = ls.filter(l => l.sub?.index === n);
+                const sub = yl[0].sub!;
+                const status = today > sub.end ? "Ended" : today >= sub.start ? "Current" : "Upcoming";
+                return (
+                  <View key={n} style={[s.yearBlock, status === "Current" && s.yearNow]}>
+                    <View style={s.yearHead}>
+                      <Text style={s.yearTitle}>{sub.label}</Text>
+                      <Text style={[s.yearBadge, status === "Current" ? s.badgeNow : s.badgeOther]}>{status.toUpperCase()}</Text>
+                    </View>
+                    <Text style={s.yearDates}>{fmtDate(sub.start)} – {fmtDate(sub.end)}</Text>
+                    {yl.map((l, i) => <Bar key={l.id + i} line={l} />)}
+                  </View>
+                );
+              })}
+            </Card>
+          </View>
+        );
+      })}
+    </>
   );
 }
 
@@ -260,7 +304,9 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
             <Text style={s.alertText}>
               Next deadline: {urgent.alt && urgent.alt.remaining < (urgent.mainRemaining ?? Infinity)
                 ? `${urgent.alt.remaining} more hrs of ${urgent.alt.area} (or ${urgent.mainRemaining} in any subject)`
-                : `${urgent.remaining} hrs of ${urgent.label.replace(" each year", "").toLowerCase()}`} by {fmtDate(urgent.deadline)}
+                : urgent.sub
+                ? `${urgent.remaining} hrs of ${shortLabel(urgent).toLowerCase()} for ${urgent.sub.label}`
+                : `${urgent.remaining} hrs of ${urgent.label.toLowerCase()}`} by {fmtDate(urgent.deadline)}
             </Text>
           </View>
         )}
@@ -270,8 +316,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
 
-      <Text style={ui.h2}>Requirements</Text>
-      <Card>{lines.map((l, i) => <Bar key={l.id + i} line={l} />)}</Card>
+      <Requirements lines={lines} groups={rules?.requirementGroups} />
 
       {current.length > 0 && <Reconciliation />}
 
@@ -313,6 +358,14 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
 
 const s = StyleSheet.create({
   altBox: { marginTop: 2 },
+  yearBlock: { borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, paddingBottom: 0, marginTop: 4, marginBottom: 12 },
+  yearNow: { borderColor: C.accent, backgroundColor: "#F8FAFF" },
+  yearHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  yearTitle: { fontSize: 15, fontWeight: "800", color: C.ink },
+  yearDates: { color: C.muted, fontSize: 12, marginTop: 2, marginBottom: 6 },
+  yearBadge: { fontSize: 10, fontWeight: "800", letterSpacing: 0.8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, overflow: "hidden" },
+  badgeNow: { backgroundColor: C.accent, color: "#fff" },
+  badgeOther: { backgroundColor: "#F3F4F6", color: C.muted },
   altText: { color: C.muted, fontSize: 12, marginTop: 2 },
   firstBox: { marginTop: 10, backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10 },
   firstTitle: { color: C.accent, fontWeight: "700", marginBottom: 2 },

@@ -18,13 +18,15 @@
       "id": "total",
       "label": "Total CE",
       "hours": 80,
-      "scope": "cycle"
+      "scope": "cycle",
+      "group": "overall"
     },
     {
       "id": "annual_total",
-      "label": "Minimum each year",
+      "label": "Total hours each year",
       "hours": 20,
-      "scope": "each_sub_period"
+      "scope": "each_sub_period",
+      "group": "overall"
     },
     {
       "id": "technical_total",
@@ -33,7 +35,8 @@
       "scope": "cycle",
       "categories": [
         "technical"
-      ]
+      ],
+      "group": "subject"
     },
     {
       "id": "technical_annual",
@@ -42,7 +45,8 @@
       "scope": "each_sub_period",
       "categories": [
         "technical"
-      ]
+      ],
+      "group": "subject"
     },
     {
       "id": "non_technical_max",
@@ -53,7 +57,8 @@
         "non_technical"
       ],
       "kind": "max",
-      "note": "Maximum, not a target. Because 40 of the 80 hours must be technical, at most 40 non-technical hours can count toward the 80."
+      "note": "Maximum, not a target. Because 40 of the 80 hours must be technical, at most 40 non-technical hours can count toward the 80.",
+      "group": "subject"
     },
     {
       "id": "ethics",
@@ -62,7 +67,8 @@
       "scope": "cycle",
       "categories": [
         "ethics"
-      ]
+      ],
+      "group": "special"
     },
     {
       "id": "regulatory_review",
@@ -73,7 +79,8 @@
       "categories": [
         "regulatory_review"
       ],
-      "note": "Required if more than six years have lapsed since the last one. Not interchangeable with ethics. Must carry a CBA approval number (RRL-/RRS-)."
+      "note": "Required if more than six years have lapsed since the last one. Not interchangeable with ethics. Must carry a CBA approval number (RRL-/RRS-).",
+      "group": "special"
     },
     {
       "id": "aa",
@@ -83,7 +90,8 @@
       "categories": [
         "accounting_auditing"
       ],
-      "when": "attest"
+      "when": "attest",
+      "group": "subject"
     },
     {
       "id": "gov",
@@ -93,7 +101,8 @@
       "categories": [
         "government"
       ],
-      "when": "government_audit"
+      "when": "government_audit",
+      "group": "subject"
     },
     {
       "id": "prep",
@@ -105,7 +114,8 @@
       ],
       "when": "preparation_engagement",
       "unless": "attest",
-      "note": "8 hours in preparation engagement subject matter. Covered by the 24 A&A hours if you also do audit/attest work."
+      "note": "8 hours in preparation engagement subject matter. Covered by the 24 A&A hours if you also do audit/attest work.",
+      "group": "subject"
     },
     {
       "id": "fraud",
@@ -120,7 +130,8 @@
         "government_audit",
         "preparation_engagement"
       ],
-      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements — one requirement, not one per activity."
+      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements — one requirement, not one per activity.",
+      "group": "subject"
     }
   ],
   "newLicensee": {
@@ -132,7 +143,8 @@
         "id": "total",
         "label": "Total CE",
         "per20": 20,
-        "scope": "cycle"
+        "scope": "cycle",
+        "group": "overall"
       },
       {
         "id": "technical_total",
@@ -143,7 +155,8 @@
           "technical",
           "regulatory_review"
         ],
-        "note": "Half of your hours must be technical. The Regulatory Review course counts toward this."
+        "note": "Half of your hours must be technical. The Regulatory Review course counts toward this.",
+        "group": "subject"
       },
       {
         "id": "non_technical_max",
@@ -154,7 +167,8 @@
           "non_technical"
         ],
         "kind": "max",
-        "note": "Maximum, not a target. Because half your hours must be technical, only this many non-technical hours can count."
+        "note": "Maximum, not a target. Because half your hours must be technical, only this many non-technical hours can count.",
+        "group": "subject"
       },
       {
         "id": "regulatory_review",
@@ -164,7 +178,8 @@
         "categories": [
           "regulatory_review"
         ],
-        "note": "Required for every new licensee's first renewal. Must carry a CBA approval number (RRL-/RRS-)."
+        "note": "Required for every new licensee's first renewal. Must carry a CBA approval number (RRL-/RRS-).",
+        "group": "special"
       },
       {
         "id": "ethics",
@@ -174,7 +189,8 @@
         "categories": [
           "ethics"
         ],
-        "minTotal": 80
+        "minTotal": 80,
+        "group": "special"
       },
       {
         "id": "aa",
@@ -185,7 +201,8 @@
           "accounting_auditing"
         ],
         "when": "attest",
-        "note": "6 hours for every 20 hours required."
+        "note": "6 hours for every 20 hours required.",
+        "group": "subject"
       },
       {
         "id": "gov",
@@ -196,7 +213,8 @@
           "government"
         ],
         "when": "government_audit",
-        "note": "6 hours for every 20 hours required."
+        "note": "6 hours for every 20 hours required.",
+        "group": "subject"
       },
       {
         "id": "prep",
@@ -208,7 +226,8 @@
         ],
         "when": "preparation_engagement",
         "unless": "attest",
-        "note": "2 hours for every 20 hours required. Covered by the A&A hours if you also do audit/attest work."
+        "note": "2 hours for every 20 hours required. Covered by the A&A hours if you also do audit/attest work.",
+        "group": "subject"
       },
       {
         "id": "fraud",
@@ -223,7 +242,8 @@
           "government_audit",
           "preparation_engagement"
         ],
-        "minTotal": 80
+        "minTotal": 80,
+        "group": "subject"
       }
     ]
   },
@@ -314,5 +334,19 @@
   "tagCategories": [
     "technical",
     "non_technical"
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ]
 }

@@ -30,7 +30,8 @@
           "specialized"
         ]
       },
-      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). No carryforward."
+      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). No carryforward.",
+      "group": "overall"
     },
     {
       "id": "ethics",
@@ -41,7 +42,8 @@
       "categories": [
         "ethics"
       ],
-      "note": "4 hours in the three calendar years before your registration renews. If your principal place of business is in New York, it must be a New York State-specific ethics course."
+      "note": "4 hours in the three calendar years before your registration renews. If your principal place of business is in New York, it must be a New York State-specific ethics course.",
+      "group": "special"
     },
     {
       "id": "attest",
@@ -55,7 +57,8 @@
         "attest"
       ],
       "when": "attest",
-      "note": "If you supervise attest or compilation work or sign reports: 40 hours in accounting, auditing or attest in the prior three calendar years, or in the year you do the work. Separate from the 24-hour option."
+      "note": "If you supervise attest or compilation work or sign reports: 40 hours in accounting, auditing or attest in the prior three calendar years, or in the year you do the work. Separate from the 24-hour option.",
+      "group": "subject"
     }
   ],
   "newLicensee": {
@@ -131,5 +134,19 @@
     "Whether NY treats NASBA 'Behavioral Ethics' strictly as Advisory Services (per the NYSED Q&A) — it does not count toward the 4 ethics hours.",
     "Courses on marketing professional services or firm profitability get no NY credit; Communications and Marketing courses are counted as advisory unless the user changes them.",
     "The New York State-specific ethics requirement (principal place of business in NY) can't be verified from a certificate — shown as a reminder only."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ]
 }
