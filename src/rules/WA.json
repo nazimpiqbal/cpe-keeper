@@ -1,0 +1,146 @@
+{
+  "state": "WA",
+  "board": "Washington State Board of Accountancy",
+  "sourceUrls": [
+    "https://app.leg.wa.gov/wac/default.aspx?cite=4-30-134",
+    "https://acb.wa.gov/individual-licensing/renewal",
+    "https://acb.wa.gov/individual-licensing/continuing-professional-education-cpe/continuing-professional-education-first-reporting-period",
+    "https://acb.wa.gov/individual-licensing/not-enough-cpe-renew-cpe-extension-requests",
+    "https://www.nasbaregistry.org/cpe-requirements/washington"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "calendarSubPeriods": true,
+    "endsDecemberBeforeExpiration": true,
+    "label": "Reporting period",
+    "note": "Licenses expire June 30 every three years. CPE must be done by December 31 of the year before, over three calendar years."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall",
+      "showNote": true,
+      "note": "Due by December 31 of the year before your license expires. Renew between January 1 and April 30; the license lapses July 1 if not renewed.",
+      "warning": "Missed December 31? You can request a CPE extension and carry back hours completed by June 30 — only one extension in any six years, and carried-back hours can't count again toward your next period."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "non_technical_max",
+      "label": "Non-technical",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "non_technical"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 60 non-technical hours (communication, management, leadership, client relations, practice development, motivational) count."
+    },
+    {
+      "id": "ethics",
+      "label": "Washington Board-approved ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "wa_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "A 4-hour ethics and regulation course from a Washington Board-approved provider. Other ethics courses count toward the 120 but not this. We count courses with \"Washington\" and \"ethics\" in the title — edit the title if yours isn't picked up."
+    }
+  ],
+  "newLicensee": {
+    "firstPeriodFromIssue": true,
+    "note": "Your first period runs from your license issue date to December 31 of the year before your license expires — the full 120 hours, at least 20 in each calendar year (including the first, partial one)."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Washington licenses expire June 30 every three years (e.g. 06/30/2028). CPE is due by December 31 of the year before.",
+  "issueDateHint": "If your license was issued during this period, your first period starts on this date.",
+  "deadlineLabel": "License expires",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "06-30",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical",
+    "wa_ethics": "Washington ethics"
+  },
+  "tagCategories": [
+    "wa_ethics",
+    "technical",
+    "non_technical"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Regulatory Ethics",
+      "Computer Software and Applications"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Business Management and Organization",
+      "Production",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "wa_ethics": [
+      "washington+ethics"
+    ]
+  },
+  "categoryExcludes": {
+    "wa_ethics": [
+      "non_technical"
+    ]
+  },
+  "limitsNotTracked": [
+    "Nano-learning: max 12 hours per period.",
+    "Board service, first-time instruction/development and authorship: max 60 combined, and they don't count toward the 20-hour yearly minimum.",
+    "Non-interactive self-study earns half credit."
+  ],
+  "toVerify": [
+    "Non-technical mapping (WAC 4-30-132 wasn't readable from here): Communications and Marketing, Personal Development, Personnel/HR, Business Management and Organization, Production and Behavioral Ethics treated as non-technical; Computer Software and Applications as technical.",
+    "Whether a Washington-approved ethics course also counts as technical (we count it toward the 120 and keep it out of the non-technical cap).",
+    "Carry-back hours (Jan 1 – June 30 of the renewal year, with an extension) are explained on the dashboard but not added to the numbers."
+  ]
+}

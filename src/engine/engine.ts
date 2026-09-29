@@ -47,7 +47,13 @@ type Req = {
 export type Rules = {
   state: string;
   // calendar_year with yearStartMonth = a fixed yearly CPE period, e.g. CT: July 1 – June 30 (yearStartMonth 7).
-  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number };
+  cycle: {
+    type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number;
+    // WA: the CPE period ends December 31 of the year before the license expires (license expires June 30).
+    endsDecemberBeforeExpiration?: boolean;
+    // WA: minimums apply per calendar year (2025, 2026, 2027) rather than per 12 months from the cycle start.
+    calendarSubPeriods?: boolean;
+  };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
@@ -65,6 +71,8 @@ export type Rules = {
     phaseIn?: { none?: boolean; total?: number; annual?: number; months?: number; note?: string }[];
     // FL-style: the first period runs from the issue date to the Nth occurrence of this date after it (third June 30).
     firstPeriodNthDate?: { month: number; day: number; count: number };
+    // WA-style: the first period starts on the issue date (full requirement, no proration).
+    firstPeriodFromIssue?: boolean;
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
     // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
@@ -133,6 +141,17 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
 
 // Current renewal cycle, e.g. CA license expiring 2028-01-31 → 2026-02-01 to 2028-01-31.
 // On a first renewal under new-licensee rules, the cycle runs from the issue date instead.
+// When the CPE period ends (usually the license expiration; WA: Dec 31 of the year before).
+export function cpePeriodEnd(licenseExpiration: string, rules: Rules): string {
+  return rules.cycle.endsDecemberBeforeExpiration ? `${Number(licenseExpiration.slice(0, 4)) - 1}-12-31` : licenseExpiration;
+}
+// Normal start of the rolling period, moved to the issue date for a WA-style first period.
+function rollingStart(end: Date, rules: Rules, profile?: Partial<Profile>): Date {
+  const normal = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
+  const issued = profile?.licenseIssued ? d(profile.licenseIssued) : null;
+  return rules.newLicensee?.firstPeriodFromIssue && issued && issued > normal && issued <= end ? issued : normal;
+}
+
 // Calendar-year states (NY): the current calendar year.
 export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: Partial<Profile>, asOf: string = today()):
   { start: string; end: string; calendarYear?: boolean; label?: string } {
@@ -150,8 +169,8 @@ export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: P
     const end = d(licenseExpiration);
     return { start: iso(addDays(addMonths(end, -ph.stage.months), 1)), end: iso(end) };
   }
-  const end = d(licenseExpiration);
-  return { start: iso(addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1)), end: iso(end) };
+  const end = d(cpePeriodEnd(licenseExpiration, rules));
+  return { start: iso(rollingStart(end, rules, profile)), end: iso(end) };
 }
 
 // Full license years completed by this renewal, for states that phase CPE in (TX).
@@ -248,8 +267,8 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
   const ph = phaseStage(profile, rules);
   if (ph) return evaluatePhaseIn(records, profile, rules, ph.n, ph.stage);
-  const end = d(profile.licenseExpiration);
-  const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
+  const end = d(cpePeriodEnd(profile.licenseExpiration, rules));
+  const start = rollingStart(end, rules, profile);
   if (rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued && d(profile.licenseIssued) >= start) {
     return [{
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
@@ -313,11 +332,18 @@ function evaluatePhaseIn(records: Record[], profile: Profile, rules: Rules, n: n
 function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start: Date, end: Date, cycleName: string, asOf: string = today()): Line[] {
   const subCount = rules.cycle.subPeriods ?? 0;
   const subLen = subCount ? (rules.cycle.lengthMonths ?? 0) / subCount : 0;
-  const subs = Array.from({ length: subCount }, (_, i) => {
-    const s = addMonths(start, i * subLen);
-    const e = addDays(addMonths(start, (i + 1) * subLen), -1);
-    return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: `Year ${i + 1}`, start: iso(s), end: iso(e) } };
-  });
+  const subs = rules.cycle.calendarSubPeriods
+    // One sub-period per calendar year in the window; the first may be partial (WA first period from the issue date).
+    ? Array.from({ length: end.getUTCFullYear() - start.getUTCFullYear() + 1 }, (_, i) => {
+        const y = start.getUTCFullYear() + i;
+        const s = i === 0 ? start : d(`${y}-01-01`), e = d(`${y}-12-31`) > end ? end : d(`${y}-12-31`);
+        return { name: `${y} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: `${y}`, start: iso(s), end: iso(e) } };
+      })
+    : Array.from({ length: subCount }, (_, i) => {
+        const s = addMonths(start, i * subLen);
+        const e = addDays(addMonths(start, (i + 1) * subLen), -1);
+        return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: `Year ${i + 1}`, start: iso(s), end: iso(e) } };
+      });
 
   const label = (cat: string) => rules.categoryLabels?.[cat] ?? cat;
   const sm = startMonth(rules);

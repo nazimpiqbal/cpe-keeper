@@ -321,6 +321,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         <Text style={s.title}>{rules?.deadlineLabel ?? (cycle.calendarYear ? "Registration renews" : "Renews")} {fmtDate(license.expiration_date)}</Text>
         <Text style={ui.muted}>{cycle.calendarYear
           ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours${rules?.yearEndNote ? ` (${rules.yearEndNote})` : ""}`
+          : cycle.end !== license.expiration_date
+          ? `CPE due ${fmtDate(cycle.end)} · ${daysUntil(cycle.end)} days left`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
         {rules && (() => {
           // A saved date that can't be right for this state (e.g. a Texas license set two years out).
