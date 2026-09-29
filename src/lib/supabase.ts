@@ -1,8 +1,6 @@
 import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
-import { Record as CpeRecord } from "../engine/engine";
-import { normalizeDelivery } from "./delivery";
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -17,39 +15,10 @@ AppState.addEventListener("change", state => {
   else supabase.auth.stopAutoRefresh();
 });
 
-export type License = {
-  id: string;
-  state: string;
-  expiration_date: string;
-  license_issued: string | null;
-  regulatory_review_due: string | null;
-  practice: string[];
-  first_renewal?: boolean;
-};
+export type { License, CpeRow } from "./records";
+export { toEngineRecord } from "./records";
 
-export type CpeRow = {
-  id: string;
-  title: string;
-  provider: string | null;
-  completed_on: string;
-  hours: number;
-  field_of_study: string | null;
-  delivery_method: string | null;
-  needs_review: boolean;
-  created_at: string;
-  sponsor_id?: string | null;
-  certificate_path?: string | null;
-};
 
-export const toEngineRecord = (r: CpeRow): CpeRecord => ({
-  title: r.title,
-  provider: r.provider ?? "",
-  date: r.completed_on,
-  hours: Number(r.hours),
-  fieldOfStudy: r.field_of_study ?? "",
-  delivery: normalizeDelivery(r.delivery_method) ?? undefined,
-  needsReview: r.needs_review,
-});
 
 // Turns Supabase errors into something a user can act on.
 export function friendlyError(msg: string) {

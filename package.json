@@ -3,16 +3,21 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.117.2",
     "expo": "~57.0.25",
+    "expo-document-picker": "~57.0.2",
+    "expo-file-system": "~57.0.7",
+    "expo-image-manipulator": "~57.0.20",
+    "expo-image-picker": "~57.0.20",
+    "expo-print": "~57.0.2",
+    "expo-sharing": "~57.0.22",
     "expo-status-bar": "~57.0.1",
+    "expo-web-browser": "~57.0.3",
+    "pdf-lib": "^1.17.1",
     "react": "19.2.3",
     "react-native": "0.86.3",
-    "@supabase/supabase-js": "^2.117.2",
-    "@react-native-async-storage/async-storage": "2.2.0",
-    "expo-image-picker": "~57.0.20",
-    "expo-document-picker": "~57.0.2",
-    "expo-web-browser": "~57.0.3",
-    "expo-image-manipulator": "~57.0.20"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
@@ -23,7 +28,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "npx tsx scripts/test-nazim.ts && npx tsx scripts/test-dates.ts && npx tsx scripts/test-new-licensee.ts && npx tsx scripts/test-ny.ts && npx tsx scripts/test-tx.ts && npx tsx scripts/test-fl.ts && npx tsx scripts/test-il.ts && npx tsx scripts/test-id.ts && npx tsx scripts/test-ct.ts && npx tsx scripts/test-wa.ts && npx tsx scripts/test-az.ts && npx tsx scripts/test-nj.ts && npx tsx scripts/test-pa.ts && npx tsx scripts/test-oh.ts && npx tsx scripts/test-mi.ts && npx tsx scripts/test-ga.ts && npx tsx scripts/test-summary.ts"
+    "test": "npx tsx scripts/test-nazim.ts && npx tsx scripts/test-dates.ts && npx tsx scripts/test-new-licensee.ts && npx tsx scripts/test-ny.ts && npx tsx scripts/test-tx.ts && npx tsx scripts/test-fl.ts && npx tsx scripts/test-il.ts && npx tsx scripts/test-id.ts && npx tsx scripts/test-ct.ts && npx tsx scripts/test-wa.ts && npx tsx scripts/test-az.ts && npx tsx scripts/test-nj.ts && npx tsx scripts/test-pa.ts && npx tsx scripts/test-oh.ts && npx tsx scripts/test-mi.ts && npx tsx scripts/test-ga.ts && npx tsx scripts/test-summary.ts && npx tsx scripts/test-transcript.ts"
   },
   "private": true
 }

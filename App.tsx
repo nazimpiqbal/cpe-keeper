@@ -13,10 +13,11 @@ import ScanScreen, { Extracted } from "./src/screens/ScanScreen";
 import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 import CertificatesScreen from "./src/screens/CertificatesScreen";
 import CoursesScreen from "./src/screens/CoursesScreen";
+import ExportScreen from "./src/screens/ExportScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
@@ -98,6 +99,7 @@ export default function App() {
     <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
+  else if (view === "export") screen = <ExportScreen license={license} onClose={() => setView(tab)} />;
   else if (view === "certificates") screen = (
     <Tabs active="certificates" onChange={goTab}>
       <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle}
@@ -116,7 +118,7 @@ export default function App() {
     <Tabs active="dashboard" onChange={goTab}>
       <DashboardScreen key={dashKey} license={license}
         onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
-        onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} />
+        onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} onExport={() => setView("export")} />
     </Tabs>
   );
 

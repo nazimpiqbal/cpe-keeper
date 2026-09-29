@@ -29,7 +29,8 @@
           "photosPermission": "CPE Keeper uses your photos so you can upload CPE certificates.",
           "cameraPermission": "CPE Keeper uses the camera so you can photograph CPE certificates."
         }
-      ]
+      ],
+      "expo-sharing"
     ]
   }
 }

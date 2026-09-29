@@ -181,8 +181,8 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
   );
 }
 
-export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense }: {
-  license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void;
+export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport }: {
+  license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void; onExport: () => void;
 }) {
   const { rows, loading, error, load, dupeIds } = useCourses();
 
@@ -297,7 +297,12 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
   return (
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
-      <Text style={[ui.brand, { marginBottom: 12 }]}>CPE Keeper</Text>
+      <View style={s.topRow}>
+        <Text style={ui.brand}>CPE Keeper</Text>
+        <Pressable onPress={onExport} style={s.auditBtn} accessibilityRole="button" accessibilityLabel="Audit report — PDF or Excel">
+          <Text style={s.auditText}>🧾 Audit report</Text>
+        </Pressable>
+      </View>
       <ErrorText msg={error} />
 
       <Card>
@@ -360,6 +365,9 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
 const s = StyleSheet.create({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
+  topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+  auditBtn: { borderWidth: 1, borderColor: C.accent, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: "#fff" },
+  auditText: { color: C.accent, fontWeight: "700", fontSize: 13 },
   sumHead: { flexDirection: "row", alignItems: "baseline", marginBottom: 4 },
   sumBig: { fontSize: 28, fontWeight: "800", color: C.ink, fontVariant: ["tabular-nums"] },
   sumUnit: { fontSize: 15, color: C.muted, fontWeight: "600" },
