@@ -35,6 +35,7 @@ type Req = {
   orConcentrated?: { hours: number; categories: string[] };
   group?: string; // dashboard section, e.g. "overall" | "subject" | "special"
   showNote?: boolean; // always show the note under this line on the dashboard
+  warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)

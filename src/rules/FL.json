@@ -24,8 +24,9 @@
       "hours": 80,
       "scope": "cycle",
       "group": "overall",
-      "note": "Hours must be done by June 30. Proof must be uploaded to the DBPR On-Line Services portal by December 31 after the period, before your license renewal. Missed June 30? Automatic extension to September 15 with 8 extra accounting & auditing hours (88 total), or to December 31 with 16 extra (96 total). Nonresidents may instead show their home state's CPE compliance, but still need the Florida ethics course.",
-      "showNote": true
+      "note": "Hours must be done by June 30. Proof must be uploaded to the DBPR On-Line Services portal by December 31 after the period, before your license renewal. Nonresidents may instead show their home state's CPE compliance, but still need the Florida ethics course.",
+      "showNote": true,
+      "warning": "Missed June 30? Automatic extension to September 15 with 8 extra accounting & auditing hours (88 total), or to December 31 with 16 extra (96 total)."
     },
     {
       "id": "aa",

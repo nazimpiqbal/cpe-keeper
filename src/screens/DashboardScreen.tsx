@@ -22,7 +22,7 @@ function deadlineText(l: Line) {
   return `${l.remaining} hrs${what}${when}`;
 }
 
-function Bar({ line, showNote }: { line: Line; showNote?: boolean }) {
+function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warning?: string }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
   if (line.kind === "max") {
     // A ceiling, not a goal: grey bar, no "to go", no checkmark.
@@ -64,13 +64,16 @@ function Bar({ line, showNote }: { line: Line; showNote?: boolean }) {
         </View>
       ) : !line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
+      {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
     </View>
   );
 }
 
 // Requirements split into sections (Overall / Subject / Special). Within a section, whole-cycle lines come first,
 // then one block per year (CA Year 1 / Year 2), each with its dates and whether it's the current year.
-function Requirements({ lines, groups, noteIds }: { lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string> }) {
+function Requirements({ lines, groups, noteIds, warnings }: {
+  lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string>; warnings: Map<string, string>;
+}) {
   const today = new Date().toISOString().slice(0, 10);
   const sections = groups?.length ? groups : [{ id: "", label: "Requirements" }];
   const inSection = (g: string) => lines.filter(l => !groups?.length || (l.group ?? "overall") === g);
@@ -85,7 +88,7 @@ function Requirements({ lines, groups, noteIds }: { lines: Line[]; groups?: { id
           <View key={g.id}>
             <Text style={ui.h2}>{g.label}</Text>
             <Card>
-              {whole.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} />)}
+              {whole.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />)}
               {years.map(n => {
                 const yl = ls.filter(l => l.sub?.index === n);
                 const sub = yl[0].sub!;
@@ -97,7 +100,7 @@ function Requirements({ lines, groups, noteIds }: { lines: Line[]; groups?: { id
                       <Text style={[s.yearBadge, status === "Current" ? s.badgeNow : s.badgeOther]}>{status.toUpperCase()}</Text>
                     </View>
                     <Text style={s.yearDates}>{fmtDate(sub.start)} – {fmtDate(sub.end)}</Text>
-                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} />)}
+                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />)}
                   </View>
                 );
               })}
@@ -334,7 +337,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <View style={{ height: 16 }} />
 
       <Requirements lines={lines} groups={rules?.requirementGroups}
-        noteIds={new Set((rules?.requirements ?? []).filter(q => q.showNote).map(q => q.id))} />
+        noteIds={new Set((rules?.requirements ?? []).filter(q => q.showNote).map(q => q.id))}
+        warnings={new Map((rules?.requirements ?? []).filter(q => q.warning).map(q => [q.id, q.warning!]))} />
 
       {current.length > 0 && <Reconciliation />}
 
@@ -376,6 +380,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
 
 const s = StyleSheet.create({
   altBox: { marginTop: 2 },
+  warnLine: { color: "#991B1B", fontSize: 12, fontWeight: "600", marginTop: 6 },
   dateProblem: { marginTop: 10, backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: "#FECACA" },
   dateProblemText: { color: C.danger, fontWeight: "700", fontSize: 13 },
   yearBlock: { borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, paddingBottom: 0, marginTop: 4, marginBottom: 12 },
