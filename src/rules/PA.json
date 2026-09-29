@@ -2,7 +2,7 @@
   "state": "PA",
   "board": "Pennsylvania State Board of Accountancy (Department of State)",
   "sourceUrls": [
-    "49 Pa. Code §§ 11.61–11.63 (text provided by user)",
+    "49 Pa. Code §§ 11.61–11.68 (text provided by user)",
     "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/accountancy-board/renewal-information",
     "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/049/chapter11/chap11toc.html&d=reduce",
     "https://www.nasbaregistry.org/cpe-requirements/pennsylvania"
@@ -43,7 +43,7 @@
       "kind": "max",
       "group": "subject",
       "showNote": true,
-      "note": "Maximum, not a target. No more than 40 hours from self-study (including nano) and preapproved authorship count. We use each course's delivery format — set it on each course."
+      "note": "Maximum, not a target. No more than 40 hours of individual (self) study count per reporting period, including when combined with authorship (§ 11.64(2)(iv)). Nano counts as self-study. We use each course's delivery format — set it on each course."
     },
     {
       "id": "aa",
@@ -164,8 +164,9 @@
   ],
   "toVerify": [
     "First-renewal exemption: § 11.62(a) exempts exam-passers from CPE for the initial license application; the Department of State's renewal page extends it to the first renewal. Keyed to the date entered as the issue date.",
-    "40-hour self-study cap comes from the Department of State renewal page (likely § 11.64, not provided). Nano counted as self-study; blended isn't.",
     "Mapping of NASBA fields to the § 11.63 subject areas is for display only (only A&A for attest and ethics have minimums).",
-    "Both Regulatory and Behavioral Ethics count toward the 4 professional ethics hours."
-  ]
+    "Both Regulatory and Behavioral Ethics count toward the 4 professional ethics hours.",
+    "Nano counted as individual study toward the § 11.64 40-hour cap; blended isn't."
+  ],
+  "recordRetention": "Keep certificates for 5 years after each program (§ 11.68(b))."
 }
