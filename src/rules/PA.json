@@ -2,6 +2,7 @@
   "state": "PA",
   "board": "Pennsylvania State Board of Accountancy (Department of State)",
   "sourceUrls": [
+    "49 Pa. Code §§ 11.61–11.63 (text provided by user)",
     "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/accountancy-board/renewal-information",
     "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/049/chapter11/chap11toc.html&d=reduce",
     "https://www.nasbaregistry.org/cpe-requirements/pennsylvania"
@@ -46,19 +47,19 @@
     },
     {
       "id": "aa",
-      "label": "Accounting & attest/auditing",
+      "label": "Accounting & attest",
       "hours": 24,
       "scope": "cycle",
       "categories": [
-        "accounting_auditing"
+        "accounting_attest"
       ],
       "when": "attest",
       "group": "subject",
-      "note": "24 hours in accounting and attest/auditing subjects if you participate in attest activity."
+      "note": "24 hours in accounting and attest if you participate in attest activity (§ 11.63(a)(1)). If you supervise attest services and sign the report, § 11.23a may require additional CPE."
     },
     {
       "id": "ethics",
-      "label": "Ethics",
+      "label": "Professional ethics",
       "hours": 4,
       "scope": "cycle",
       "categories": [
@@ -69,7 +70,7 @@
   ],
   "newLicensee": {
     "exemptIfIssuedInCycle": true,
-    "note": "Licensees who passed the CPA exam during this reporting period are exempt from CPE for their first renewal."
+    "note": "Passed the CPA exam during this reporting period? You're exempt from CPE for your first renewal (Department of State renewal guidance; § 11.62(a) applies the same exemption to the initial license)."
   },
   "practiceOptions": [
     {
@@ -98,41 +99,57 @@
     }
   ],
   "categoryLabels": {
-    "ethics": "Ethics",
-    "accounting_auditing": "Accounting & auditing",
-    "other": "Other subjects"
+    "accounting_attest": "Accounting & attest",
+    "taxation": "Taxation",
+    "advisory": "Advisory services",
+    "management": "Management",
+    "skills": "Professional skills development",
+    "specialized": "Specialized knowledge",
+    "ethics": "Professional ethics"
   },
   "tagCategories": [
     "ethics",
-    "accounting_auditing",
-    "other"
+    "accounting_attest",
+    "taxation",
+    "advisory",
+    "management",
+    "skills",
+    "specialized"
   ],
   "fieldOfStudyMap": {
-    "ethics": [
-      "Regulatory Ethics",
-      "Behavioral Ethics"
-    ],
-    "accounting_auditing": [
+    "accounting_attest": [
       "Accounting",
       "Accounting (Governmental)",
       "Auditing",
       "Auditing (Governmental)"
     ],
-    "other": [
-      "Taxes",
-      "Management Advisory Services",
-      "Economics",
-      "Finance",
-      "Information Technology",
-      "Business Law",
-      "Statistics",
-      "Specialized Knowledge",
-      "Communications and Marketing",
-      "Computer Software and Applications",
+    "taxation": [
+      "Taxes"
+    ],
+    "advisory": [
+      "Management Advisory Services"
+    ],
+    "management": [
       "Business Management and Organization",
       "Personnel/Human Resources",
+      "Finance",
+      "Economics",
       "Production",
-      "Personal Development"
+      "Information Technology"
+    ],
+    "skills": [
+      "Communications and Marketing",
+      "Personal Development",
+      "Computer Software and Applications"
+    ],
+    "specialized": [
+      "Specialized Knowledge",
+      "Business Law",
+      "Statistics"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
     ]
   },
   "deliveryMap": {
@@ -146,9 +163,9 @@
     "Authorship: 20 per publication, 40 total (shares the 40-hour self-study cap)."
   ],
   "toVerify": [
-    "49 Pa. Code §§ 11.61–11.68 couldn't be read from here (robots block) — requirements are from the Department of State renewal page and NASBA.",
-    "First-renewal exemption is keyed to passing the exam in the period; the app uses the date entered as the issue date.",
-    "Nano learning counted as self-study toward the 40-hour cap; blended isn't.",
-    "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours."
+    "First-renewal exemption: § 11.62(a) exempts exam-passers from CPE for the initial license application; the Department of State's renewal page extends it to the first renewal. Keyed to the date entered as the issue date.",
+    "40-hour self-study cap comes from the Department of State renewal page (likely § 11.64, not provided). Nano counted as self-study; blended isn't.",
+    "Mapping of NASBA fields to the § 11.63 subject areas is for display only (only A&A for attest and ethics have minimums).",
+    "Both Regulatory and Behavioral Ethics count toward the 4 professional ethics hours."
   ]
 }
