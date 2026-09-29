@@ -13,6 +13,7 @@ assert.deepEqual(cycleBounds("2027-12-31", rules, vet), { start: "2025-01-01", e
 assert.deepEqual(categoriesOf(c("2026-01-01", 3, "Regulatory Ethics", "Ohio Professional Standards and Responsibilities"), rules), ["oh_psr"]);
 assert.ok(categoriesOf(c("2026-01-01", 3, "Regulatory Ethics", "Ohio Ethics for CPAs"), rules).includes("oh_psr"));
 assert.ok(!categoriesOf(c("2026-01-01", 3, "Regulatory Ethics", "AICPA Ethics"), rules).includes("oh_psr"));
+assert.ok(categoriesOf(c("2026-01-01", 3, "Regulatory Ethics", "PSR: Accountancy Law Update"), rules).includes("oh_psr"));
 
 const recs = [c("2025-03-01", 30, "Taxes"), c("2026-03-01", 20, "Auditing"), c("2026-06-01", 3, "Regulatory Ethics", "Ohio Ethics Update"),
   c("2027-02-01", 5, "Accounting"), c("2024-12-31", 40, "Taxes")];

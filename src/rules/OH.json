@@ -3,7 +3,7 @@
   "board": "Accountancy Board of Ohio",
   "sourceUrls": [
     "https://www.law.cornell.edu/regulations/ohio/Ohio-Admin-Code-4701-15-02",
-    "https://codes.ohio.gov/ohio-administrative-code/rule-4701-15-11",
+    "https://codes.ohio.gov/ohio-administrative-code/rule-4701-15-11 (full text provided by user)",
     "https://acc.ohio.gov/maintaining-your-license/renewal-requirements",
     "https://www.nasbaregistry.org/cpe-requirements/ohio"
   ],
@@ -43,7 +43,7 @@
       ],
       "when": "financial_reporting",
       "group": "subject",
-      "note": "24 credits if you perform accounting, auditing, assurance or attest engagements, or prepare or sign any financial report."
+      "note": "24 credits in accounting, auditing or attestation standards each three-year period if you perform accounting, auditing, assurance or attestation engagements, or prepare or sign any financial report (OAC 4701-15-11(A))."
     },
     {
       "id": "tax",
@@ -55,7 +55,7 @@
       ],
       "when": "tax_work",
       "group": "subject",
-      "note": "24 credits if you do tax work on any engagement, or prepare or sign any tax return."
+      "note": "24 credits in taxation each three-year period if you do tax work on any engagement, or prepare or sign any tax return (OAC 4701-15-11(B))."
     },
     {
       "id": "psr",
@@ -67,7 +67,7 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "3 credits from a Board-approved Ohio PSR course (Ohio accountancy law and ethics). We count courses with \"Ohio\" and \"ethics\", \"Ohio\" and \"PSR\", or \"Professional Standards and Responsibilities\" in the title."
+      "note": "3 credits each three-year period from a course approved by the Board as Professional Standards and Responsibilities — it can cover Ohio accountancy law and rules, professional ethics, ethical philosophy, or another state's accountancy laws. We count courses with \"PSR\", \"Professional Standards and Responsibilities\", or \"Ohio\" and \"ethics\" in the title — edit the title if your approved course isn't picked up."
     }
   ],
   "newLicensee": {
@@ -150,7 +150,7 @@
   "titleKeywordMap": {
     "oh_psr": [
       "ohio+ethics",
-      "ohio+psr",
+      "psr",
       "professional standards and responsibilities"
     ]
   },
@@ -165,7 +165,7 @@
   ],
   "toVerify": [
     "Reporting period timing is per permit; the user enters their period end (Dec 31). New-licensee initial period detected when that end is Dec 31 of the year after the certificate year.",
-    "Rule 4701-15-11 is from a summary of the current rule (eff. 9/6/2024) — confirm the 3 PSR credits are per triennial period and the exact engagement wording for the 24 A&A and 24 tax credits.",
-    "PSR course recognised by title keywords; the Board approves specific Ohio courses."
+    "PSR course recognised by title keywords; the Board approves specific Ohio courses.",
+    "PSR courses are Board-approved individually; title matching ('PSR', 'Professional Standards and Responsibilities', 'Ohio'+'ethics') may miss an approved course with another title."
   ]
 }
