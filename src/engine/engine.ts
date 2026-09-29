@@ -95,6 +95,7 @@ export type Rules = {
   renewalMonths?: number;      // how far ahead an expiration can be (TX 12, CA 24, NY 36)
   expiresEndOfMonth?: boolean; // licenses expire on the last day of the birth month (CA, TX)
   expiresOnMonthDay?: string;  // every period ends on this date, "MM-DD" (FL: "06-30")
+  expiresYearParity?: "odd" | "even"; // PA: licenses expire Dec 31 of odd-numbered years
   deadlineLabel?: string;      // dashboard heading, e.g. "CPE period ends" (default "Renews")
   yearEndNote?: string;        // calendar-year states: shown after "N days left to finish YYYY's hours"
   issueDateHint?: string;
@@ -583,6 +584,9 @@ export function checkExpiration(licenseExpiration: string, rules: Rules, stateNa
   if (rules.expiresOnMonthDay && licenseExpiration.slice(5) !== rules.expiresOnMonthDay) {
     const [m, dd] = rules.expiresOnMonthDay.split("-");
     return `${stateName} CPE periods always end on ${m}/${dd}. Check the date.`;
+  }
+  if (rules.expiresYearParity && (e.getUTCFullYear() % 2 === 1) !== (rules.expiresYearParity === "odd")) {
+    return `${stateName} licenses expire in ${rules.expiresYearParity}-numbered years. Check the date on your license.`;
   }
   if (rules.expiresEndOfMonth && addDays(e, 1).getUTCDate() !== 1) {
     return `${stateName} licenses expire on the last day of your birth month — e.g. 03/31. Check the date on your license.`;

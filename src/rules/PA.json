@@ -1,0 +1,154 @@
+{
+  "state": "PA",
+  "board": "Pennsylvania State Board of Accountancy (Department of State)",
+  "sourceUrls": [
+    "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/accountancy-board/renewal-information",
+    "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/049/chapter11/chap11toc.html&d=reduce",
+    "https://www.nasbaregistry.org/cpe-requirements/pennsylvania"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "Reporting period",
+    "note": "Licenses expire December 31 of odd-numbered years; CPE runs January 1 of the even year to December 31 of the odd year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than 40 hours from self-study (including nano) and preapproved authorship count. We use each course's delivery format — set it on each course."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & attest/auditing",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "attest",
+      "group": "subject",
+      "note": "24 hours in accounting and attest/auditing subjects if you participate in attest activity."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special"
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Licensees who passed the CPA exam during this reporting period are exempt from CPE for their first renewal."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Attest activity"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Pennsylvania licenses expire December 31 of odd-numbered years (e.g. 12/31/2027).",
+  "issueDateHint": "Enter the date you passed the CPA exam — if it's in this reporting period, no CPE is due for your first renewal.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "expiresYearParity": "odd",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "accounting_auditing": "Accounting & auditing",
+    "other": "Other subjects"
+  },
+  "tagCategories": [
+    "ethics",
+    "accounting_auditing",
+    "other"
+  ],
+  "fieldOfStudyMap": {
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "other": [
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 40 hours (3 CPE per 50 minutes presented).",
+    "Authorship: 20 per publication, 40 total (shares the 40-hour self-study cap)."
+  ],
+  "toVerify": [
+    "49 Pa. Code §§ 11.61–11.68 couldn't be read from here (robots block) — requirements are from the Department of State renewal page and NASBA.",
+    "First-renewal exemption is keyed to passing the exam in the period; the app uses the date entered as the issue date.",
+    "Nano learning counted as self-study toward the 40-hour cap; blended isn't.",
+    "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours."
+  ]
+}
