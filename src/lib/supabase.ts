@@ -2,6 +2,7 @@ import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
 import { Record as CpeRecord } from "../engine/engine";
+import { normalizeDelivery } from "./delivery";
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -46,7 +47,7 @@ export const toEngineRecord = (r: CpeRow): CpeRecord => ({
   date: r.completed_on,
   hours: Number(r.hours),
   fieldOfStudy: r.field_of_study ?? "",
-  delivery: r.delivery_method ?? undefined,
+  delivery: normalizeDelivery(r.delivery_method) ?? undefined,
   needsReview: r.needs_review,
 });
 

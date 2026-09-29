@@ -10,7 +10,7 @@ export const sampleRecords: Record[] = [
   { title: "AI Empowerment Day 4 – AI Process Redesign", provider: "RSM US LLP", date: "2026-03-12", hours: 1.8, fieldOfStudy: "Personal Development" },
   { title: "AI Empowerment Day 5 – Change Management", provider: "RSM US LLP", date: "2026-03-13", hours: 1.8, fieldOfStudy: "Personal Development" },
   // CFGI certificates
-  { title: "LA OC Training", provider: "CFGI (137501)", date: "2026-06-16", hours: 5, fieldOfStudy: "Accounting", delivery: "Live" },
+  { title: "LA OC Training", provider: "CFGI (137501)", date: "2026-06-16", hours: 5, fieldOfStudy: "Accounting", delivery: "Group Live" },
   { title: "Introduction to Controllership Part II", provider: "CFGI (137501)", date: "2026-06-17", hours: 1, fieldOfStudy: "Accounting", delivery: "Group Internet Based" },
   // CFGI Learn transcript — no field of study printed, assumed non-technical
   { title: "Accelerating Your Career with Personal Branding", provider: "CFGI Learn", date: "2026-06-25", hours: 1.4, fieldOfStudy: "Personal Development", needsReview: true },

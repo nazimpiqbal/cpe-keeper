@@ -6,6 +6,7 @@ import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { findDuplicateIds } from "../lib/duplicates";
+import { normalizeDelivery } from "../lib/delivery";
 
 export { RULES };
 
@@ -269,7 +270,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.rowTitle}>{r.title}</Text>
           <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
           <Text style={s.tag}>
-            {tagOf(r)} · {r.field_of_study}{rules?.deliveryMap ? ` · ${r.delivery_method ?? "Format not set"}` : ""}
+            {tagOf(r)} · {r.field_of_study}{rules?.deliveryMap ? ` · ${normalizeDelivery(r.delivery_method) ?? "Format not set"}` : ""}
           </Text>
           {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}

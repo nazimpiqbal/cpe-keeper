@@ -46,3 +46,18 @@ assert.match(checkExpiration("2029-03-31", rules, "Arizona", "2026-09-28")!, /ev
 
 for (const l of L) console.log(`${l.met ? "✅" : "⬜"} ${l.label.padEnd(52)} ${String(l.earned).padStart(5)} / ${l.required}`);
 console.log("\nAZ tests passed");
+
+// Delivery labels from older records and certificates are normalised before the rules see them.
+import { normalizeDelivery } from "../src/lib/delivery";
+const cases: [string, string | null][] = [
+  ["Live", "Group Live"], ["Group Live", "Group Live"], ["Live Presentation", "Group Live"], ["Classroom", "Group Live"], ["In-person seminar", "Group Live"],
+  ["Group Internet Based", "Group Internet Based"], ["Group Internet-based programs", "Group Internet Based"], ["Webinar", "Group Internet Based"],
+  ["Virtual live", "Group Internet Based"], ["Live webinar", "Group Internet Based"],
+  ["QAS Self Study", "QAS Self Study"], ["Self-study", "QAS Self Study"], ["Interactive Self-Study", "QAS Self Study"], ["On-demand", "QAS Self Study"],
+  ["Nano Learning Program", "Nano Learning"], ["Blended Learning Program", "Blended"], ["", null], ["Podcast", null],
+];
+for (const [raw, want] of cases) assert.equal(normalizeDelivery(raw), want, raw);
+// Nazim's LA OC Training (saved as "Live") now counts toward Arizona's 16 live hours.
+const la = { title: "LA OC Training", provider: "CFGI", date: "2026-06-16", hours: 5, fieldOfStudy: "Accounting", delivery: normalizeDelivery("Live") ?? undefined };
+assert.equal(get(evaluate([la], vet, rules), "live").earned, 5);
+console.log("delivery normalisation passed");

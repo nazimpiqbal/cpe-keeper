@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { supabase, friendlyError } from "../lib/supabase";
 import { sameCourse } from "../lib/duplicates";
+import { normalizeDelivery } from "../lib/delivery";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import AddCourseScreen, { FIELDS } from "./AddCourseScreen";
 import type { Extracted } from "./ScanScreen";
@@ -93,7 +94,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
     const rows = fresh.map(c => ({
       user_id: userId, title: c.title.trim(), provider: c.provider?.trim() || null,
       completed_on: c.completed_on, hours: c.hours, field_of_study: c.field_of_study,
-      delivery_method: c.delivery_method, sponsor_id: c.sponsor_id,
+      delivery_method: normalizeDelivery(c.delivery_method), sponsor_id: c.sponsor_id,
       certificate_path: certificatePath, source: "import", needs_review: !c.field_confident,
     }));
     // Existing courses (no certificate yet) the user chose to attach this file to.

@@ -15,7 +15,7 @@ export const FIELDS = [
   "Business Management and Organization", "Communications and Marketing", "Computer Software and Applications",
   "Personal Development", "Personnel/Human Resources", "Production",
 ];
-const DELIVERY = ["Group Live", "Group Internet Based", "QAS Self Study", "Nano Learning", "Blended"];
+import { DELIVERY, normalizeDelivery } from "../lib/delivery";
 
 export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip, cycle, existing }: {
   userId: string;
@@ -38,7 +38,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   const [hours, setHours] = useState(src?.hours != null ? String(src.hours) : "");
   const [field, setField] = useState<string | null>(src?.field_of_study && FIELDS.includes(src.field_of_study) ? src.field_of_study : null);
   const [fieldTouched, setFieldTouched] = useState(false);
-  const [delivery, setDelivery] = useState<string | null>(src?.delivery_method && DELIVERY.includes(src.delivery_method) ? src.delivery_method : null);
+  const [delivery, setDelivery] = useState<string | null>(normalizeDelivery(src?.delivery_method));
   const fieldGuessed = !!src && !src.field_confident && !fieldTouched;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
