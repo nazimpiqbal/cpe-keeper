@@ -41,6 +41,43 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
       </View>
     );
   }
+  if (line.alt) {
+    // Two ways to meet it (NY): e.g. 40 in any subjects OR 24 in one subject — shown side by side.
+    const a = line.alt;
+    const options = [
+      { title: `${line.required} hrs`, sub: "in any subjects", earned: line.earned, required: line.required, remaining: line.mainRemaining ?? 0, area: undefined as string | undefined },
+      { title: `${a.required} hrs`, sub: "in one subject", earned: a.earned, required: a.required, remaining: a.remaining, area: a.area },
+    ];
+    const metWith = line.mainRemaining === 0 ? 0 : a.remaining === 0 ? 1 : -1;
+    return (
+      <View style={s.req}>
+        <View style={s.reqTop}>
+          <Text style={s.reqLabel}>{line.met ? "✓ " : ""}{shortLabel(line)}</Text>
+          <Text style={[s.reqNum, { color: line.met ? C.ok : C.muted, fontSize: 12 }]}>{line.met ? "MET" : "MEET EITHER ONE"}</Text>
+        </View>
+        {!line.sub && <Text style={s.reqPeriod}>{line.period}</Text>}
+        <View style={s.optRow}>
+          {options.map((o, i) => {
+            const done = o.remaining === 0;
+            const pct = Math.min(1, o.earned / o.required);
+            return [
+              i === 1 ? <View key="or" style={s.orWrap}><Text style={s.orText}>OR</Text></View> : null,
+              <View key={i} style={[s.opt, done && s.optMet, metWith !== -1 && !done && { opacity: 0.55 }]}>
+                <Text style={s.optTitle}>{done ? "✓ " : ""}{o.title}</Text>
+                <Text style={s.optSub}>{o.sub}</Text>
+                <Text style={s.optNum}>{o.earned} / {o.required}</Text>
+                {o.area ? <Text style={s.optArea} numberOfLines={1}>{done ? "" : "Closest: "}{o.area}</Text> : <Text style={s.optArea}> </Text>}
+                <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: done ? C.ok : C.accent }]} /></View>
+                <Text style={[s.optNeed, done && { color: C.ok }, metWith !== -1 && !done && { color: C.muted }]}>{done ? "Met" : metWith !== -1 ? "Not needed" : `${hrs(o.remaining)} to go`}</Text>
+              </View>,
+            ];
+          })}
+        </View>
+        {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
+        {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
+      </View>
+    );
+  }
   return (
     <View style={s.req}>
       <View style={s.reqTop}>
@@ -55,17 +92,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         </Text>
       )}
       <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : C.accent }]} /></View>
-      {line.alt ? (
-        // Two ways to meet it (NY): 40 in any areas, or 24 in one.
-        <View style={s.altBox}>
-          <Text style={s.altText}>
-            Or {line.alt.required} in one subject — closest: {line.alt.area} {line.alt.earned} / {line.alt.required}
-          </Text>
-          {line.met
-            ? <Text style={[s.need, { color: C.ok }]}>{line.mainRemaining === 0 ? `Met with ${line.earned} hrs` : `Met with ${line.alt.earned} hrs of ${line.alt.area}`}</Text>
-            : <Text style={s.need}>{hrs(line.mainRemaining ?? 0)} to go — or {line.alt.remaining} more of {line.alt.area}</Text>}
-        </View>
-      ) : line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — this year's minimum was due at your {fmtDate(line.deadline)} renewal</Text>)
+      {line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — this year's minimum was due at your {fmtDate(line.deadline)} renewal</Text>)
         : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
       {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
@@ -73,8 +100,6 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
   );
 }
 
-// Requirements split into sections (Overall / Subject / Special). Within a section, whole-cycle lines come first,
-// then one block per year (CA Year 1 / Year 2), each with its dates and whether it's the current year.
 function Requirements({ lines, groups, noteIds, warnings }: {
   lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string>; warnings: Map<string, string>;
 }) {
@@ -291,7 +316,16 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 }
 
 const s = StyleSheet.create({
-  altBox: { marginTop: 2 },
+  optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
+  opt: { flex: 1, borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 10, backgroundColor: "#fff" },
+  optMet: { borderColor: C.ok, backgroundColor: "#F0FDF4" },
+  optTitle: { fontSize: 17, fontWeight: "800", color: C.ink },
+  optSub: { fontSize: 12, color: C.muted, marginTop: 1 },
+  optNum: { fontSize: 15, fontWeight: "700", color: C.ink, marginTop: 8, fontVariant: ["tabular-nums"] },
+  optArea: { fontSize: 12, color: C.accent, marginTop: 1 },
+  optNeed: { fontSize: 12, color: C.warn, fontWeight: "600", marginTop: 4 },
+  orWrap: { justifyContent: "center", paddingHorizontal: 6 },
+  orText: { fontSize: 11, fontWeight: "800", color: C.muted },
   warnLine: { color: "#991B1B", fontSize: 12, fontWeight: "600", marginTop: 6 },
   dateProblem: { marginTop: 10, backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: "#FECACA" },
   dateProblemText: { color: C.danger, fontWeight: "700", fontSize: 13 },
@@ -303,7 +337,6 @@ const s = StyleSheet.create({
   yearBadge: { fontSize: 10, fontWeight: "800", letterSpacing: 0.8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, overflow: "hidden" },
   badgeNow: { backgroundColor: C.accent, color: "#fff" },
   badgeOther: { backgroundColor: "#F3F4F6", color: C.muted },
-  altText: { color: C.muted, fontSize: 12, marginTop: 2 },
   firstBox: { marginTop: 10, backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10 },
   firstTitle: { color: C.accent, fontWeight: "700", marginBottom: 2 },
   firstText: { color: C.ink, fontSize: 13 },
