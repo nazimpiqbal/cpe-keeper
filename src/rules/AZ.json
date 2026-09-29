@@ -1,0 +1,182 @@
+{
+  "state": "AZ",
+  "board": "Arizona State Board of Accountancy",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/arizona/Ariz-Admin-Code-SS-R4-1-453",
+    "https://www.azaccountancy.gov/Renewals/CPE.aspx",
+    "https://www.nasbaregistry.org/cpe-requirements/arizona"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "Registration period",
+    "note": "Registration runs from the 1st of the month after your birth month to the last day of your birth month two years later."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "live",
+      "label": "Classroom or live interactive webinar",
+      "hours": 16,
+      "scope": "cycle",
+      "categories": [
+        "live"
+      ],
+      "group": "overall",
+      "showNote": true,
+      "note": "At least 16 hours in a classroom or live interactive webinar (or as a lecturer). We count courses marked Group Live or Group Internet Based — set the delivery method on each course."
+    },
+    {
+      "id": "core",
+      "label": "Accounting, auditing, tax, business law or consulting",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "core"
+      ],
+      "group": "subject"
+    },
+    {
+      "id": "aat",
+      "label": "Accounting, auditing or tax",
+      "hours": 16,
+      "scope": "cycle",
+      "categories": [
+        "aat"
+      ],
+      "group": "subject",
+      "note": "At least 16 of the 40 in accounting, auditing or taxation."
+    },
+    {
+      "id": "computer_max",
+      "label": "Computer",
+      "hours": 20,
+      "scope": "cycle",
+      "categories": [
+        "computer"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 20 hours of computer courses count per registration period."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics (AICPA Code + Arizona Board rules)",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "az_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "4 hours, including at least 1 hour on the AICPA Code of Professional Conduct and 1 hour on Arizona Board statutes and rules. Not taught by your employer or a co-worker. We count courses with \"Arizona\" and \"ethics\" in the title — edit the title if yours isn't picked up."
+    }
+  ],
+  "newLicensee": {
+    "prorateByQuarter": {
+      "except": [
+        "ethics"
+      ]
+    },
+    "note": "Registration period shorter than two years: hours are prorated by quarter (ethics isn't)"
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "Registration expiration date",
+  "licenseDateHint": "Arizona registrations end on the last day of your birth month every two years (e.g. 03/31/2028).",
+  "issueDateHint": "If your first registration period is shorter than two years, hours are prorated by quarter from this date.",
+  "renewalMonths": 24,
+  "expiresEndOfMonth": true,
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "aat": "Accounting, auditing & tax",
+    "core": "Business law & consulting",
+    "computer": "Computer",
+    "az_ethics": "Arizona ethics",
+    "other": "Other"
+  },
+  "tagCategories": [
+    "az_ethics",
+    "aat",
+    "core",
+    "computer",
+    "other"
+  ],
+  "fieldOfStudyMap": {
+    "core": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Business Law",
+      "Management Advisory Services"
+    ],
+    "aat": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes"
+    ],
+    "computer": [
+      "Computer Software and Applications"
+    ],
+    "other": [
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "az_ethics": [
+      "arizona+ethics"
+    ]
+  },
+  "deliveryMap": {
+    "live": [
+      "Group Live",
+      "Group Internet Based"
+    ]
+  },
+  "limitsNotTracked": [
+    "Nano-learning: max 4 hours per period.",
+    "Authorship: max 20 hours; instruction plus authorship: max 40 hours."
+  ],
+  "recordRetention": "Keep CPE records for three years.",
+  "toVerify": [
+    "First-period proration: quarters counted from the issue date to the end of the period, part quarters rounded up (the rule just says 'prorated by quarter').",
+    "Group Internet Based counted as 'interactive live webinar' — self-study, nano and blended don't count toward the 16 live hours.",
+    "'Computer courses' mapped to NASBA Computer Software and Applications only (not Information Technology).",
+    "Whether Arizona-approved ethics hours also count toward the 40 core hours (we don't count them)."
+  ]
+}

@@ -269,7 +269,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.rowTitle}>{r.title}</Text>
           <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
           <Text style={s.tag}>
-            {tagOf(r)} · {r.field_of_study}
+            {tagOf(r)} · {r.field_of_study}{rules?.deliveryMap ? ` · ${r.delivery_method ?? "Format not set"}` : ""}
           </Text>
           {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}

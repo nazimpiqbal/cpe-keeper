@@ -58,6 +58,8 @@ export type Rules = {
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
   titleKeywordMap?: { [category: string]: string[] };
+  // Categories from how a course was taken, e.g. AZ: { "live": ["Group Live", "Group Internet Based"] }.
+  deliveryMap?: { [category: string]: string[] };
   // A category that cancels others, e.g. FL: a Board-approved ethics course is ethics, not behavioral.
   categoryExcludes?: { [category: string]: string[] };
   // First-renewal rules (e.g. CA): hours scale with full six-month periods from issue date to first expiration.
@@ -73,6 +75,9 @@ export type Rules = {
     firstPeriodNthDate?: { month: number; day: number; count: number };
     // WA-style: the first period starts on the issue date (full requirement, no proration).
     firstPeriodFromIssue?: boolean;
+    // AZ-style: a first period shorter than the full cycle starts on the issue date and is prorated by quarter
+    // (hours × quarters ÷ quarters in a full cycle, part quarters rounded up), except the listed requirements.
+    prorateByQuarter?: { except: string[] };
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
     // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
@@ -134,7 +139,10 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
     // "texas+ethics" = the title must contain both words.
     .filter(([, words]) => words.some(w => w.split("+").every(part => title.includes(part))))
     .map(([cat]) => cat);
-  const cats = [...new Set([...byField, ...byTitle])];
+  const byDelivery = Object.entries(rules.deliveryMap ?? {})
+    .filter(([, methods]) => !!rec.delivery && methods.includes(rec.delivery))
+    .map(([cat]) => cat);
+  const cats = [...new Set([...byField, ...byTitle, ...byDelivery])];
   const dropped = new Set(cats.flatMap(c => rules.categoryExcludes?.[c] ?? []));
   return cats.filter(c => !dropped.has(c));
 }
@@ -149,7 +157,8 @@ export function cpePeriodEnd(licenseExpiration: string, rules: Rules): string {
 function rollingStart(end: Date, rules: Rules, profile?: Partial<Profile>): Date {
   const normal = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
   const issued = profile?.licenseIssued ? d(profile.licenseIssued) : null;
-  return rules.newLicensee?.firstPeriodFromIssue && issued && issued > normal && issued <= end ? issued : normal;
+  const fromIssue = rules.newLicensee?.firstPeriodFromIssue || rules.newLicensee?.prorateByQuarter;
+  return fromIssue && issued && issued > normal && issued <= end ? issued : normal;
 }
 
 // Calendar-year states (NY): the current calendar year.
@@ -274,6 +283,19 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
     }];
+  }
+  const pq = rules.newLicensee?.prorateByQuarter;
+  const normalStart = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
+  if (pq && start > normalStart) {
+    // Short first period (AZ): scale each requirement by quarters in the period ÷ quarters in a full cycle.
+    const fullQuarters = (rules.cycle.lengthMonths ?? 24) / 3;
+    const quarters = Math.min(fullQuarters, Math.ceil((end.getTime() - start.getTime() + 86400000) / (86400000 * 365.25 / 4)));
+    const f = quarters / fullQuarters;
+    const requirements = rules.requirements.map(q => pq.except.includes(q.id) ? q : { ...q, hours: Math.ceil(q.hours * f * 2) / 2 });
+    const lines = evaluateWindow(records, profile, { ...rules, requirements }, start, end, "First period", asOf);
+    const total = lines.find(l => l.id === "total");
+    if (total) total.note = `${rules.newLicensee?.note ?? "First period prorated"} — ${quarters} of ${fullQuarters} quarters.`;
+    return lines;
   }
   const fp = firstPeriodStart(profile, rules);
   if (fp) {
