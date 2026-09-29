@@ -291,6 +291,13 @@ export function newLicenseePlan(profile: Profile, rules: Rules): NewLicenseePlan
 }
 
 export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf: string = today()): Line[] {
+  const lines = evaluateAll(records, profile, rules, asOf);
+  // A minimum whose deadline has already passed can't be worked toward any more: it's "short", not "to go".
+  for (const l of lines) if (l.kind !== "max" && !l.met && l.remaining > 0 && l.deadline < asOf) l.past = true;
+  return lines;
+}
+
+function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: string): Line[] {
   if (isCalendarYear(rules)) {
     const { start, end } = cycleBounds(profile.licenseExpiration, rules, profile, asOf);
     const sm = startMonth(rules), name = fyLabel(fyIndex(start, sm), sm);
@@ -658,7 +665,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   const groupOf = new Map(rules.requirements.map(q => [q.id, q.group]));
   for (const l of lines) l.group = groupOf.get(l.id) ?? l.group;
   applyMaximums(lines, rules);
-  capByAnnualMinimums(lines, rules);
+  capByAnnualMinimums(lines, rules, asOf);
   return lines;
 }
 
@@ -685,13 +692,14 @@ function applyMaximums(lines: Line[], rules: Rules) {
 // can't be finished early: hours still owed to a later year are reserved. So what counts toward the total
 // right now is capped at (total required − hours still owed to the yearly minimums).
 // Example: 28.5 technical in Year 1, 0 in Year 2 → Year 2 still owes 12 → 28 / 40 counts, 12 to go.
-function capByAnnualMinimums(lines: Line[], rules: Rules) {
+function capByAnnualMinimums(lines: Line[], rules: Rules, asOf: string) {
   const sameCats = (a?: string[], b?: string[]) => JSON.stringify([...(a ?? [])].sort()) === JSON.stringify([...(b ?? [])].sort());
   for (const q of rules.requirements.filter(r => r.scope === "cycle")) {
     const annual = rules.requirements.find(r => r.scope === "each_sub_period" && sameCats(r.categories, q.categories) && r.when === q.when);
     if (!annual) continue;
     const total = lines.find(l => l.id === q.id);
-    const years = lines.filter(l => l.id === annual.id);
+    // Years already over can't take more hours, so they don't hold hours back from the total (their shortfall shows on its own).
+    const years = lines.filter(l => l.id === annual.id && l.deadline >= asOf);
     if (!total || !years.length) continue;
     const owed = round(years.reduce((a, y) => a + y.remaining, 0));
     const countable = round(Math.max(0, Math.min(total.earned, total.required - owed)));

@@ -65,4 +65,15 @@ assert(!lines.some(l => l.label === "Fraud"), "no fraud line when no practice se
 const withFraud: Record[] = [...records, { title: "Fraud Risk in Revenue Recognition", provider: "X", date: "2026-07-01", hours: 2, fieldOfStudy: "Auditing" }];
 const wf = evaluate(withFraud, { licenseExpiration: "2028-01-31", practice: ["attest"], licenseIssued: "2022-04-01" }, rules);
 assert(wf.find(l => l.label === "Fraud")!.earned === 2 && wf.find(l => l.id === "aa")!.earned >= 2, "fraud-titled Auditing course counts toward Fraud and A&A");
+
+// After Year 1 ends (1/31/2027), a Year 1 shortfall is "short", not "to go", and no longer holds back the 40 technical.
+const later = evaluate(records, { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules, "2027-03-01");
+const y1 = later.find(l => l.id === "technical_annual" && l.sub?.index === 1)!, y2 = later.find(l => l.id === "technical_annual" && l.sub?.index === 2)!;
+assert(y1.past === true && y1.remaining === 3.5, "Year 1 technical: 8.5 / 12, past → 3.5 short");
+assert(!y2.past, "Year 2 still open");
+assert(!later.some(l => l.past && l.sub?.index === 2), "nothing in Year 2 marked past");
+const now = evaluate(records, { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules, "2026-09-28");
+assert(!now.some(l => l.past), "nothing past during Year 1");
+const ttLater = later.find(l => l.id === "technical_total")!;
+assert(!(ttLater.reserved?.label ?? "").includes("Year 1"), "ended Year 1 isn't listed as still owing");
 console.log("\nAll assertions passed.");

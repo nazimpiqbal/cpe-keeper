@@ -91,8 +91,8 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
           {line.logged} logged · {line.reserved.hours} must still come from {line.reserved.label}
         </Text>
       )}
-      <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : C.accent }]} /></View>
-      {line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — this year's minimum was due at your {fmtDate(line.deadline)} renewal</Text>)
+      <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : line.past ? C.danger : C.accent }]} /></View>
+      {line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — was due by {fmtDate(line.deadline)}</Text>)
         : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
       {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
