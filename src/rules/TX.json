@@ -61,7 +61,8 @@
       ],
       "minRenewal": 2,
       "group": "special",
-      "note": "A 4-hour TSBPA-approved ethics course every two years. We count courses with \"Texas\" and \"ethics\" (or \"TSBPA\") in the title — edit the title if yours isn't picked up. Out-of-state licensees with no Texas clients may meet their home state's ethics rule instead."
+      "note": "A 4-hour TSBPA-approved ethics course every two years. We count courses with \"Texas\" and \"ethics\" (or \"TSBPA\") in the title — edit the title if yours isn't picked up. Out-of-state licensees with no Texas clients may meet their home state's ethics rule instead.",
+      "showNote": true
     }
   ],
   "newLicensee": {

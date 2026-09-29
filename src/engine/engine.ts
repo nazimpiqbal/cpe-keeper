@@ -34,6 +34,7 @@ type Req = {
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   orConcentrated?: { hours: number; categories: string[] };
   group?: string; // dashboard section, e.g. "overall" | "subject" | "special"
+  showNote?: boolean; // always show the note under this line on the dashboard
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)
@@ -46,6 +47,8 @@ export type Rules = {
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
   titleKeywordMap?: { [category: string]: string[] };
+  // A category that cancels others, e.g. FL: a Board-approved ethics course is ethics, not behavioral.
+  categoryExcludes?: { [category: string]: string[] };
   // First-renewal rules (e.g. CA): hours scale with full six-month periods from issue date to first expiration.
   newLicensee?: {
     // CA-style: hours scale with full six-month periods; per20 = hours for every 20 required, minTotal = only once total reaches it.
@@ -105,7 +108,9 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
     // "texas+ethics" = the title must contain both words.
     .filter(([, words]) => words.some(w => w.split("+").every(part => title.includes(part))))
     .map(([cat]) => cat);
-  return [...new Set([...byField, ...byTitle])];
+  const cats = [...new Set([...byField, ...byTitle])];
+  const dropped = new Set(cats.flatMap(c => rules.categoryExcludes?.[c] ?? []));
+  return cats.filter(c => !dropped.has(c));
 }
 
 // Current renewal cycle, e.g. CA license expiring 2028-01-31 → 2026-02-01 to 2028-01-31.

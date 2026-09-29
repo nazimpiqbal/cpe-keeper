@@ -2,6 +2,7 @@
   "state": "FL",
   "board": "Florida Board of Accountancy (DBPR)",
   "sourceUrls": [
+    "Rule 61H1-33.003, F.A.C., as amended effective 9/30/2026 (text provided by user from flrules.org)",
     "https://www2.myfloridalicense.com/certified-public-accounting/general-cpe-information/",
     "https://www2.myfloridalicense.com/certified-public-accounting/licensure/continuing-professional-education/",
     "https://www2.myfloridalicense.com/cpa/documents/CPEGuidelines.pdf",
@@ -23,7 +24,8 @@
       "hours": 80,
       "scope": "cycle",
       "group": "overall",
-      "note": "Missed June 30? Florida allows an automatic extension to September 15 with 8 extra accounting & auditing hours, or to December 31 with 16 extra."
+      "note": "Hours must be done by June 30. Proof must be uploaded to the DBPR On-Line Services portal by December 31 after the period, before your license renewal. Missed June 30? Automatic extension to September 15 with 8 extra accounting & auditing hours (88 total), or to December 31 with 16 extra (96 total). Nonresidents may instead show their home state's CPE compliance, but still need the Florida ethics course.",
+      "showNote": true
     },
     {
       "id": "aa",
@@ -45,7 +47,7 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 20 behavioral hours (communications, personal development, practice administration) count toward the 80."
+      "note": "Maximum, not a target. No more than 20 behavioral hours count toward the 80. Under the rule, anything that isn't accounting & auditing, technical business or Florida-approved ethics is behavioral — including communications, personal development and general (non-Florida) ethics courses."
     },
     {
       "id": "gov",
@@ -57,7 +59,7 @@
       ],
       "when": "government_audit",
       "group": "subject",
-      "note": "24 hours of governmental CPE if you work on audits under Government Auditing Standards."
+      "note": "24 hours of governmental CPE if you work on audits under Government Auditing Standards. This comes from the GAO Yellow Book, not the Florida rule."
     },
     {
       "id": "ethics",
@@ -68,7 +70,8 @@
         "fl_ethics"
       ],
       "group": "special",
-      "note": "4 hours from a Florida Board-approved ethics provider, covering Chapters 455 and 473, F.S. We count courses with \"Florida\" and \"ethics\" (or \"473\") in the title — edit the title if yours isn't picked up."
+      "note": "4 hours from a Florida Board-approved ethics provider, covering Chapters 455 and 473, F.S. We count courses with \"Florida\" and \"ethics\" (or \"473\") in the title — edit the title if yours isn't picked up.",
+      "showNote": true
     }
   ],
   "newLicensee": {
@@ -108,14 +111,14 @@
   "categoryLabels": {
     "accounting_auditing": "Accounting & auditing",
     "technical_business": "Technical business",
-    "behavioral": "Behavioral",
-    "general_ethics": "Ethics (general)"
+    "fl_ethics": "Florida ethics",
+    "behavioral": "Behavioral"
   },
   "tagCategories": [
     "accounting_auditing",
     "technical_business",
-    "behavioral",
-    "general_ethics"
+    "fl_ethics",
+    "behavioral"
   ],
   "fieldOfStudyMap": {
     "accounting_auditing": [
@@ -131,24 +134,22 @@
     "technical_business": [
       "Taxes",
       "Management Advisory Services",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Information Technology",
+      "Computer Software and Applications",
+      "Finance",
       "Economics",
       "Business Law",
-      "Finance",
-      "Computer Software and Applications",
-      "Information Technology",
       "Statistics",
       "Specialized Knowledge"
     ],
     "behavioral": [
       "Communications and Marketing",
       "Personal Development",
-      "Personnel/Human Resources",
-      "Business Management and Organization",
-      "Production",
-      "Behavioral Ethics"
-    ],
-    "general_ethics": [
-      "Regulatory Ethics"
+      "Behavioral Ethics",
+      "Regulatory Ethics",
+      "Production"
     ]
   },
   "titleKeywordMap": {
@@ -159,13 +160,17 @@
   },
   "limitsNotTracked": [
     "Self-study in A&A or technical business must be from NASBA QAS sponsors.",
-    "Published articles/books: max 20 hours per period."
+    "Authorship: max 20 hours per period, and never toward ethics."
   ],
-  "recordRetentionYears": 4,
   "toVerify": [
-    "Rule 61H1-33.003 was amended effective 9/30/2026 ('clarify renewal deadline language') — confirm nothing changes the 80 / 8 / 4 / 20 figures or the June 30 period.",
-    "Mapping of NASBA fields to Florida's behavioral vs technical business subjects (Business Management and Organization, Production and Behavioral Ethics treated as behavioral; Computer Software and Applications as technical business).",
-    "First period: we require the full 80 hours from issue date to the third June 30 (no proration found in the guidance).",
-    "Whether the 24 governmental hours for Yellow Book audits come from Florida's rule or the GAO's own CPE requirement (applies either way)."
-  ]
+    "Economics, Business Law and Statistics treated as technical business per the Board's CPE Guidelines ('general business'); the rule text itself doesn't name them.",
+    "Production (operations/supply chain) treated as behavioral under the rule's catch-all — conservative; confirm.",
+    "First period: full 80 hours from issue date to the third June 30 — the rule has no proration."
+  ],
+  "categoryExcludes": {
+    "fl_ethics": [
+      "behavioral"
+    ]
+  },
+  "recordRetention": "Keep proof for at least two years after each two-year period."
 }

@@ -25,6 +25,13 @@ assert.ok(categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "Florida Ethics f
 assert.ok(categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "Chapter 473 and Board Rules Review"), rules).includes("fl_ethics"));
 assert.ok(!categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "AICPA Professional Ethics"), rules).includes("fl_ethics"));
 
+// Rule 61H1-33.003(2): management, HR and information systems are technical business; everything else not listed is behavioral.
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Personnel/Human Resources"), rules), ["technical_business"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Business Management and Organization"), rules), ["technical_business"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Regulatory Ethics", "AICPA Professional Ethics"), rules), ["behavioral"]);
+// A Florida-approved ethics course is ethics only — it doesn't use up the behavioral cap.
+assert.deepEqual(categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "Florida Ethics for CPAs"), rules), ["fl_ethics"]);
+
 // Requirements: 30 behavioral (10 over), 6 A&A, 40 tax, 4 FL ethics.
 const recs = [c("2025-08-01", 30, "Personal Development"), c("2026-01-10", 6, "Accounting"), c("2026-02-01", 40, "Taxes"),
   c("2026-03-01", 4, "Regulatory Ethics", "Florida Ethics Update"), c("2025-06-30", 20, "Taxes")];
