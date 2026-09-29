@@ -221,7 +221,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
                 : c === "non_technical" && ntLine ? `Maximum ${ntLine.required} can count` : undefined} />
           ))}
           {other > 0 && <Row label="No field of study" value={`${other}`} indent muted hint="Counts toward the total only — edit the course to set a field." />}
-          {over > 0 && <Row label="Less non-technical over the maximum" value={`−${over}`} muted />}
+          {over > 0 && <Row label={`Less ${(ntLine?.label ?? "non-technical").toLowerCase()} over the maximum`} value={`−${over}`} muted />}
           <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
           <Row label="Counted toward Total CE" value={`${expected}`} strong />
           <Text style={[ui.hint, { color: matches ? C.ok : C.danger, fontWeight: "700" }]}>
@@ -294,7 +294,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
           <Pressable onPress={onEditLicense}><Text style={{ color: C.accent, fontWeight: "600" }}>Edit</Text></Pressable>
         </View>
-        <Text style={s.title}>{cycle.calendarYear ? "Registration renews" : "Renews"} {fmtDate(license.expiration_date)}</Text>
+        <Text style={s.title}>{cycle.calendarYear ? "Registration renews" : rules?.deadlineLabel ?? "Renews"} {fmtDate(license.expiration_date)}</Text>
         <Text style={ui.muted}>{cycle.calendarYear
           ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours (no carryforward)`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>

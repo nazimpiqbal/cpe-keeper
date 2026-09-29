@@ -55,6 +55,8 @@ export type Rules = {
     exemptUntilFirstJanuary?: boolean;
     // TX-style: stage N applies when renewing into the Nth full license year (index 0 = first full year).
     phaseIn?: { none?: boolean; total?: number; annual?: number; months?: number; note?: string }[];
+    // FL-style: the first period runs from the issue date to the Nth occurrence of this date after it (third June 30).
+    firstPeriodNthDate?: { month: number; day: number; count: number };
     note?: string;
   };
   // Display helpers for the app.
@@ -65,6 +67,8 @@ export type Rules = {
   licenseDateHint?: string;
   renewalMonths?: number;      // how far ahead an expiration can be (TX 12, CA 24, NY 36)
   expiresEndOfMonth?: boolean; // licenses expire on the last day of the birth month (CA, TX)
+  expiresOnMonthDay?: string;  // every period ends on this date, "MM-DD" (FL: "06-30")
+  deadlineLabel?: string;      // dashboard heading, e.g. "CPE period ends" (default "Renews")
   issueDateHint?: string;
   requirementGroups?: { id: string; label: string }[];
 };
@@ -116,6 +120,8 @@ export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: P
   const full: Profile = { licenseExpiration, practice: [], ...profile };
   const plan = profile ? newLicenseePlan(full, rules) : null;
   if (plan) return { start: plan.start, end: plan.end };
+  const fp = profile ? firstPeriodStart(full, rules) : null;
+  if (fp) return { start: fp, end: licenseExpiration };
   const ph = profile ? phaseStage(full, rules) : null;
   if (ph?.stage.months) {
     const end = d(licenseExpiration);
@@ -137,6 +143,24 @@ export function fullYearsIntoLicense(licenseIssued: string, licenseExpiration: s
     if (prevEnd < issued) return k;
     k++;
   }
+}
+
+// The Nth occurrence of a month/day strictly after a date (FL: third June 30 after licensure).
+export function nthDateAfter(from: string, month: number, day: number, count: number): string {
+  const f = d(from);
+  let y = f.getUTCFullYear(), n = 0;
+  while (true) {
+    const cand = new Date(Date.UTC(y, month - 1, day));
+    if (cand > f && ++n === count) return iso(cand);
+    y++;
+  }
+}
+
+// FL: if this period is the licensee's first, it starts on the issue date (and can be longer than two years).
+function firstPeriodStart(profile: Profile, rules: Rules): string | null {
+  const nth = rules.newLicensee?.firstPeriodNthDate;
+  if (!nth || !profile.licenseIssued) return null;
+  return nthDateAfter(profile.licenseIssued, nth.month, nth.day, nth.count) === profile.licenseExpiration ? profile.licenseIssued : null;
 }
 
 type PhaseStage = NonNullable<NonNullable<Rules["newLicensee"]>["phaseIn"]>[number];
@@ -184,6 +208,13 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
   const ph = phaseStage(profile, rules);
   if (ph) return evaluatePhaseIn(records, profile, rules, ph.n, ph.stage);
+  const fp = firstPeriodStart(profile, rules);
+  if (fp) {
+    const lines = evaluateWindow(records, profile, rules, d(fp), d(profile.licenseExpiration), "First period");
+    const total = lines.find(l => l.id === "total");
+    if (total && rules.newLicensee?.note) total.note = rules.newLicensee.note;
+    return lines;
+  }
   const end = d(profile.licenseExpiration);
   const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
   return evaluateWindow(records, profile, rules, start, end, rules.cycle.label ?? "Cycle");
@@ -401,7 +432,13 @@ export function checkExpiration(licenseExpiration: string, rules: Rules, stateNa
   const e = d(licenseExpiration);
   if (rules.renewalMonths && e > addMonthsClamped(d(asOf), rules.renewalMonths)) {
     const every = rules.renewalMonths === 12 ? "every year" : `every ${rules.renewalMonths / 12} years`;
-    return `${stateName} licenses renew ${every}, so the expiration date can't be more than ${rules.renewalMonths} months away. Check the date on your license.`;
+    return rules.expiresOnMonthDay
+      ? `That date is more than ${rules.renewalMonths} months away — ${stateName} CPE periods are two years (a new licensee's first can be up to three). Check the date.`
+      : `${stateName} licenses renew ${every}, so the expiration date can't be more than ${rules.renewalMonths} months away. Check the date on your license.`;
+  }
+  if (rules.expiresOnMonthDay && licenseExpiration.slice(5) !== rules.expiresOnMonthDay) {
+    const [m, dd] = rules.expiresOnMonthDay.split("-");
+    return `${stateName} CPE periods always end on ${m}/${dd}. Check the date.`;
   }
   if (rules.expiresEndOfMonth && addDays(e, 1).getUTCDate() !== 1) {
     return `${stateName} licenses expire on the last day of your birth month — e.g. 03/31. Check the date on your license.`;

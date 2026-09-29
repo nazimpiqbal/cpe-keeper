@@ -1,0 +1,171 @@
+{
+  "state": "FL",
+  "board": "Florida Board of Accountancy (DBPR)",
+  "sourceUrls": [
+    "https://www2.myfloridalicense.com/certified-public-accounting/general-cpe-information/",
+    "https://www2.myfloridalicense.com/certified-public-accounting/licensure/continuing-professional-education/",
+    "https://www2.myfloridalicense.com/cpa/documents/CPEGuidelines.pdf",
+    "https://www.flrules.org/gateway/ruleNo.asp?id=61H1-33.003",
+    "https://www.nasbaregistry.org/cpe-requirements/florida"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "Reporting period",
+    "note": "Florida CPE periods run July 1 – June 30, every two years."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "Missed June 30? Florida allows an automatic extension to September 15 with 8 extra accounting & auditing hours, or to December 31 with 16 extra."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "group": "subject"
+    },
+    {
+      "id": "behavioral_max",
+      "label": "Behavioral",
+      "hours": 20,
+      "scope": "cycle",
+      "categories": [
+        "behavioral"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 20 behavioral hours (communications, personal development, practice administration) count toward the 80."
+    },
+    {
+      "id": "gov",
+      "label": "Governmental (Yellow Book audits)",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "government"
+      ],
+      "when": "government_audit",
+      "group": "subject",
+      "note": "24 hours of governmental CPE if you work on audits under Government Auditing Standards."
+    },
+    {
+      "id": "ethics",
+      "label": "Florida Board-approved ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "fl_ethics"
+      ],
+      "group": "special",
+      "note": "4 hours from a Florida Board-approved ethics provider, covering Chapters 455 and 473, F.S. We count courses with \"Florida\" and \"ethics\" (or \"473\") in the title — edit the title if yours isn't picked up."
+    }
+  ],
+  "newLicensee": {
+    "firstPeriodNthDate": {
+      "month": 6,
+      "day": 30,
+      "count": 3
+    },
+    "note": "Your first Florida CPE period runs from your license issue date to the third June 30 after it."
+  },
+  "practiceOptions": [
+    {
+      "id": "government_audit",
+      "label": "Yellow Book (government) audits"
+    }
+  ],
+  "licenseDateLabel": "CPE reporting period ends",
+  "licenseDateHint": "Florida CPE periods end June 30 every two years (e.g. 06/30/2027). This is separate from your license renewal date.",
+  "issueDateHint": "If you were licensed recently, your first period runs from this date to the third June 30 after it.",
+  "deadlineLabel": "CPE period ends",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "06-30",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "accounting_auditing": "Accounting & auditing",
+    "technical_business": "Technical business",
+    "behavioral": "Behavioral",
+    "general_ethics": "Ethics (general)"
+  },
+  "tagCategories": [
+    "accounting_auditing",
+    "technical_business",
+    "behavioral",
+    "general_ethics"
+  ],
+  "fieldOfStudyMap": {
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "government": [
+      "Accounting (Governmental)",
+      "Auditing (Governmental)"
+    ],
+    "technical_business": [
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Business Law",
+      "Finance",
+      "Computer Software and Applications",
+      "Information Technology",
+      "Statistics",
+      "Specialized Knowledge"
+    ],
+    "behavioral": [
+      "Communications and Marketing",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Business Management and Organization",
+      "Production",
+      "Behavioral Ethics"
+    ],
+    "general_ethics": [
+      "Regulatory Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "fl_ethics": [
+      "florida+ethics",
+      "473"
+    ]
+  },
+  "limitsNotTracked": [
+    "Self-study in A&A or technical business must be from NASBA QAS sponsors.",
+    "Published articles/books: max 20 hours per period."
+  ],
+  "recordRetentionYears": 4,
+  "toVerify": [
+    "Rule 61H1-33.003 was amended effective 9/30/2026 ('clarify renewal deadline language') — confirm nothing changes the 80 / 8 / 4 / 20 figures or the June 30 period.",
+    "Mapping of NASBA fields to Florida's behavioral vs technical business subjects (Business Management and Organization, Production and Behavioral Ethics treated as behavioral; Computer Software and Applications as technical business).",
+    "First period: we require the full 80 hours from issue date to the third June 30 (no proration found in the guidance).",
+    "Whether the 24 governmental hours for Yellow Book audits come from Florida's rule or the GAO's own CPE requirement (applies either way)."
+  ]
+}
