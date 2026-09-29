@@ -1,0 +1,171 @@
+{
+  "state": "OH",
+  "board": "Accountancy Board of Ohio",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/ohio/Ohio-Admin-Code-4701-15-02",
+    "https://codes.ohio.gov/ohio-administrative-code/rule-4701-15-11",
+    "https://acc.ohio.gov/maintaining-your-license/renewal-requirements",
+    "https://www.nasbaregistry.org/cpe-requirements/ohio"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "calendarSubPeriods": true,
+    "label": "Triennial period",
+    "note": "Each permit's triennial reporting period runs January 1 to December 31 three years later."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall",
+      "note": "At least 20 credits by December 31 each year — $10 fine per missing credit."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting, auditing & attest",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "financial_reporting",
+      "group": "subject",
+      "note": "24 credits if you perform accounting, auditing, assurance or attest engagements, or prepare or sign any financial report."
+    },
+    {
+      "id": "tax",
+      "label": "Taxation",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "taxation"
+      ],
+      "when": "tax_work",
+      "group": "subject",
+      "note": "24 credits if you do tax work on any engagement, or prepare or sign any tax return."
+    },
+    {
+      "id": "psr",
+      "label": "Professional Standards & Responsibilities (Ohio)",
+      "hours": 3,
+      "scope": "cycle",
+      "categories": [
+        "oh_psr"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "3 credits from a Board-approved Ohio PSR course (Ohio accountancy law and ethics). We count courses with \"Ohio\" and \"ethics\", \"Ohio\" and \"PSR\", or \"Professional Standards and Responsibilities\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "initialCalendarPeriod": {
+      "years": 2,
+      "hours": 40
+    },
+    "note": "Initial period: 40 credits from January 1 of the year you were certified through December 31 of the next year — no yearly minimum or subject requirements."
+  },
+  "practiceOptions": [
+    {
+      "id": "financial_reporting",
+      "label": "Accounting/audit/attest work or financial reports"
+    },
+    {
+      "id": "tax_work",
+      "label": "Tax work or tax returns"
+    }
+  ],
+  "licenseDateLabel": "CPE reporting period ends",
+  "licenseDateHint": "Ohio reporting periods end December 31 (e.g. 12/31/2027). New licensees: Dec 31 of the year after you were certified.",
+  "issueDateHint": "The date on your CPA certificate — sets your initial two-year period.",
+  "deadlineLabel": "CPE period ends",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "12-31",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "oh_psr": "Ohio PSR",
+    "accounting_auditing": "Accounting & auditing",
+    "taxation": "Taxation",
+    "other": "Other"
+  },
+  "tagCategories": [
+    "oh_psr",
+    "accounting_auditing",
+    "taxation",
+    "other"
+  ],
+  "fieldOfStudyMap": {
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "taxation": [
+      "Taxes"
+    ],
+    "other": [
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "oh_psr": [
+      "ohio+ethics",
+      "ohio+psr",
+      "professional standards and responsibilities"
+    ]
+  },
+  "categoryExcludes": {
+    "oh_psr": [
+      "other"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 90 credits per period.",
+    "Live group study: max 8 credits in one day (for sessions of 400+ minutes)."
+  ],
+  "toVerify": [
+    "Reporting period timing is per permit; the user enters their period end (Dec 31). New-licensee initial period detected when that end is Dec 31 of the year after the certificate year.",
+    "Rule 4701-15-11 is from a summary of the current rule (eff. 9/6/2024) — confirm the 3 PSR credits are per triennial period and the exact engagement wording for the 24 A&A and 24 tax credits.",
+    "PSR course recognised by title keywords; the Board approves specific Ohio courses."
+  ]
+}

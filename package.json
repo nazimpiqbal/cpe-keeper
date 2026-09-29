@@ -23,7 +23,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "npx tsx scripts/test-nazim.ts && npx tsx scripts/test-dates.ts && npx tsx scripts/test-new-licensee.ts && npx tsx scripts/test-ny.ts && npx tsx scripts/test-tx.ts && npx tsx scripts/test-fl.ts && npx tsx scripts/test-il.ts && npx tsx scripts/test-id.ts && npx tsx scripts/test-ct.ts && npx tsx scripts/test-wa.ts && npx tsx scripts/test-az.ts && npx tsx scripts/test-nj.ts && npx tsx scripts/test-pa.ts"
+    "test": "npx tsx scripts/test-nazim.ts && npx tsx scripts/test-dates.ts && npx tsx scripts/test-new-licensee.ts && npx tsx scripts/test-ny.ts && npx tsx scripts/test-tx.ts && npx tsx scripts/test-fl.ts && npx tsx scripts/test-il.ts && npx tsx scripts/test-id.ts && npx tsx scripts/test-ct.ts && npx tsx scripts/test-wa.ts && npx tsx scripts/test-az.ts && npx tsx scripts/test-nj.ts && npx tsx scripts/test-pa.ts && npx tsx scripts/test-oh.ts"
   },
   "private": true
 }

@@ -82,6 +82,8 @@ export type Rules = {
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
     exemptExcept?: string[];
+    // OH: first period = Jan 1 of the year certified through Dec 31 of the following year(s), with only a total.
+    initialCalendarPeriod?: { years: number; hours: number };
     // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
     licensureYear?: { requirement: Req; creditIfMet: number; note?: string };
     note?: string;
@@ -156,6 +158,14 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
 export function cpePeriodEnd(licenseExpiration: string, rules: Rules): string {
   return rules.cycle.endsDecemberBeforeExpiration ? `${Number(licenseExpiration.slice(0, 4)) - 1}-12-31` : licenseExpiration;
 }
+// OH: is this the new licensee's initial period (Jan 1 of the certificate year → Dec 31, N years on)?
+function initialCalendarStart(profile: Partial<Profile> | undefined, licenseExpiration: string, rules: Rules): Date | null {
+  const ip = rules.newLicensee?.initialCalendarPeriod;
+  if (!ip || !profile?.licenseIssued) return null;
+  const y = Number(profile.licenseIssued.slice(0, 4));
+  return licenseExpiration === `${y + ip.years - 1}-12-31` ? d(`${y}-01-01`) : null;
+}
+
 // Normal start of the rolling period, moved to the issue date for a WA-style first period.
 function rollingStart(end: Date, rules: Rules, profile?: Partial<Profile>): Date {
   const normal = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
@@ -182,6 +192,8 @@ export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: P
     return { start: iso(addDays(addMonths(end, -ph.stage.months), 1)), end: iso(end) };
   }
   const end = d(cpePeriodEnd(licenseExpiration, rules));
+  const ics = initialCalendarStart(profile, licenseExpiration, rules);
+  if (ics) return { start: iso(ics), end: iso(end) };
   return { start: iso(rollingStart(end, rules, profile)), end: iso(end) };
 }
 
@@ -290,6 +302,15 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
     }, ...still];
+  }
+  const ics = initialCalendarStart(profile, profile.licenseExpiration, rules);
+  if (ics) {
+    // OH initial period: only a total, no yearly minimums or subject requirements.
+    const ip = rules.newLicensee!.initialCalendarPeriod!;
+    const total = rules.requirements.find(q => q.id === "total")!;
+    const lines = evaluateWindow(records, profile, { ...rules, requirements: [{ ...total, hours: ip.hours }] }, ics, end, "Initial period", asOf);
+    if (lines[0] && rules.newLicensee?.note) lines[0].note = rules.newLicensee.note;
+    return lines;
   }
   const pq = rules.newLicensee?.prorateByQuarter;
   const normalStart = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);

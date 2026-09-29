@@ -10,6 +10,7 @@ import wa from "./WA.json";
 import az from "./AZ.json";
 import nj from "./NJ.json";
 import pa from "./PA.json";
+import oh from "./OH.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -24,6 +25,7 @@ export const RULES: { [state: string]: Rules } = {
   AZ: az as unknown as Rules,
   NJ: nj as unknown as Rules,
   PA: pa as unknown as Rules,
+  OH: oh as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
