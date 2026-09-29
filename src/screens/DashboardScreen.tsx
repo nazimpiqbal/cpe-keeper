@@ -17,7 +17,7 @@ const shortLabel = (l: Line) => l.sub ? l.label.replace(/ each year$/, "") : l.l
 // "7 hrs of technical for Year 1", "12 hrs for this reporting year", "55 hrs".
 function deadlineText(l: Line) {
   const name = shortLabel(l).replace(/\s*\(.*\)$/, "");
-  const what = /^total/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
+  const what = /total/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
   const when = l.sub ? ` for ${l.sub.label.startsWith("Year") ? l.sub.label : l.sub.label.toLowerCase()}` : "";
   return `${l.remaining} hrs${what}${when}`;
 }
@@ -210,6 +210,27 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         {hint ? <Text style={[ui.hint, { marginTop: 1 }, indent && { paddingLeft: 14 }]}>{hint}</Text> : null}
       </View>
     );
+    if (total?.parts) {
+      // Rolling multi-year total (ID): one row per year, showing any yearly cap or credit.
+      const sumCounted = r2(total.parts.reduce((a, p) => a + p.counted, 0));
+      return (
+        <>
+          <Text style={ui.h2}>How your hours add up</Text>
+          <Card>
+            {total.parts.map(p => (
+              <Row key={p.label} label={`${p.label} courses`} value={p.counted !== p.logged ? `${p.logged} → ${p.counted}` : `${p.counted}`}
+                hint={p.why ? `${p.logged} logged — ${p.why}` : undefined} />
+            ))}
+            <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
+            <Row label={`Counted toward ${total.label.toLowerCase()}`} value={`${sumCounted}`} strong />
+            <Text style={[ui.hint, { color: Math.abs(sumCounted - total.earned) < 0.01 ? C.ok : C.danger, fontWeight: "700" }]}>
+              {Math.abs(sumCounted - total.earned) < 0.01 ? `✓ Matches ${total.label} above (${total.earned} / ${total.required})` : `⚠ Doesn't match ${total.label} above (${total.earned}) — please report this`}
+            </Text>
+            {dupHrs > 0 && <Text style={ui.hint}>Duplicates aren't counted.</Text>}
+          </Card>
+        </>
+      );
+    }
     return (
       <>
         <Text style={ui.h2}>How your hours add up</Text>
@@ -297,9 +318,9 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
           <Pressable onPress={onEditLicense}><Text style={{ color: C.accent, fontWeight: "600" }}>Edit</Text></Pressable>
         </View>
-        <Text style={s.title}>{cycle.calendarYear ? "Registration renews" : rules?.deadlineLabel ?? "Renews"} {fmtDate(license.expiration_date)}</Text>
+        <Text style={s.title}>{rules?.deadlineLabel ?? (cycle.calendarYear ? "Registration renews" : "Renews")} {fmtDate(license.expiration_date)}</Text>
         <Text style={ui.muted}>{cycle.calendarYear
-          ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours (no carryforward)`
+          ? `${daysUntil(cycle.end)} days left to finish ${year}'s hours${rules?.yearEndNote ? ` (${rules.yearEndNote})` : ""}`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
         {rules && (() => {
           // A saved date that can't be right for this state (e.g. a Texas license set two years out).
@@ -337,7 +358,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       <View style={{ height: 16 }} />
 
       <Requirements lines={lines} groups={rules?.requirementGroups}
-        noteIds={new Set((rules?.requirements ?? []).filter(q => q.showNote).map(q => q.id))}
+        noteIds={new Set([...(rules?.requirements ?? []), ...(rules?.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])]
+          .filter(q => q.showNote).map(q => q.id))}
         warnings={new Map((rules?.requirements ?? []).filter(q => q.warning).map(q => [q.id, q.warning!]))} />
 
       {current.length > 0 && <Reconciliation />}
@@ -366,7 +388,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
       {earlier.length > 0 && (<>
         <Text style={ui.h2}>{cycle.calendarYear ? "Earlier years" : "Earlier courses"} ({earlier.length})</Text>
         <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>{cycle.calendarYear
-          ? `Completed before ${fmtDate(cycle.start)} — they don't count toward ${year}'s hours, but can still count toward multi-year requirements like ethics.`
+          ? `Completed before ${fmtDate(cycle.start)} — they don't count toward ${year}'s hours, but can still count toward multi-year requirements.`
           : `Completed before ${fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.`}</Text>
         <Card><ConfirmBanner rows={earlier} /><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
       </>)}

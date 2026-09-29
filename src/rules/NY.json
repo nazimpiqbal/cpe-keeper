@@ -152,5 +152,6 @@
   "licenseDateHint": "Your three-year registration end date. Your yearly CPE runs January–December regardless.",
   "issueDateHint": "New licensees don't need CPE until the first January 1 after they're licensed.",
   "renewalMonths": 36,
-  "expiresEndOfMonth": false
+  "expiresEndOfMonth": false,
+  "yearEndNote": "no carryforward"
 }

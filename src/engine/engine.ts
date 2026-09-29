@@ -26,7 +26,9 @@ type Req = {
   // prior_calendar_years: the N full calendar years before the registration renewal year (e.g. NY ethics)
   // calendar_years_or_current: N prior calendar years, or the current year on its own (e.g. NY attest)
   // trailing_months: the N months ending at license expiration (e.g. TX: 20 hrs in the last 12, ethics in the last 24)
-  scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current" | "trailing_months";
+  // calendar_years_rolling: the last N calendar years including this one, each year capped at perYearMax (ID: 80 over 2 years, 50/yr max)
+  scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current" | "trailing_months" | "calendar_years_rolling";
+  perYearMax?: number;
   months?: number; subLabel?: string; // trailing_months: window length, and a year-block label for the dashboard
   role?: "total" | "annual" | "max_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
@@ -63,6 +65,8 @@ export type Rules = {
     firstPeriodNthDate?: { month: number; day: number; count: number };
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
+    // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
+    licensureYear?: { requirement: Req; creditIfMet: number; note?: string };
     note?: string;
   };
   // Display helpers for the app.
@@ -75,6 +79,7 @@ export type Rules = {
   expiresEndOfMonth?: boolean; // licenses expire on the last day of the birth month (CA, TX)
   expiresOnMonthDay?: string;  // every period ends on this date, "MM-DD" (FL: "06-30")
   deadlineLabel?: string;      // dashboard heading, e.g. "CPE period ends" (default "Renews")
+  yearEndNote?: string;        // calendar-year states: shown after "N days left to finish YYYY's hours"
   issueDateHint?: string;
   requirementGroups?: { id: string; label: string }[];
 };
@@ -90,6 +95,7 @@ export type Line = {
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
   alt?: { label: string; area: string; earned: number; required: number; remaining: number };
   mainRemaining?: number; // hours to go on the main (e.g. 40-hour) path, when alt is set
+  parts?: { label: string; logged: number; counted: number; why?: string }[]; // per-year breakdown for rolling totals (ID)
   group?: string;          // dashboard section (from the rule file)
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
 };
@@ -210,6 +216,15 @@ export function newLicenseePlan(profile: Profile, rules: Rules): NewLicenseePlan
 export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf: string = today()): Line[] {
   if (isCalendarYear(rules)) {
     const { start, end } = cycleBounds(profile.licenseExpiration, rules, profile, asOf);
+    const ly = rules.newLicensee?.licensureYear;
+    if (ly && profile.licenseIssued?.slice(0, 4) === start.slice(0, 4)) {
+      // Licensed this year (ID): only the licensure-year course is due.
+      const lines = evaluateWindow(records, profile, { ...rules, requirements: [ly.requirement] }, d(start), d(end), start.slice(0, 4), asOf);
+      return [{
+        id: "total", label: "CPE this year", period: `${start.slice(0, 4)} (year licensed)`, required: 0, earned: 0, remaining: 0, met: true,
+        deadline: end, group: "overall", note: ly.note ?? "No CPE is due in the year you're licensed.",
+      }, ...lines];
+    }
     return evaluateWindow(records, profile, rules, d(start), d(end), start.slice(0, 4), asOf);
   }
   const plan = newLicenseePlan(profile, rules);
@@ -343,6 +358,34 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       });
       continue;
     }
+    if (q.scope === "calendar_years_rolling") {
+      // Sum of the last N calendar years (this one included), each capped. The licensure year counts as
+      // creditIfMet once its required course is done (ID: 2-hr Idaho ethics → 50).
+      const y = Number(asOf.slice(0, 4)), n = q.years ?? 2;
+      const ly = rules.newLicensee?.licensureYear;
+      const issuedYear = profile.licenseIssued ? Number(profile.licenseIssued.slice(0, 4)) : null;
+      let earned = 0;
+      const parts: NonNullable<Line["parts"]> = [];
+      for (let yr = y - n + 1; yr <= y; yr++) {
+        const logged = sum(yearStart(yr), yearEnd(yr), q.categories);
+        let h = logged, why: string | undefined;
+        if (!q.categories && ly && issuedYear === yr &&
+            sum(yearStart(yr), yearEnd(yr), ly.requirement.categories) >= ly.requirement.hours && ly.creditIfMet > h) {
+          h = ly.creditIfMet; why = "year licensed — credited";
+        }
+        const counted = q.perYearMax != null ? Math.min(q.perYearMax, h) : h;
+        if (!why && counted < h) why = `only ${q.perYearMax} a year count`;
+        earned += counted;
+        parts.push({ label: String(yr), logged, counted: round(counted), why });
+      }
+      earned = round(earned);
+      lines.push({
+        id: q.id, label: q.label, period: `${y - n + 1}–${y}`,
+        required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
+        note: q.note, deadline: iso(yearEnd(y)), parts: q.categories ? undefined : parts,
+      });
+      continue;
+    }
     if (q.scope === "calendar_years_or_current") {
       // Met by the N prior calendar years together, or by the current year alone — whichever has more.
       const y = Number(asOf.slice(0, 4)), n = q.years ?? 0;
@@ -379,7 +422,8 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       const line: Line = {
         id: q.id, label: q.label, period: w.name, required: q.hours, earned,
-        remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e), sub: w.sub,
+        remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
+        sub: w.sub ?? (q.subLabel ? { index: 1, label: q.subLabel, start: iso(w.s), end: iso(w.e) } : undefined),
       };
       if (q.orConcentrated) {
         // Best single area, e.g. 22 hrs of Taxation toward the 24-hour option.

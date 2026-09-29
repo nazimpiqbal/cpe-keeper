@@ -1,0 +1,145 @@
+{
+  "state": "ID",
+  "board": "Idaho State Board of Accountancy (DOPL)",
+  "sourceUrls": [
+    "https://files.dfm.idaho.gov/dfm-admin-website/rules/current/24/243001.pdf",
+    "https://dopl.idaho.gov/boa/boa-cpe/",
+    "https://www.nasbaregistry.org/cpe-requirements/idaho"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "CPE is recorded by calendar year. Each January 31 report covers the two calendar years just ended: at least 80 hours, 30–50 in each year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "role": "total",
+      "label": "Two-year total",
+      "hours": 80,
+      "scope": "calendar_years_rolling",
+      "years": 2,
+      "perYearMax": 50,
+      "group": "overall",
+      "showNote": true,
+      "note": "Last year plus this year must reach 80. Only 50 hours a year count toward it. Report due January 31."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum this year",
+      "hours": 30,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "group": "overall",
+      "note": "At least 30 hours every calendar year (at most 50 count)."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 2,
+      "categories": [
+        "ethics",
+        "id_ethics"
+      ],
+      "group": "special"
+    }
+  ],
+  "newLicensee": {
+    "licensureYear": {
+      "requirement": {
+        "id": "id_ethics",
+        "label": "Idaho ethics course (new licensee)",
+        "hours": 2,
+        "scope": "cycle",
+        "categories": [
+          "id_ethics"
+        ],
+        "group": "special",
+        "showNote": true,
+        "note": "A 2-hour Idaho state-specific ethics course (Idaho Accountancy Act and Rules) in the calendar year you're licensed. We count courses with \"Idaho\" and \"ethics\" in the title."
+      },
+      "creditIfMet": 50,
+      "note": "New licensee: once you record the 2-hour Idaho ethics course, your first year counts as 50 hours (2 ethics + 48 credited). No other CPE is due this year."
+    }
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Idaho CPE runs January–December regardless of this date; the CPE report is due each January 31.",
+  "issueDateHint": "If you were licensed this year, you only need the 2-hour Idaho ethics course this year.",
+  "renewalMonths": 24,
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "id_ethics": "Idaho ethics",
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "id_ethics",
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "id_ethics": [
+      "idaho+ethics"
+    ]
+  },
+  "categoryExcludes": {
+    "id_ethics": [
+      "ethics",
+      "general"
+    ]
+  },
+  "limitsNotTracked": [
+    "Nano-learning counts 0.2 credit per 10 minutes.",
+    "Self-study without review questions or an end-of-course assessment doesn't qualify."
+  ],
+  "toVerify": [
+    "New-licensee credit: DOPL says recording the Idaho ethics course gives '48 non-ethics credits' — modelled as the licensure year counting 50 toward the 80 (not in the rule text itself).",
+    "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours (the rule just says 'ethics').",
+    "Whether the 30-hour yearly minimum applies in the first full year after licensure (we require it)."
+  ],
+  "deadlineLabel": "License renews",
+  "yearEndNote": "report due January 31"
+}
