@@ -16,10 +16,20 @@ assert.deepEqual(categoriesOf(c("2026-01-01", 2, "Regulatory Ethics", "Idaho Eth
 // 60 hrs last year (only 50 count) + 25 this year → 75/80; this year 25/30.
 let L = evaluate([c("2025-03-01", 60, "Taxes"), c("2026-02-01", 21, "Accounting"), c("2026-03-01", 4, "Regulatory Ethics"), c("2024-06-01", 40, "Taxes")], vet, rules, asOf);
 assert.equal(get(L, "total")!.earned, 75);
-assert.equal(get(L, "total")!.period, "2025–2026");
+assert.equal(get(L, "total")!.period, "2025–2026 · for the report due Jan 31, 2027");
 assert.equal(get(L, "annual_min")!.earned, 25);
 assert.equal(get(L, "annual_min")!.remaining, 5);
-assert.equal(get(L, "annual_min")!.sub!.label, "This year");
+assert.equal(get(L, "annual_min")!.sub!.label, "2026");
+// Last year and next year each get their own 30-hour box.
+const y25 = get(L, "annual_min_2025")!, y27 = get(L, "annual_min_2027")!;
+assert.deepEqual([y25.sub!.label, y25.earned, y25.met, y25.past ?? false], ["2025", 60, true, false]);
+assert.deepEqual([y27.sub!.label, y27.earned, y27.remaining, y27.past ?? false], ["2027", 0, 30, false]);
+assert.ok(y25.sub!.index < get(L, "annual_min")!.sub!.index && get(L, "annual_min")!.sub!.index < y27.sub!.index);
+// A short year that has ended is flagged as short.
+const Ls = evaluate([c("2025-03-01", 20, "Taxes")], vet, rules, asOf);
+assert.equal(get(Ls, "annual_min_2025")!.past, true); assert.equal(get(Ls, "annual_min_2025")!.remaining, 10);
+// Licensed in 2025: no 2025 box (nothing was due that year).
+assert.ok(!get(evaluate([], { ...vet, licenseIssued: "2025-04-01" }, rules, asOf), "annual_min_2025"));
 assert.equal(get(L, "ethics")!.met, true);
 
 // Licensed this year: only the 2-hr Idaho ethics course is due.

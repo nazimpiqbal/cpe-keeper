@@ -23,16 +23,18 @@
       "perYearMax": 50,
       "group": "overall",
       "showNote": true,
-      "note": "Last year plus this year must reach 80. Only 50 hours a year count toward it. Report due January 31."
+      "note": "Each January 31 report covers the two calendar years just ended: at least 80 hours, and only 50 a year count. Next year's report covers this year plus next year."
     },
     {
       "id": "annual_min",
-      "label": "Minimum this year",
+      "label": "Minimum each year",
       "hours": 30,
       "scope": "cycle",
       "subLabel": "This year",
       "group": "overall",
-      "note": "At least 30 hours every calendar year (at most 50 count)."
+      "note": "At least 30 hours every calendar year (at most 50 count).",
+      "priorYears": 1,
+      "nextYears": 1
     },
     {
       "id": "ethics",
@@ -141,5 +143,6 @@
     "Whether the 30-hour yearly minimum applies in the first full year after licensure (we require it)."
   ],
   "deadlineLabel": "License renews",
-  "yearEndNote": "report due January 31"
+  "yearEndNote": "report due January 31",
+  "reportDueMonthDay": "01-31"
 }

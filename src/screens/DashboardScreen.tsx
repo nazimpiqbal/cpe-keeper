@@ -205,6 +205,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
         <>
           <Text style={ui.h2}>How your hours add up</Text>
           <Card>
+            <Text style={[ui.hint, { marginTop: 0, marginBottom: 8 }]}>{total.label}: {total.period}</Text>
             {total.parts.map(p => (
               <Row key={p.label} label={p.label} value={p.counted !== p.logged ? `${p.logged} → ${p.counted}` : `${p.counted}`}
                 hint={p.why ? `${p.logged} logged — ${p.why}` : undefined} />

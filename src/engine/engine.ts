@@ -33,6 +33,7 @@ type Req = {
   // trailing_months (12): also show the N earlier reporting years inside the window, each against the same minimum
   // (TX: the 36-month look-back covers this year and the two before it, each of which needed 20).
   priorYears?: number;
+  nextYears?: number; // calendar-year cycles: also show this many later years (ID: next year's 30-hour minimum)
   role?: "total" | "annual" | "max_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
@@ -115,7 +116,8 @@ export type Rules = {
   expiresOnMonthDay?: string;  // every period ends on this date, "MM-DD" (FL: "06-30")
   expiresYearParity?: "odd" | "even"; // PA: licenses expire Dec 31 of odd-numbered years
   deadlineLabel?: string;      // dashboard heading, e.g. "CPE period ends" (default "Renews")
-  yearEndNote?: string;        // calendar-year states: shown after "N days left to finish YYYY's hours"
+  yearEndNote?: string;
+  reportDueMonthDay?: string;  // ID: "01-31" — each rolling total is reported on this date after its last year        // calendar-year states: shown after "N days left to finish YYYY's hours"
   issueDateHint?: string;
   requirementGroups?: { id: string; label: string }[];
 };
@@ -139,6 +141,8 @@ export type Line = {
 };
 
 const d = (s: string) => new Date(s + "T00:00:00Z");
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthDayText = (md: string) => `${MONTHS[Number(md.slice(0, 2)) - 1]} ${Number(md.slice(3))}`;
 const iso = (x: Date) => x.toISOString().slice(0, 10);
 const addMonths = (x: Date, m: number) => { const y = new Date(x); y.setUTCMonth(y.getUTCMonth() + m); return y; };
 const addDays = (x: Date, n: number) => new Date(x.getTime() + n * 86400000);
@@ -317,7 +321,27 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
         deadline: end, group: "overall", note: rules.newLicensee.note ?? "No CPE is due for the year you're licensed.",
       }];
     }
-    return evaluateWindow(records, profile, rules, d(start), d(end), name, asOf);
+    const lines = evaluateWindow(records, profile, rules, d(start), d(end), name, asOf);
+    // Neighbouring years for a yearly minimum (ID: last year, this year, next year — each needs 30).
+    const cur = fyIndex(start, sm);
+    const issued = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
+    for (const q of rules.requirements.filter(r => r.scope === "cycle" && (r.priorYears || r.nextYears))) {
+      const here = lines.find(l => l.id === q.id);
+      if (here?.sub) here.sub = { ...here.sub, index: 5, label: fyLabel(cur, sm) };
+      const others = [
+        ...Array.from({ length: q.priorYears ?? 0 }, (_, i) => cur - (q.priorYears ?? 0) + i),
+        ...Array.from({ length: q.nextYears ?? 0 }, (_, i) => cur + 1 + i),
+      ].filter(y => issued == null || y > issued); // nothing was due in or before the year licensed
+      for (const y of others) {
+        const ys = fyStartD(y, sm), ye = fyEndD(y, sm);
+        const [l] = evaluateWindow(records, profile, { ...rules, requirements: [q] }, ys, ye, fyLabel(y, sm), asOf);
+        if (!l) continue;
+        l.id = `${q.id}_${y}`; l.group = q.group;
+        l.sub = { index: 5 + (y - cur), label: fyLabel(y, sm), start: iso(ys), end: iso(ye) };
+        lines.push(l);
+      }
+    }
+    return lines;
   }
   const plan = newLicenseePlan(profile, rules);
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
@@ -539,7 +563,8 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       earned = round(earned);
       lines.push({
-        id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`,
+        id: q.id, label: q.label, period: (sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`) +
+          (rules.reportDueMonthDay ? ` · for the report due ${monthDayText(rules.reportDueMonthDay)}, ${y + 1}` : ""),
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(yearEnd(y)), parts: q.categories ? undefined : parts,
       });
