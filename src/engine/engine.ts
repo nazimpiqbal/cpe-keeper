@@ -53,6 +53,10 @@ export type Rules = {
     endsDecemberBeforeExpiration?: boolean;
     // WA: minimums apply per calendar year (2025, 2026, 2027) rather than per 12 months from the cycle start.
     calendarSubPeriods?: boolean;
+    // MI: the CPE period ends on this month-day on or before the license expiration (license Jul 31 → CE ends Jun 30).
+    cpeEndMonthDay?: string;
+    // MI: label 12-month sub-periods by the years they span ("2025–26") instead of "Year 1".
+    fiscalSubLabels?: boolean;
   };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
@@ -82,6 +86,8 @@ export type Rules = {
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
     exemptExcept?: string[];
+    // MI: nothing is due for this many months from the original license date; a CE year partly inside it is prorated.
+    exemptMonthsFromIssue?: number;
     // OH: first period = Jan 1 of the year certified through Dec 31 of the following year(s), with only a total.
     initialCalendarPeriod?: { years: number; hours: number };
     // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
@@ -116,6 +122,7 @@ export type Line = {
   alt?: { label: string; area: string; earned: number; required: number; remaining: number };
   mainRemaining?: number; // hours to go on the main (e.g. 40-hour) path, when alt is set
   parts?: { label: string; logged: number; counted: number; why?: string }[]; // per-year breakdown for rolling totals (ID)
+  carried?: number; // hours carried in from the previous year (MI per-year lines)
   group?: string;          // dashboard section (from the rule file)
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
 };
@@ -156,7 +163,14 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
 // On a first renewal under new-licensee rules, the cycle runs from the issue date instead.
 // When the CPE period ends (usually the license expiration; WA: Dec 31 of the year before).
 export function cpePeriodEnd(licenseExpiration: string, rules: Rules): string {
-  return rules.cycle.endsDecemberBeforeExpiration ? `${Number(licenseExpiration.slice(0, 4)) - 1}-12-31` : licenseExpiration;
+  if (rules.cycle.endsDecemberBeforeExpiration) return `${Number(licenseExpiration.slice(0, 4)) - 1}-12-31`;
+  const md = rules.cycle.cpeEndMonthDay;
+  if (md) {
+    const y = Number(licenseExpiration.slice(0, 4));
+    const same = `${y}-${md}`;
+    return same <= licenseExpiration ? same : `${y - 1}-${md}`;
+  }
+  return licenseExpiration;
 }
 // OH: is this the new licensee's initial period (Jan 1 of the certificate year → Dec 31, N years on)?
 function initialCalendarStart(profile: Partial<Profile> | undefined, licenseExpiration: string, rules: Rules): Date | null {
@@ -392,7 +406,8 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     : Array.from({ length: subCount }, (_, i) => {
         const s = addMonths(start, i * subLen);
         const e = addDays(addMonths(start, (i + 1) * subLen), -1);
-        return { name: `Year ${i + 1} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: `Year ${i + 1}`, start: iso(s), end: iso(e) } };
+        const lbl = rules.cycle.fiscalSubLabels ? `${s.getUTCFullYear()}–${String(e.getUTCFullYear()).slice(2)}` : `Year ${i + 1}`;
+        return { name: `${lbl} (${iso(s)} – ${iso(e)})`, s, e, sub: { index: i + 1, label: lbl, start: iso(s), end: iso(e) } };
       });
 
   const label = (cat: string) => rules.categoryLabels?.[cat] ?? cat;
@@ -546,6 +561,40 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       lines.push(line);
     }
+    if (q.scope === "each_sub_period") {
+      const mine = lines.filter(l => l.id === q.id && l.sub);
+      // MI: no CE is due for N months after the original license; a year partly in that window is prorated by days.
+      const exM = rules.newLicensee?.exemptMonthsFromIssue;
+      if (exM && profile.licenseIssued) {
+        const exEnd = addMonthsClamped(d(profile.licenseIssued), exM);
+        for (const l of mine.filter(l => l.kind !== "max")) {
+          const s = d(l.sub!.start), e = d(l.sub!.end);
+          if (e < exEnd) { l.required = 0; l.note = rules.newLicensee?.note ?? "Not required yet."; }
+          else if (s < exEnd) l.required = Math.ceil(q.hours * ((e.getTime() - exEnd.getTime()) / 86400000 + 1) / ((e.getTime() - s.getTime()) / 86400000 + 1) * 2) / 2;
+          else continue;
+          l.remaining = round(Math.max(0, l.required - l.earned)); l.met = l.remaining === 0;
+        }
+      }
+      // MI: hours over last year's requirement carry into this year (up to carryForwardMax; carryovers don't chain).
+      if (q.carryForwardMax && mine.length && !q.kind) {
+        const s0 = d(mine[0].sub!.start);
+        let prevOwn = sum(addMonths(s0, -12), addDays(s0, -1), q.categories), prevReq = q.hours;
+        for (const l of mine) {
+          const own = l.earned;
+          const carry = round(Math.min(q.carryForwardMax, Math.max(0, prevOwn - prevReq)));
+          if (carry > 0) {
+            l.carried = carry; l.earned = round(own + carry);
+            l.remaining = round(Math.max(0, l.required - l.earned)); l.met = l.remaining === 0;
+          }
+          prevOwn = own; prevReq = l.required;
+        }
+      }
+    }
+  }
+  // Cycle-wide requirements don't apply while every year of the cycle is still inside the new-licensee exemption.
+  const exM = rules.newLicensee?.exemptMonthsFromIssue;
+  if (exM && profile.licenseIssued && addMonthsClamped(d(profile.licenseIssued), exM) > end) {
+    for (const l of lines) if (!l.sub && !l.kind) { l.required = 0; l.remaining = 0; l.met = true; }
   }
   // Tag each line with its dashboard section, and per-year lines with their year.
   const groupOf = new Map(rules.requirements.map(q => [q.id, q.group]));
@@ -557,6 +606,12 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
 
 // Hours above a "max" line (e.g. more than 40 non-technical) don't count toward the cycle total.
 function applyMaximums(lines: Line[], rules: Rules) {
+  // Per-year ceilings (MI: 20 self-study hours per CE year) reduce that year's hours.
+  const annualReq = rules.requirements.find(r => r.scope === "each_sub_period" && !r.categories && !r.when && !r.kind);
+  for (const m of lines.filter(l => l.kind === "max" && l.sub && (l.over ?? 0) > 0)) {
+    const y = annualReq && lines.find(l => l.id === annualReq.id && l.sub?.index === m.sub!.index);
+    if (y) { y.earned = round(y.earned - m.over!); y.remaining = round(Math.max(0, y.required - y.earned)); y.met = y.remaining === 0; }
+  }
   const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when);
   const total = totalReq && lines.find(l => l.id === totalReq.id);
   if (!total) return;

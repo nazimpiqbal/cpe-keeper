@@ -15,12 +15,15 @@ const daysUntil = (iso: string) => Math.ceil((new Date(iso + "T00:00:00Z").getTi
 // Inside a Year block the year and dates are in the block header, so the label drops "each year" and the period is hidden.
 const shortLabel = (l: Line) => l.sub ? l.label.replace(/ each year$/, "") : l.label;
 
+// "1 hr" / "7 hrs"
+const hrs = (n: number) => `${n} ${n === 1 ? "hr" : "hrs"}`;
+
 // "7 hrs of technical for Year 1", "12 hrs for this reporting year", "55 hrs".
 function deadlineText(l: Line) {
   const name = shortLabel(l).replace(/\s*\(.*\)$/, "");
   const what = /total|^annual/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
   const when = l.sub ? ` for ${l.sub.label.startsWith("Year") ? l.sub.label : l.sub.label.toLowerCase()}` : "";
-  return `${l.remaining} hrs${what}${when}`;
+  return `${hrs(l.remaining)}${what}${when}`;
 }
 
 function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warning?: string }) {
@@ -36,7 +39,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
         <Text style={s.reqPeriod}>Up to {line.required} {line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.</Text>
         <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : "#9CA3AF" }]} /></View>
-        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{line.over} hrs over the maximum — they won't count toward the total</Text>}
+        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{hrs(line.over ?? 0)} over the maximum — they won't count toward the total</Text>}
       </View>
     );
   }
@@ -47,6 +50,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         <Text style={s.reqNum}>{line.required ? `${line.earned} / ${line.required}` : "Not due"}</Text>
       </View>
       {!line.sub && <Text style={s.reqPeriod}>{line.period}</Text>}
+      {line.carried ? <Text style={s.reqPeriod}>Includes {hrs(line.carried)} carried from the previous year</Text> : null}
       {line.logged != null && line.reserved && (
         <Text style={s.reqPeriod}>
           {line.logged} logged · {line.reserved.hours} must still come from {line.reserved.label}
@@ -61,9 +65,9 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
           </Text>
           {line.met
             ? <Text style={[s.need, { color: C.ok }]}>{line.mainRemaining === 0 ? `Met with ${line.earned} hrs` : `Met with ${line.alt.earned} hrs of ${line.alt.area}`}</Text>
-            : <Text style={s.need}>{line.mainRemaining} hrs to go — or {line.alt.remaining} more of {line.alt.area}</Text>}
+            : <Text style={s.need}>{hrs(line.mainRemaining ?? 0)} to go — or {line.alt.remaining} more of {line.alt.area}</Text>}
         </View>
-      ) : !line.met && line.remaining > 0 && <Text style={s.need}>{line.remaining} hrs to go</Text>}
+      ) : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
       {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
     </View>
@@ -196,6 +200,7 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     const byTag = tagCats.map(c => ({ c, h: r2(counted.filter(r => tagOf(r) === catLabel(c)).reduce((a, r) => a + Number(r.hours), 0)) }));
     const other = r2(countedHrs - byTag.reduce((a, x) => a + x.h, 0));
     const total = lines.find(l => l.id === "total");
+    if (!total) return null; // states with only per-year totals (MI)
     const techLine = lines.find(l => l.id === "technical_total");
     const ntLine = lines.find(l => l.kind === "max");
     const over = ntLine?.over ?? 0;

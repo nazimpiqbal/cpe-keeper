@@ -1,0 +1,166 @@
+{
+  "state": "MI",
+  "board": "Michigan Board of Accountancy (LARA)",
+  "sourceUrls": [
+    "https://codes.findlaw.com/mi/chapter-339-occupational-code/mi-comp-laws-339-729.html",
+    "https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=R+338.5101++to+R+338.5503.pdf&ReturnHTML=True",
+    "https://www.micpa.org/advocacy/licensure/cpe-requirements-for-licensure",
+    "https://www.nasbaregistry.org/cpe-requirements/michigan"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "cpeEndMonthDay": "06-30",
+    "fiscalSubLabels": true,
+    "label": "License cycle",
+    "note": "Two CE years per license cycle, each July 1 – June 30. Licenses renew July 31."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 40,
+      "scope": "each_sub_period",
+      "carryForwardMax": 40,
+      "group": "overall",
+      "note": "40 hours each CE year (July 1 – June 30). Up to 40 extra hours carry into the next year."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study & nano",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 20 hours of self-study and nano-learning count per CE year (R 338.5215)."
+    },
+    {
+      "id": "aa_annual",
+      "label": "Accounting & auditing each year",
+      "hours": 8,
+      "scope": "each_sub_period",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "carryForwardMax": 8,
+      "group": "subject"
+    },
+    {
+      "id": "ethics_annual",
+      "label": "Ethics each year",
+      "hours": 2,
+      "scope": "each_sub_period",
+      "categories": [
+        "ethics"
+      ],
+      "carryForwardMax": 2,
+      "group": "special"
+    },
+    {
+      "id": "mi_rules",
+      "label": "Michigan statutes & rules (ethics)",
+      "hours": 1,
+      "scope": "cycle",
+      "categories": [
+        "mi_rules"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "1 of the 4 ethics hours in each two-year cycle must cover Michigan's accountancy statutes and rules (the MICPA course). We count courses with \"Michigan\" and \"rules\", \"statutes\" or \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "exemptMonthsFromIssue": 12,
+    "note": "Not required yet — no CE is due for the first 12 months after your original license."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Michigan licenses renew July 31 every two years (e.g. 07/31/2027). CE years run July 1 – June 30.",
+  "issueDateHint": "Your original license date — no CE is due for the first 12 months.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "07-31",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "mi_rules": "Michigan rules",
+    "ethics": "Ethics",
+    "accounting_auditing": "Accounting & auditing",
+    "other": "Other"
+  },
+  "tagCategories": [
+    "mi_rules",
+    "ethics",
+    "accounting_auditing",
+    "other"
+  ],
+  "fieldOfStudyMap": {
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "other": [
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ]
+  },
+  "titleKeywordMap": {
+    "mi_rules": [
+      "michigan+rules",
+      "michigan+statutes",
+      "michigan+ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching: max 20 hours per CE year (3 hours per 50 minutes).",
+    "No credit for repeating substantially equivalent content in the same period."
+  ],
+  "recordRetention": "Keep CE records for 4 years after applying for renewal (R 338.5210).",
+  "toVerify": [
+    "Carryforward (MCL 339.729): modelled as own excess hours of the previous CE year only (a carryover isn't carried again), max 40 total / 8 A&A / 2 ethics.",
+    "New licensees: a CE year partly inside the first 12 months is prorated by days (the statute just says CE isn't required for 12 months).",
+    "Self-study/nano cap read as 20 per CE year ('per period', where R 338.5101 defines a CE period as July 1 – June 30).",
+    "Both Regulatory and Behavioral Ethics count toward the ethics hours; the Michigan rules course is matched by title."
+  ]
+}
