@@ -1,0 +1,149 @@
+{
+  "state": "IL",
+  "board": "Illinois Department of Financial and Professional Regulation (IDFPR)",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/illinois/Ill-Admin-Code-tit-68-SS-1420.70",
+    "https://idfpr.illinois.gov/content/dam/soi/en/web/idfpr/faq/dpr/dpr-sexual-harassment-prevention-ce.pdf",
+    "https://www.icpas.org/advocacy/licensing/cpe-requirements",
+    "https://www.nasbaregistry.org/cpe-requirements/illinois"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "label": "Renewal period",
+    "note": "Licensed CPAs renew every three years; the period runs October 1 – September 30. No carryover."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 24 personal development hours count toward the 120."
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special"
+    },
+    {
+      "id": "harassment",
+      "label": "Sexual harassment prevention",
+      "hours": 1,
+      "scope": "cycle",
+      "categories": [
+        "harassment"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "1 hour each renewal (20 ILCS 2105/2105-15.5). It counts toward the 120. We count courses with \"harassment\" in the title — employer training only counts if the employer is an IDFPR-approved CE provider and issues a certificate."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Licensed CPAs are exempt from CPE for the first renewal after the license is issued."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Illinois licensed CPAs renew every three years on September 30.",
+  "issueDateHint": "If your license was issued during this renewal period, no CPE is due for your first renewal.",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "09-30",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "harassment": "Harassment prevention",
+    "ethics": "Ethics",
+    "personal_development": "Personal development",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "harassment",
+    "ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "harassment": [
+      "harassment"
+    ]
+  },
+  "categoryExcludes": {
+    "harassment": [
+      "general",
+      "personal_development",
+      "ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Self-study: max 80 hours (max 60 non-interactive).",
+    "Non-verifiable CPE: max 60 hours.",
+    "Instruction: max 60 hours."
+  ],
+  "recordRetention": "Keep CPE records for at least 6 years.",
+  "toVerify": [
+    "Personal development cap applied to the NASBA 'Personal Development' field only.",
+    "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours (the rule says 'professional ethics').",
+    "First-renewal exemption: inferred when the issue date falls inside the current renewal period.",
+    "Registered (not licensed) CPAs have no CPE requirement — the app assumes a licensed CPA."
+  ]
+}

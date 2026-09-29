@@ -61,6 +61,8 @@ export type Rules = {
     phaseIn?: { none?: boolean; total?: number; annual?: number; months?: number; note?: string }[];
     // FL-style: the first period runs from the issue date to the Nth occurrence of this date after it (third June 30).
     firstPeriodNthDate?: { month: number; day: number; count: number };
+    // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
+    exemptIfIssuedInCycle?: boolean;
     note?: string;
   };
   // Display helpers for the app.
@@ -214,6 +216,14 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
   const ph = phaseStage(profile, rules);
   if (ph) return evaluatePhaseIn(records, profile, rules, ph.n, ph.stage);
+  const end = d(profile.licenseExpiration);
+  const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
+  if (rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued && d(profile.licenseIssued) >= start) {
+    return [{
+      id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
+      deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
+    }];
+  }
   const fp = firstPeriodStart(profile, rules);
   if (fp) {
     const lines = evaluateWindow(records, profile, rules, d(fp), d(profile.licenseExpiration), "First period");
@@ -221,8 +231,6 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
     if (total && rules.newLicensee?.note) total.note = rules.newLicensee.note;
     return lines;
   }
-  const end = d(profile.licenseExpiration);
-  const start = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);
   return evaluateWindow(records, profile, rules, start, end, rules.cycle.label ?? "Cycle");
 }
 
@@ -439,7 +447,7 @@ export function checkExpiration(licenseExpiration: string, rules: Rules, stateNa
   if (rules.renewalMonths && e > addMonthsClamped(d(asOf), rules.renewalMonths)) {
     const every = rules.renewalMonths === 12 ? "every year" : `every ${rules.renewalMonths / 12} years`;
     return rules.expiresOnMonthDay
-      ? `That date is more than ${rules.renewalMonths} months away — ${stateName} CPE periods are two years (a new licensee's first can be up to three). Check the date.`
+      ? `That date is more than ${rules.renewalMonths} months away, which is longer than a ${stateName} CPE period can be. Check the date.`
       : `${stateName} licenses renew ${every}, so the expiration date can't be more than ${rules.renewalMonths} months away. Check the date on your license.`;
   }
   if (rules.expiresOnMonthDay && licenseExpiration.slice(5) !== rules.expiresOnMonthDay) {
