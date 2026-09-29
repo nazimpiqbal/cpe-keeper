@@ -19,7 +19,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-1", state: "CA", title: "Clean slate",
     checks: "Every requirement shows 0 and the full amount to go; the summary splits 80 hours correctly (the 4 ethics hours are part of the 40 technical); nothing is past due.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01" },
     courses: [],
     expect: [
       { id: "total", earned: 0, required: 80, remaining: 80 },
@@ -38,7 +38,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-2", state: "CA", title: "Typical first year, ethics counts as technical",
     checks: "Ethics hours count as technical (CBA lists ethics as technical subject matter); computer-software and personal-development courses count as non-technical.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01" },
     courses: [
       { title: "Individual Tax Update", provider: P, date: "2026-03-10", hours: 8, field: "Taxes" },
       { title: "Leading Hybrid Teams", provider: P, date: "2026-04-15", hours: 6, field: "Personal Development" },
@@ -58,7 +58,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-3", state: "CA", title: "All 40 technical hours in Year 1",
     checks: "Year 2 still needs its own 12 technical, so only 28 of the 40 technical hours count toward the 40 for now.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01" },
     courses: [
       { title: "Revenue Recognition Deep Dive", provider: P, date: "2026-03-02", hours: 30, field: "Accounting" },
       { title: "Audit Sampling", provider: P, date: "2026-04-02", hours: 10, field: "Auditing" },
@@ -74,7 +74,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-4", state: "CA", title: "Too much non-technical",
     checks: "Only 40 non-technical hours can count (50% of 80); the 5 extra don't count toward the 80. With the non-technical allowance used up, everything still needed must be technical — 28 hours, not 40.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01" },
     courses: [
       { title: "Personal Brand Bootcamp", provider: P, date: "2026-03-05", hours: 30, field: "Personal Development" },
       { title: "Presentation Skills", provider: P, date: "2026-04-05", hours: 15, field: "Communications and Marketing" },
@@ -90,7 +90,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-5", state: "CA", title: "Year 1 already ended short",
     checks: "A year that has ended short shows red 'hrs short — was due by…', isn't the next deadline, and drops out of 'What you still need'.",
-    license: { expiration: "2027-05-31", issued: "2015-06-01" },
+    license: { expiration: "2027-05-31", issued: "2016-03-01" },
     courses: [
       { title: "Tax Planning Strategies", provider: P, date: "2025-09-15", hours: 8, field: "Taxes" },
       { title: "Time Management", provider: P, date: "2025-11-01", hours: 10, field: "Personal Development" },
@@ -109,7 +109,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-6", state: "CA", title: "Audit/attest work with a fraud course",
     checks: "A&A needs 24 hours PLUS 4 fraud: the fraud course counts as technical and toward fraud, but not toward the 24 A&A. Governmental fields don't count toward A&A.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01", practice: ["attest"] },
+    license: { expiration: "2028-01-31", issued: "2016-03-01", practice: ["attest"] },
     courses: [
       { title: "Audit Sampling", provider: P, date: "2026-03-10", hours: 8, field: "Auditing" },
       { title: "Revenue Recognition", provider: P, date: "2026-04-10", hours: 10, field: "Accounting" },
@@ -129,7 +129,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-7", state: "CA", title: "Government audits cover A&A and prep",
     checks: "With A&A, government and preparation engagements all selected, only Government 24 + Fraud 4 apply (CBA: meeting government + fraud is deemed to meet A&A; either covers prep).",
-    license: { expiration: "2028-01-31", issued: "2015-06-01", practice: ["attest", "government_audit", "preparation_engagement"] },
+    license: { expiration: "2028-01-31", issued: "2016-03-01", practice: ["attest", "government_audit", "preparation_engagement"] },
     courses: [
       { title: "GASB Update", provider: P, date: "2026-03-12", hours: 6, field: "Accounting (Governmental)" },
       { title: "Single Audit Essentials", provider: P, date: "2026-04-12", hours: 8, field: "Auditing (Governmental)" },
@@ -173,7 +173,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-10", state: "CA", title: "Regulatory Review due this cycle; not ethics",
     checks: "With a Regulatory Review due date inside the cycle, the 2-hr course is required. It counts as technical but NOT toward the 4 ethics hours (CBA: not interchangeable).",
-    license: { expiration: "2028-01-31", issued: "2015-06-01", regulatoryReviewDue: "2027-06-30" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01", regulatoryReviewDue: "2027-06-30" },
     courses: [
       { title: "Regulatory Review for California CPAs", provider: P, date: "2026-08-01", hours: 2, field: "Regulatory Ethics" },
     ],
@@ -186,7 +186,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: "CA-11", state: "CA", title: "Duplicates and courses outside the cycle",
     checks: "The same course entered twice counts once (flagged as a duplicate); a course before the cycle and one after it don't count.",
-    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    license: { expiration: "2028-01-31", issued: "2016-03-01" },
     courses: [
       { title: "Lease Accounting Update", provider: P, date: "2026-03-01", hours: 8, field: "Accounting" },
       { title: "Lease Accounting Update", provider: P, date: "2026-03-01", hours: 8, field: "Accounting" },
@@ -197,5 +197,16 @@ export const SCENARIOS: Scenario[] = [
       { id: "total", earned: 8, required: 80, remaining: 72 },
       { id: "technical_annual", y: 1, earned: 8, required: 12, remaining: 4 },
     ],
+  },
+  {
+    id: "CA-12", state: "CA", title: "Regulatory Review estimated from the issue date",
+    checks: "No Regulatory Review date entered, licensed 6/1/2015: the estimate rolls forward every six years (2021 → 6/1/2027), so it's due this cycle — shown as 'to go', never overdue.",
+    license: { expiration: "2028-01-31", issued: "2015-06-01" },
+    courses: [],
+    expect: [
+      { id: "regulatory_review", earned: 0, required: 2, remaining: 2 },
+      { id: "technical_total", earned: 0, required: 40, remaining: 40 },
+    ],
+    stillNeeded: { total: 80, rows: ["Year 1: Technical 12", "Year 1: Any subject 8", "Year 2: Technical 12", "Year 2: Any subject 8", "Any time: Technical 10", "Any time: Ethics 4", "Any time: Board-approved Regulatory Review course 2", "Any time: Any subject 24"] },
   },
 ];

@@ -500,10 +500,14 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     if (q.unless && [q.unless].flat().some(p => profile.practice.includes(p))) continue;
     if (q.scope === "lookback_years") {
       // Due date: board-portal date if given, else last course (or licensure) + N years.
+      // An estimate that falls before this cycle is assumed done then, so it rolls forward every N years
+      // (licensed 2015 → 2021, then 2027). Only the board-portal date can make it overdue.
       const base = profile.lastRegulatoryReview ?? profile.licenseIssued;
-      const due = profile.regulatoryReviewDue
+      let due = profile.regulatoryReviewDue
         ? d(profile.regulatoryReviewDue)
         : base ? addMonths(d(base), 12 * (q.lookbackYears ?? 0)) : null;
+      if (due && !profile.regulatoryReviewDue && q.lookbackYears)
+        while (due < start) due = addMonths(due, 12 * q.lookbackYears);
       const dueThisCycle = !due || due <= end;
       const source = profile.regulatoryReviewDue ? "board portal" : base ? "estimated" : "unknown — enter license issue date";
       const earned = dueThisCycle && due ? sum(addMonths(due, -12 * (q.lookbackYears ?? 0)), end, q.categories) : 0;
@@ -511,7 +515,8 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         id: q.id, label: q.label, period: due ? `Due ${iso(due)} (${source})` : `Due date ${source}`,
         required: dueThisCycle ? q.hours : 0, earned,
         remaining: dueThisCycle ? round(Math.max(0, q.hours - earned)) : 0,
-        met: !dueThisCycle || earned >= q.hours, deadline: due ? iso(due) : iso(end),
+        met: !dueThisCycle || earned >= q.hours,
+        deadline: due && profile.regulatoryReviewDue ? iso(due) : iso(end), // an estimate is never "overdue"
         note: dueThisCycle ? q.note : "Not due this renewal cycle.",
       });
       continue;
