@@ -29,6 +29,16 @@ assert.equal(get(L, "annual_total")!.remaining, 10);
 assert.equal(get(L, "annual_total")!.sub!.label, "This reporting year");
 assert.equal(get(L, "ethics")!.required, 4);
 
+// The two earlier reporting years in the 36-month window, each against its own 20.
+const p2 = get(L, "annual_total_prior2")!, p1 = get(L, "annual_total_prior1")!;
+assert.deepEqual([p2.sub!.start, p2.sub!.end, p2.sub!.label], ["2024-04-01", "2025-03-31", "2024–25 reporting year"]);
+assert.deepEqual([p1.sub!.start, p1.sub!.end, p1.sub!.label], ["2025-04-01", "2026-03-31", "2025–26 reporting year"]);
+assert.equal(p2.earned, 50); assert.equal(p2.met, true); assert.equal(p2.past, true);
+assert.equal(p1.earned, 50); assert.equal(p1.group, "overall");
+assert.ok(p2.sub!.index < p1.sub!.index && p1.sub!.index < get(L, "annual_total")!.sub!.index, "oldest year first");
+L = evaluate([c("2025-02-01", 5, "Taxes")], vet, rules);
+assert.equal(get(L, "annual_total_prior2")!.remaining, 15); // short, but past — shown, not a deadline
+
 // Non-technical above 60 doesn't count toward the 120.
 L = evaluate([c("2025-01-01", 70, "Personal Development"), c("2026-06-01", 60, "Taxes")], vet, rules);
 assert.equal(get(L, "non_technical_max")!.over, 10);
@@ -55,8 +65,10 @@ L = evaluate([], nl("2025-03-31"), rules);
 assert.ok(!get(L, "total") && !get(L, "ethics"));
 assert.equal(get(L, "annual_total")!.required, 20);
 assert.equal(get(L, "non_technical_max")!.required, 10);
+assert.ok(!get(L, "annual_total_prior1"), "12-month phase-in window has no earlier year");
 assert.deepEqual(cycleBounds("2025-03-31", rules, nl("2025-03-31")), { start: "2024-04-01", end: "2025-03-31" });
 L = evaluate([], nl("2026-03-31"), rules);
+assert.ok(get(L, "annual_total_prior1") && !get(L, "annual_total_prior2"), "24-month phase-in window: one earlier year");
 assert.equal(get(L, "total")!.required, 60);
 assert.equal(get(L, "annual_total")!.required, 20);
 assert.equal(get(L, "non_technical_max")!.required, 30);

@@ -65,7 +65,8 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
             ? <Text style={[s.need, { color: C.ok }]}>{line.mainRemaining === 0 ? `Met with ${line.earned} hrs` : `Met with ${line.alt.earned} hrs of ${line.alt.area}`}</Text>
             : <Text style={s.need}>{hrs(line.mainRemaining ?? 0)} to go — or {line.alt.remaining} more of {line.alt.area}</Text>}
         </View>
-      ) : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
+      ) : line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — this year's minimum was due at your {fmtDate(line.deadline)} renewal</Text>)
+        : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
       {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
     </View>
@@ -223,7 +224,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
   const lines = useMemo(() => rules ? evaluate(records, profile, rules) : [], [records, license, rules]);
 
-  const urgent = lines.filter(l => !l.met && l.remaining > 0)
+  const urgent = lines.filter(l => !l.met && l.remaining > 0 && !l.past)
     // Earliest deadline first; on the same date, the biggest shortfall (meeting it usually covers the smaller ones).
     .sort((a, b) => a.deadline.localeCompare(b.deadline) || b.remaining - a.remaining)[0];
 

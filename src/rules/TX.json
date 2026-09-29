@@ -34,6 +34,7 @@
       "scope": "trailing_months",
       "months": 12,
       "subLabel": "This reporting year",
+      "priorYears": 2,
       "group": "overall"
     },
     {

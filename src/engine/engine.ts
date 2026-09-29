@@ -30,6 +30,9 @@ type Req = {
   scope: "cycle" | "each_sub_period" | "lookback_years" | "prior_calendar_years" | "calendar_years_or_current" | "trailing_months" | "calendar_years_rolling";
   perYearMax?: number;
   months?: number; subLabel?: string; // trailing_months: window length, and a year-block label for the dashboard
+  // trailing_months (12): also show the N earlier reporting years inside the window, each against the same minimum
+  // (TX: the 36-month look-back covers this year and the two before it, each of which needed 20).
+  priorYears?: number;
   role?: "total" | "annual" | "max_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
@@ -131,6 +134,7 @@ export type Line = {
   parts?: { label: string; logged: number; counted: number; why?: string }[]; // per-year breakdown for rolling totals (ID)
   carried?: number; // hours carried in from the previous year (MI per-year lines)
   group?: string;          // dashboard section (from the rule file)
+  past?: boolean;          // an earlier reporting year whose deadline has passed — shown for the record, never "to go"
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
 };
 
@@ -486,8 +490,24 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         id: q.id, label: q.label, period: `Last ${q.months} months (${iso(s)} – ${iso(end)})`,
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(end),
-        sub: q.subLabel ? { index: 1, label: q.subLabel, start: iso(s), end: iso(end) } : undefined,
+        sub: q.subLabel ? { index: (q.priorYears ? 9 : 1), label: q.subLabel, start: iso(s), end: iso(end) } : undefined,
       });
+      if (q.priorYears && (q.months ?? 12) === 12) {
+        // Earlier reporting years still inside this window (TX: two, for a 36-month look-back; fewer during phase-in).
+        const windowYears = Math.round((addDays(end, 1).getTime() - start.getTime()) / (365.25 * 86400000));
+        const n = Math.min(q.priorYears, windowYears - 1);
+        for (let k = n; k >= 1; k--) {
+          const pe = addDays(addMonths(addDays(end, 1), -12 * k), -1), ps = addDays(addMonths(pe, -12), 1);
+          const e2 = sum(ps, pe, q.categories);
+          const yy = `${ps.getUTCFullYear()}–${String(pe.getUTCFullYear()).slice(2)}`;
+          lines.push({
+            id: `${q.id}_prior${k}`, label: q.label, period: `${iso(ps)} – ${iso(pe)}`,
+            required: q.hours, earned: e2, remaining: round(Math.max(0, q.hours - e2)), met: e2 >= q.hours,
+            deadline: iso(pe), past: true, group: q.group,
+            sub: { index: 9 - k, label: `${yy} reporting year`, start: iso(ps), end: iso(pe) },
+          });
+        }
+      }
       continue;
     }
     if (q.scope === "calendar_years_rolling") {
@@ -636,7 +656,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   }
   // Tag each line with its dashboard section, and per-year lines with their year.
   const groupOf = new Map(rules.requirements.map(q => [q.id, q.group]));
-  for (const l of lines) l.group = groupOf.get(l.id);
+  for (const l of lines) l.group = groupOf.get(l.id) ?? l.group;
   applyMaximums(lines, rules);
   capByAnnualMinimums(lines, rules);
   return lines;
