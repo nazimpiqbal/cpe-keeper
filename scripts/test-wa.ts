@@ -25,7 +25,12 @@ assert.equal(get(L, "total")[0].required, 120);
 
 // Ethics matching and mapping.
 assert.deepEqual(categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "Washington Ethics and Regulations"), rules), ["technical", "wa_ethics"]);
-assert.deepEqual(categoriesOf(c("2026-01-01", 4, "Behavioral Ethics", "Ethics for Washington CPAs"), rules), ["wa_ethics"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 4, "Behavioral Ethics", "Ethics for Washington CPAs"), rules), ["technical", "wa_ethics"]);
+// WAC 4-30-132(5): HR management, business management and professional ethics are technical; only communication/personal development are not.
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Personnel/Human Resources"), rules), ["technical"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Business Management and Organization"), rules), ["technical"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Behavioral Ethics"), rules), ["technical"]);
+assert.deepEqual(categoriesOf(c("2026-01-01", 1, "Communications and Marketing"), rules), ["non_technical"]);
 assert.ok(!categoriesOf(c("2026-01-01", 4, "Regulatory Ethics", "AICPA Ethics"), rules).includes("wa_ethics"));
 
 // Requirements: 70 non-technical (10 over), yearly minimums, total capped by owed yearly hours.

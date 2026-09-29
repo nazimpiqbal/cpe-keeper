@@ -3,6 +3,7 @@
   "board": "Washington State Board of Accountancy",
   "sourceUrls": [
     "https://app.leg.wa.gov/wac/default.aspx?cite=4-30-134",
+    "https://app.leg.wa.gov/wac/default.aspx?cite=4-30-132",
     "https://acb.wa.gov/individual-licensing/renewal",
     "https://acb.wa.gov/individual-licensing/continuing-professional-education-cpe/continuing-professional-education-first-reporting-period",
     "https://acb.wa.gov/individual-licensing/not-enough-cpe-renew-cpe-extension-requests",
@@ -47,7 +48,7 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 60 non-technical hours (communication, management, leadership, client relations, practice development, motivational) count."
+      "note": "Maximum, not a target. No more than 60 non-technical hours count: communication, interpersonal and leadership skills, personal development, client and public relations, practice development, motivational courses, speed reading and memory building."
     },
     {
       "id": "ethics",
@@ -112,15 +113,15 @@
       "Statistics",
       "Specialized Knowledge",
       "Regulatory Ethics",
-      "Computer Software and Applications"
+      "Behavioral Ethics",
+      "Computer Software and Applications",
+      "Personnel/Human Resources",
+      "Business Management and Organization",
+      "Production"
     ],
     "non_technical": [
       "Communications and Marketing",
-      "Personal Development",
-      "Personnel/Human Resources",
-      "Business Management and Organization",
-      "Production",
-      "Behavioral Ethics"
+      "Personal Development"
     ]
   },
   "titleKeywordMap": {
@@ -139,8 +140,7 @@
     "Non-interactive self-study earns half credit."
   ],
   "toVerify": [
-    "Non-technical mapping (WAC 4-30-132 wasn't readable from here): Communications and Marketing, Personal Development, Personnel/HR, Business Management and Organization, Production and Behavioral Ethics treated as non-technical; Computer Software and Applications as technical.",
-    "Whether a Washington-approved ethics course also counts as technical (we count it toward the 120 and keep it out of the non-technical cap).",
+    "NASBA 'Production' (operations/procurement) treated as technical under 'business management and organization' / 'budgeting and cost analysis' — not named in WAC 4-30-132.",
     "Carry-back hours (Jan 1 – June 30 of the renewal year, with an extension) are explained on the dashboard but not added to the numbers."
   ]
 }
