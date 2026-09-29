@@ -10,7 +10,10 @@ const c = (date: string, hours: number, fieldOfStudy: string, title = fieldOfStu
 const asOf = "2026-09-28";
 const vet = { licenseExpiration: "2027-06-30", licenseIssued: "2012-05-01", practice: [] as string[] };
 
-assert.deepEqual(cycleBounds(vet.licenseExpiration, rules, vet, asOf), { start: "2026-01-01", end: "2026-12-31", calendarYear: true });
+// The two calendar years before the date entered: 06/30/2027 → 2025–2026; 01/31/2028 → 2026–2027; 01/31/2026 → 2024–2025.
+assert.deepEqual(cycleBounds(vet.licenseExpiration, rules, vet, asOf), { start: "2025-01-01", end: "2026-12-31" });
+assert.deepEqual(cycleBounds("2028-01-31", rules, vet, asOf), { start: "2026-01-01", end: "2027-12-31" });
+assert.deepEqual(cycleBounds("2026-01-31", rules, vet, asOf), { start: "2024-01-01", end: "2025-12-31" });
 assert.deepEqual(categoriesOf(c("2026-01-01", 2, "Regulatory Ethics", "Idaho Ethics: Accountancy Act and Rules"), rules), ["id_ethics"]);
 
 // 60 hrs last year (only 50 count) + 25 this year → 75/80; this year 25/30.
@@ -20,11 +23,17 @@ assert.equal(get(L, "total")!.period, "2025–2026 · for the report due Jan 31,
 assert.equal(get(L, "annual_min")!.earned, 25);
 assert.equal(get(L, "annual_min")!.remaining, 5);
 assert.equal(get(L, "annual_min")!.sub!.label, "2026");
-// Last year and next year each get their own 30-hour box.
-const y25 = get(L, "annual_min_2025")!, y27 = get(L, "annual_min_2027")!;
+// Two year boxes only: the prior year and the last year of the window.
+const y25 = get(L, "annual_min_2025")!;
 assert.deepEqual([y25.sub!.label, y25.earned, y25.met, y25.past ?? false], ["2025", 60, true, false]);
-assert.deepEqual([y27.sub!.label, y27.earned, y27.remaining, y27.past ?? false], ["2027", 0, 30, false]);
-assert.ok(y25.sub!.index < get(L, "annual_min")!.sub!.index && get(L, "annual_min")!.sub!.index < y27.sub!.index);
+assert.ok(!get(L, "annual_min_2027") && !get(L, "annual_min_2024"));
+assert.ok(y25.sub!.index < get(L, "annual_min")!.sub!.index);
+// 01/31/2028: 2026 + 2027, for the report due Jan 31, 2028.
+const L28 = evaluate([c("2025-03-01", 60, "Taxes"), c("2026-02-01", 21, "Accounting"), c("2027-02-01", 10, "Taxes")], { ...vet, licenseExpiration: "2028-01-31" }, rules, asOf);
+assert.equal(get(L28, "total")!.period, "2026–2027 · for the report due Jan 31, 2028");
+assert.equal(get(L28, "total")!.earned, 31);
+assert.deepEqual([get(L28, "annual_min_2026")!.earned, get(L28, "annual_min")!.sub!.label, get(L28, "annual_min")!.earned], [21, "2027", 10]);
+assert.ok(!get(L28, "annual_min_2025"));
 // A short year that has ended is flagged as short.
 const Ls = evaluate([c("2025-03-01", 20, "Taxes")], vet, rules, asOf);
 assert.equal(get(Ls, "annual_min_2025")!.past, true); assert.equal(get(Ls, "annual_min_2025")!.remaining, 10);

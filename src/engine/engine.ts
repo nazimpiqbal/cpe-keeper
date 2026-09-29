@@ -55,6 +55,7 @@ export type Rules = {
   // calendar_year with yearStartMonth = a fixed yearly CPE period, e.g. CT: July 1 – June 30 (yearStartMonth 7).
   cycle: {
     type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number;
+    yearsBeforeExpiration?: number; // calendar_year: track the N calendar years ending the Dec 31 before the entered date (ID: 2)
     // WA: the CPE period ends December 31 of the year before the license expires (license expires June 30).
     endsDecemberBeforeExpiration?: boolean;
     // WA: minimums apply per calendar year (2025, 2026, 2027) rather than per 12 months from the cycle start.
@@ -208,6 +209,12 @@ export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: P
   { start: string; end: string; calendarYear?: boolean; label?: string } {
   if (isCalendarYear(rules)) {
     const sm = startMonth(rules), y = fyIndex(asOf, sm);
+    const n = rules.cycle.yearsBeforeExpiration;
+    if (n) {
+      // ID: the dashboard follows the date entered — the N calendar years ending the Dec 31 before it.
+      const last = Number(licenseExpiration.slice(0, 4)) - 1;
+      return { start: iso(fyStartD(last - n + 1, sm)), end: iso(fyEndD(last, sm)) };
+    }
     return { start: iso(fyStartD(y, sm)), end: iso(fyEndD(y, sm)), calendarYear: true, ...(sm !== 1 ? { label: fyLabel(y, sm) } : {}) };
   }
   const full: Profile = { licenseExpiration, practice: [], ...profile };
@@ -303,8 +310,11 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
 
 function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: string): Line[] {
   if (isCalendarYear(rules)) {
-    const { start, end } = cycleBounds(profile.licenseExpiration, rules, profile, asOf);
-    const sm = startMonth(rules), name = fyLabel(fyIndex(start, sm), sm);
+    const sm = startMonth(rules);
+    // The year the per-year lines are built around: this year, or (ID) the last year before the entered date.
+    const yr = rules.cycle.yearsBeforeExpiration ? Number(profile.licenseExpiration.slice(0, 4)) - 1 : fyIndex(asOf, sm);
+    const start = iso(fyStartD(yr, sm)), end = iso(fyEndD(yr, sm));
+    const name = fyLabel(yr, sm);
     const ly = rules.newLicensee?.licensureYear;
     if (ly && profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === fyIndex(start, sm)) {
       // Licensed this year (ID): only the licensure-year course is due.
@@ -544,7 +554,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     if (q.scope === "calendar_years_rolling") {
       // Sum of the last N calendar years (this one included), each capped. The licensure year counts as
       // creditIfMet once its required course is done (ID: 2-hr Idaho ethics → 50).
-      const y = fyIndex(asOf, sm), n = q.years ?? 2;
+      const y = fyIndex(iso(end), sm), n = q.years ?? 2; // the window's last year
       const ly = rules.newLicensee?.licensureYear;
       const issuedYear = profile.licenseIssued ? Number(profile.licenseIssued.slice(0, 4)) : null;
       let earned = 0;
