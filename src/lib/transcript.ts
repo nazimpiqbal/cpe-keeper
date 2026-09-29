@@ -46,7 +46,8 @@ const byDate = (rows: CpeRow[]) => [...rows].sort((a, b) => a.completed_on.local
 
 // ---------- PDF (HTML for expo-print) ----------
 
-export function transcriptHtml(t: TranscriptInput, certs: CertPage[]): string {
+// cssMargins: page margins via CSS @page (Android). iOS ignores @page, so there they're passed to the printer instead.
+export function transcriptHtml(t: TranscriptInput, certs: CertPage[], cssMargins = true): string {
   const rows = byDate(t.rows);
   const total = r2(rows.reduce((a, r) => a + Number(r.hours), 0));
   const showDelivery = !!t.rules?.deliveryMap || rows.some(r => r.delivery_method);
@@ -62,7 +63,7 @@ export function transcriptHtml(t: TranscriptInput, certs: CertPage[]): string {
   ].filter(Boolean) as string[][];
 
   return `<!doctype html><html><head><meta charset="utf-8"><style>
-    @page { margin: 36px 36px 44px; }
+    ${cssMargins ? "@page { margin: 0.6in 0.6in 0.7in; }" : ""}
     * { box-sizing: border-box; }
     body { font-family: -apple-system, Helvetica, Arial, sans-serif; color: #111827; font-size: 10.5px; margin: 0; }
     h1 { font-size: 20px; margin: 0 0 2px; }

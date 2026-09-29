@@ -1,4 +1,5 @@
 // Builds the audit transcript file on the device and opens the share sheet (save to Files, email, AirDrop…).
+import { Platform } from "react-native";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Directory, File, Paths } from "expo-file-system";
@@ -76,7 +77,12 @@ export async function shareTranscript(t: TranscriptInput, format: "pdf" | "xlsx"
   let certs: (CertPage & { base64?: string })[] = [], failed: number[] = [];
   if (includeCertificates && t.certNumber.size) ({ pages: certs, failed } = await downloadCertificates(t.certNumber, t.rows, onProgress));
   onProgress("Building PDF…");
-  const printed = await Print.printToFileAsync({ html: transcriptHtml(t, certs), base64: true });
+  // US Letter with 0.6" side/top and 0.7" bottom margins (72 points per inch) so it prints cleanly.
+  const ios = Platform.OS === "ios";
+  const printed = await Print.printToFileAsync({
+    html: transcriptHtml(t, certs, !ios), base64: true, width: 612, height: 792,
+    ...(ios ? { margins: { top: 43, bottom: 50, left: 43, right: 43 } } : {}),
+  });
   let b64 = printed.base64!;
   if (certs.some(c => c.isPdf)) {
     onProgress("Attaching PDF certificates…");
