@@ -80,6 +80,8 @@ export type Rules = {
     prorateByQuarter?: { except: string[] };
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
+    // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
+    exemptExcept?: string[];
     // ID-style: in the calendar year of licensure only this requirement applies; once met, that year counts as creditIfMet hours.
     licensureYear?: { requirement: Req; creditIfMet: number; note?: string };
     note?: string;
@@ -279,10 +281,14 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
   const end = d(cpePeriodEnd(profile.licenseExpiration, rules));
   const start = rollingStart(end, rules, profile);
   if (rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued && d(profile.licenseIssued) >= start) {
+    const keep = rules.newLicensee.exemptExcept ?? [];
+    const still = keep.length
+      ? evaluateWindow(records, profile, { ...rules, requirements: rules.requirements.filter(q => keep.includes(q.id)) }, start, end, rules.cycle.label ?? "Cycle", asOf)
+      : [];
     return [{
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
-    }];
+    }, ...still];
   }
   const pq = rules.newLicensee?.prorateByQuarter;
   const normalStart = addDays(addMonths(end, -(rules.cycle.lengthMonths ?? 24)), 1);

@@ -1,0 +1,161 @@
+{
+  "state": "NJ",
+  "board": "New Jersey State Board of Accountancy (Division of Consumer Affairs)",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-13-29-6-2",
+    "https://www.njcpa.org/learn/maintain-your-license/renewal",
+    "https://www.nasbaregistry.org/cpe-requirements/new-jersey"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "calendarSubPeriods": true,
+    "label": "Triennial period",
+    "note": "One triennial period for everyone (currently Jan 1, 2024 – Dec 31, 2026); licenses renew by December 31 at the end of it."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall"
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "technical",
+      "label": "Technical subjects",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "note": "At least 60 of the 120 in accounting, auditing, business law, computer science, economics, finance, MAS, math/statistics, SEC practice, taxation or professional ethics."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing (public practice)",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "public_practice",
+      "group": "subject",
+      "note": "24 hours in accounting or auditing (review and compilation count) if you're in the practice of public accountancy."
+    },
+    {
+      "id": "ethics",
+      "label": "New Jersey Law & Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nj_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "The Board-approved 4-hour New Jersey Law & Ethics course, taken in person or by live webinar from an approved provider. We count courses with \"New Jersey\" (or \"NJ\") and \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "exemptExcept": [
+      "ethics"
+    ],
+    "note": "First renewal after licensure: the 120 / 20-per-year / technical / A&A requirements don't apply. The 4-hour New Jersey Law & Ethics course still does."
+  },
+  "practiceOptions": [
+    {
+      "id": "public_practice",
+      "label": "In public practice"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "New Jersey licenses renew by December 31 at the end of each triennial period (currently 12/31/2026).",
+  "issueDateHint": "If you were licensed during this triennial period, only the NJ Law & Ethics course is due at your first renewal.",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "12-31",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "nj_ethics": "NJ Law & Ethics",
+    "technical": "Technical",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "nj_ethics",
+    "technical",
+    "non_technical"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Business Law",
+      "Computer Software and Applications",
+      "Information Technology",
+      "Economics",
+      "Finance",
+      "Management Advisory Services",
+      "Statistics",
+      "Taxes",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Business Management and Organization",
+      "Production",
+      "Specialized Knowledge"
+    ],
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ]
+  },
+  "titleKeywordMap": {
+    "nj_ethics": [
+      "new jersey+ethics",
+      "nj law",
+      "nj ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 60 hours.",
+    "Authorship: max 30 hours.",
+    "Reviewer credit: max 60 hours."
+  ],
+  "toVerify": [
+    "Technical list is from N.J.A.C. 13:29-6.3 as quoted by NASBA ('Professional Ethics' — both ethics fields treated as technical). Specialized Knowledge isn't listed, so it's treated as non-technical (conservative).",
+    "New licensees: the ethics course is kept for the first renewal ('All applicants shall complete four credits…'), everything else waived.",
+    "The in-person/webinar requirement for the NJ ethics course isn't checked against the course's delivery format."
+  ]
+}
