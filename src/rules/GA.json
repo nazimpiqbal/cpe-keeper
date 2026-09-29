@@ -1,0 +1,171 @@
+{
+  "state": "GA",
+  "board": "Georgia State Board of Accountancy",
+  "sourceUrls": [
+    "https://gsba.georgia.gov/document/document/website-cpe-rule-20-11-finalpdf/download",
+    "https://gsba.georgia.gov/cpe-requirements",
+    "https://www.gscpa.org/content/ContinuingEducation/New-CPE-Rules-2024.aspx",
+    "https://www.nasbaregistry.org/cpe-requirements/georgia"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "Reporting period",
+    "note": "Licenses renew December 31 of odd-numbered years; the reporting period is the two calendar years before."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 15,
+        "categories": [
+          "non_technical"
+        ]
+      },
+      "showNote": true,
+      "note": "Up to 15 extra non-technical credits from the previous reporting period count toward the 80 (not toward technical or yearly minimums)."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "technical",
+      "label": "Technical fields",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "note": "At least half of the credits in technical fields: accounting, auditing, business law, economics, finance, IT, management services, regulatory ethics, specialized knowledge, statistics, taxes."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special"
+    },
+    {
+      "id": "ga_ethics",
+      "label": "Georgia-specific ethics",
+      "hours": 1,
+      "scope": "cycle",
+      "categories": [
+        "ga_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "1 of the 4 ethics credits must cover the laws, rules and policies of the Georgia Board. We count courses with \"Georgia\" and \"ethics\" or \"rules\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "byIssueYearInPeriod": [
+      {
+        "hours": {
+          "total": 40,
+          "technical": 20
+        },
+        "note": "Licensed in the first year of this period: 40 credits (at least 20 in the second year), including the 4 ethics credits."
+      },
+      {
+        "none": true,
+        "note": "Licensed in the second year of this period: no CPE is due for your first renewal."
+      }
+    ],
+    "note": "Not required in the year you were licensed."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Georgia licenses renew December 31 of odd-numbered years (e.g. 12/31/2027). Licensees 70 or older are exempt.",
+  "issueDateHint": "If you were licensed during this period, your first-renewal requirement is reduced or waived.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "expiresYearParity": "odd",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "ga_ethics": "Georgia ethics",
+    "technical": "Technical",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "ga_ethics",
+    "technical",
+    "non_technical"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Business Law",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Management Advisory Services",
+      "Regulatory Ethics",
+      "Specialized Knowledge",
+      "Statistics",
+      "Taxes"
+    ],
+    "non_technical": [
+      "Behavioral Ethics",
+      "Business Management and Organization",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Personal Development",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "ga_ethics": [
+      "georgia+ethics",
+      "georgia+rules"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction, authorship and technical-reviewer credit: max 50% each.",
+    "Age 70+: exempt from CPE."
+  ],
+  "recordRetention": "Keep documentation for 5 years after each program.",
+  "toVerify": [
+    "Rule 20-11 read from the Board's posted revised rule (2024) — effective date not shown on the document; GSCPA says the new rules apply from January 1, 2024.",
+    "Carryover: modelled as min(15, previous period's non-technical credits, previous period's excess over 80); counts toward the 80 only.",
+    "New licensees licensed in year 1: technical requirement set to 20 (50% of 40).",
+    "Georgia-specific ethics course matched by title; both Regulatory and Behavioral Ethics count toward the 4 ethics credits."
+  ]
+}

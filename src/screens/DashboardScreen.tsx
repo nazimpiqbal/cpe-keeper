@@ -50,7 +50,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         <Text style={s.reqNum}>{line.required ? `${line.earned} / ${line.required}` : "Not due"}</Text>
       </View>
       {!line.sub && <Text style={s.reqPeriod}>{line.period}</Text>}
-      {line.carried ? <Text style={s.reqPeriod}>Includes {hrs(line.carried)} carried from the previous year</Text> : null}
+      {line.carried ? <Text style={s.reqPeriod}>Includes {hrs(line.carried)} carried from the previous {line.sub ? "year" : "period"}</Text> : null}
       {line.logged != null && line.reserved && (
         <Text style={s.reqPeriod}>
           {line.logged} logged · {line.reserved.hours} must still come from {line.reserved.label}

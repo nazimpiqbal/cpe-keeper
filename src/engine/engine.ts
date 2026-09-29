@@ -36,6 +36,8 @@ type Req = {
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   orConcentrated?: { hours: number; categories: string[] };
   carryForwardMax?: number; // CT: up to N excess hours from the previous CPE year count (carryovers don't chain)
+  // GA: up to `max` excess credits from the previous reporting period count toward this total — only credits in `categories`.
+  carryFromPreviousPeriod?: { max: number; categories?: string[] };
   group?: string; // dashboard section, e.g. "overall" | "subject" | "special"
   showNote?: boolean; // always show the note under this line on the dashboard
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
@@ -57,6 +59,8 @@ export type Rules = {
     cpeEndMonthDay?: string;
     // MI: label 12-month sub-periods by the years they span ("2025–26") instead of "Year 1".
     fiscalSubLabels?: boolean;
+    // internal: waive per-year minimums for sub-periods 1..N (GA new licensee's licensure year)
+    waiveSubPeriodsThrough?: number;
   };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
@@ -86,6 +90,9 @@ export type Rules = {
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
     exemptExcept?: string[];
+    // GA: by which calendar year of the period the license was issued in (index 0 = first year).
+    // none = nothing due; otherwise hours overrides by requirement id, and yearly minimums through the licensure year waived.
+    byIssueYearInPeriod?: { none?: boolean; hours?: { [id: string]: number }; note?: string }[];
     // MI: nothing is due for this many months from the original license date; a CE year partly inside it is prorated.
     exemptMonthsFromIssue?: number;
     // OH: first period = Jan 1 of the year certified through Dec 31 of the following year(s), with only a total.
@@ -317,6 +324,22 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
     }, ...still];
   }
+  const bi = rules.newLicensee?.byIssueYearInPeriod;
+  if (bi && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {
+    // GA: requirements depend on which calendar year of the period the license was issued.
+    const idx = Number(profile.licenseIssued.slice(0, 4)) - start.getUTCFullYear();
+    const stage = bi[Math.min(idx, bi.length - 1)];
+    if (stage.none) {
+      return [{ id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
+        deadline: iso(end), group: "overall", note: stage.note ?? "No CPE is due for your first renewal." }];
+    }
+    const requirements = rules.requirements.map(q => stage.hours?.[q.id] != null ? { ...q, hours: stage.hours[q.id] } : q);
+    const lines = evaluateWindow(records, profile, { ...rules, requirements, cycle: { ...rules.cycle, waiveSubPeriodsThrough: idx + 1 } },
+      start, end, rules.cycle.label ?? "Cycle", asOf);
+    const total = lines.find(l => l.id === "total");
+    if (total && stage.note) total.note = stage.note;
+    return lines;
+  }
   const ics = initialCalendarStart(profile, profile.licenseExpiration, rules);
   if (ics) {
     // OH initial period: only a total, no yearly minimums or subject requirements.
@@ -534,6 +557,17 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
         sub: w.sub ?? (q.subLabel ? { index: 1, label: q.subLabel, start: iso(w.s), end: iso(w.e) } : undefined),
       };
+      if (q.carryFromPreviousPeriod && q.scope === "cycle") {
+        // GA: excess credits from the previous reporting period (same length, just before this one).
+        const ps = addMonths(start, -(rules.cycle.lengthMonths ?? 24)), pe = addDays(start, -1);
+        const prevTotal = sum(ps, pe, q.categories);
+        const prevEligible = q.carryFromPreviousPeriod.categories ? sum(ps, pe, q.carryFromPreviousPeriod.categories) : prevTotal;
+        const carry = round(Math.min(q.carryFromPreviousPeriod.max, prevEligible, Math.max(0, prevTotal - q.hours)));
+        if (carry > 0) {
+          line.carried = carry; line.earned = round(earned + carry);
+          line.remaining = round(Math.max(0, q.hours - line.earned)); line.met = line.earned >= q.hours;
+        }
+      }
       if (q.carryForwardMax && isCalendarYear(rules)) {
         // CT: up to N hours over last year's requirement count toward this year. Last year's own carry-in doesn't.
         const y = fyIndex(iso(w.s), sm);
@@ -563,6 +597,10 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     }
     if (q.scope === "each_sub_period") {
       const mine = lines.filter(l => l.id === q.id && l.sub);
+      const waive = rules.cycle.waiveSubPeriodsThrough;
+      if (waive) for (const l of mine.filter(l => l.kind !== "max" && l.sub!.index <= waive)) {
+        l.required = 0; l.remaining = 0; l.met = true; l.note = rules.newLicensee?.note ?? "Not required in the year you were licensed.";
+      }
       // MI: no CE is due for N months after the original license; a year partly in that window is prorated by days.
       const exM = rules.newLicensee?.exemptMonthsFromIssue;
       if (exM && profile.licenseIssued) {
