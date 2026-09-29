@@ -24,7 +24,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   certificatePath?: string | null;             // stored file this course came from
   progress?: { index: number; total: number }; // e.g. course 2 of 5 on a transcript
   onSkip?: () => void;
-  cycle?: { start: string; end: string; calendarYear?: boolean }; // current renewal cycle (or year), to flag out-of-cycle dates
+  cycle?: { start: string; end: string; calendarYear?: boolean; label?: string }; // current renewal cycle (or CPE year), to flag out-of-cycle dates
   existing?: CpeRow;                           // editing a saved course
 }) {
   // Editing uses the saved course's values; scanning uses the extracted ones.
@@ -133,7 +133,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
           {(() => {
             const iso = toIso(date);
             if (!cycle || !iso) return null;
-            const y = cycle.start.slice(0, 4);
+            const y = cycle.label ?? cycle.start.slice(0, 4);
             const msg = cycle.calendarYear
               ? (iso < cycle.start ? `This is from before ${y}. It won't count toward ${y}'s hours, but can still count toward multi-year requirements like ethics.`
                 : iso > cycle.end ? `This is dated after ${y}. It'll count toward next year's hours.` : null)

@@ -17,7 +17,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   userId: string;
   courses: Extracted[];
   certificatePath: string | null;
-  cycle?: { start: string; end: string; calendarYear?: boolean };
+  cycle?: { start: string; end: string; calendarYear?: boolean; label?: string };
   onDone: (importedAny: boolean) => void;
 }) {
   const [items, setItems] = useState<BulkItem[]>(() => courses.map(course => ({ course, saved: false })));
@@ -139,7 +139,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
               else if (f.alreadyLogged) notes.push({ text: "Already logged, with a certificate — skipped", color: C.warn });
               if (f.repeatInFile) notes.push({ text: "Appears twice in this file — skipped", color: C.warn });
               if (f.incomplete) notes.push({ text: "Missing details — tap to complete", color: C.danger });
-              if (f.outside) notes.push({ text: cycle?.calendarYear ? `Not in ${cycle.start.slice(0, 4)} — won't count toward this year's hours` : "Outside current cycle — won't count", color: C.muted });
+              if (f.outside) notes.push({ text: cycle?.calendarYear ? `Not in ${cycle.label ?? cycle.start.slice(0, 4)} — won't count toward this year's hours` : "Outside current cycle — won't count", color: C.muted });
               if (f.guessed && !f.incomplete) notes.push({ text: "⚠︎ Field of study is a best guess", color: C.warn });
             }
             return (

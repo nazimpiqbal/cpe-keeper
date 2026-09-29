@@ -35,6 +35,7 @@ type Req = {
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   orConcentrated?: { hours: number; categories: string[] };
+  carryForwardMax?: number; // CT: up to N excess hours from the previous CPE year count (carryovers don't chain)
   group?: string; // dashboard section, e.g. "overall" | "subject" | "special"
   showNote?: boolean; // always show the note under this line on the dashboard
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
@@ -45,7 +46,8 @@ type Req = {
 
 export type Rules = {
   state: string;
-  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string };
+  // calendar_year with yearStartMonth = a fixed yearly CPE period, e.g. CT: July 1 – June 30 (yearStartMonth 7).
+  cycle: { type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number };
   requirements: Req[];
   fieldOfStudyMap: { [category: string]: string[] };
   // Categories that no NASBA field captures, matched by course title (e.g. fraud courses are usually "Auditing").
@@ -107,6 +109,13 @@ const addDays = (x: Date, n: number) => new Date(x.getTime() + n * 86400000);
 const round = (n: number) => Math.round(n * 100) / 100;
 const today = () => new Date().toISOString().slice(0, 10);
 const isCalendarYear = (rules: Rules) => rules.cycle.type === "calendar_year";
+// CPE years for calendar-year states. A year is named by the calendar year it starts in; with a July start,
+// CPE year 2026 = Jul 1, 2026 – Jun 30, 2027, labelled "2026–27".
+const startMonth = (rules: Rules) => rules.cycle.yearStartMonth ?? 1;
+const fyIndex = (date: string, sm: number) => Number(date.slice(0, 4)) - (Number(date.slice(5, 7)) < sm ? 1 : 0);
+const fyStartD = (y: number, sm: number) => new Date(Date.UTC(y, sm - 1, 1));
+const fyEndD = (y: number, sm: number) => addDays(new Date(Date.UTC(y + 1, sm - 1, 1)), -1);
+const fyLabel = (y: number, sm: number) => sm === 1 ? `${y}` : `${y}–${String(y + 1).slice(2)}`;
 
 export function categoriesOf(rec: Record, rules: Rules): string[] {
   const byField = Object.entries(rules.fieldOfStudyMap)
@@ -126,10 +135,10 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
 // On a first renewal under new-licensee rules, the cycle runs from the issue date instead.
 // Calendar-year states (NY): the current calendar year.
 export function cycleBounds(licenseExpiration: string, rules: Rules, profile?: Partial<Profile>, asOf: string = today()):
-  { start: string; end: string; calendarYear?: boolean } {
+  { start: string; end: string; calendarYear?: boolean; label?: string } {
   if (isCalendarYear(rules)) {
-    const y = asOf.slice(0, 4);
-    return { start: `${y}-01-01`, end: `${y}-12-31`, calendarYear: true };
+    const sm = startMonth(rules), y = fyIndex(asOf, sm);
+    return { start: iso(fyStartD(y, sm)), end: iso(fyEndD(y, sm)), calendarYear: true, ...(sm !== 1 ? { label: fyLabel(y, sm) } : {}) };
   }
   const full: Profile = { licenseExpiration, practice: [], ...profile };
   const plan = profile ? newLicenseePlan(full, rules) : null;
@@ -216,16 +225,24 @@ export function newLicenseePlan(profile: Profile, rules: Rules): NewLicenseePlan
 export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf: string = today()): Line[] {
   if (isCalendarYear(rules)) {
     const { start, end } = cycleBounds(profile.licenseExpiration, rules, profile, asOf);
+    const sm = startMonth(rules), name = fyLabel(fyIndex(start, sm), sm);
     const ly = rules.newLicensee?.licensureYear;
-    if (ly && profile.licenseIssued?.slice(0, 4) === start.slice(0, 4)) {
+    if (ly && profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === fyIndex(start, sm)) {
       // Licensed this year (ID): only the licensure-year course is due.
-      const lines = evaluateWindow(records, profile, { ...rules, requirements: [ly.requirement] }, d(start), d(end), start.slice(0, 4), asOf);
+      const lines = evaluateWindow(records, profile, { ...rules, requirements: [ly.requirement] }, d(start), d(end), name, asOf);
       return [{
-        id: "total", label: "CPE this year", period: `${start.slice(0, 4)} (year licensed)`, required: 0, earned: 0, remaining: 0, met: true,
+        id: "total", label: "CPE this year", period: `${name} (year licensed)`, required: 0, earned: 0, remaining: 0, met: true,
         deadline: end, group: "overall", note: ly.note ?? "No CPE is due in the year you're licensed.",
       }, ...lines];
     }
-    return evaluateWindow(records, profile, rules, d(start), d(end), start.slice(0, 4), asOf);
+    if (rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued && profile.licenseIssued >= start) {
+      // CT: no CPE report for the CPE year in which the license was first issued.
+      return [{
+        id: "total", label: "Annual CPE", period: `${name} (year licensed)`, required: 0, earned: 0, remaining: 0, met: true,
+        deadline: end, group: "overall", note: rules.newLicensee.note ?? "No CPE is due for the year you're licensed.",
+      }];
+    }
+    return evaluateWindow(records, profile, rules, d(start), d(end), name, asOf);
   }
   const plan = newLicenseePlan(profile, rules);
   if (plan) return evaluateFirstRenewal(records, profile, rules, plan);
@@ -303,7 +320,8 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   });
 
   const label = (cat: string) => rules.categoryLabels?.[cat] ?? cat;
-  const yearStart = (y: number) => d(`${y}-01-01`), yearEnd = (y: number) => d(`${y}-12-31`);
+  const sm = startMonth(rules);
+  const yearStart = (y: number) => fyStartD(y, sm), yearEnd = (y: number) => fyEndD(y, sm), yl = (y: number) => fyLabel(y, sm);
   // NY-style: licensed after Jan 1 of this cycle's year → nothing due in the "cycle" this year.
   const exemptThisCycle = !!rules.newLicensee?.exemptUntilFirstJanuary && !!profile.licenseIssued && d(profile.licenseIssued) > start;
 
@@ -361,7 +379,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     if (q.scope === "calendar_years_rolling") {
       // Sum of the last N calendar years (this one included), each capped. The licensure year counts as
       // creditIfMet once its required course is done (ID: 2-hr Idaho ethics → 50).
-      const y = Number(asOf.slice(0, 4)), n = q.years ?? 2;
+      const y = fyIndex(asOf, sm), n = q.years ?? 2;
       const ly = rules.newLicensee?.licensureYear;
       const issuedYear = profile.licenseIssued ? Number(profile.licenseIssued.slice(0, 4)) : null;
       let earned = 0;
@@ -376,11 +394,11 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         const counted = q.perYearMax != null ? Math.min(q.perYearMax, h) : h;
         if (!why && counted < h) why = `only ${q.perYearMax} a year count`;
         earned += counted;
-        parts.push({ label: String(yr), logged, counted: round(counted), why });
+        parts.push({ label: `${yl(yr)} courses`, logged, counted: round(counted), why });
       }
       earned = round(earned);
       lines.push({
-        id: q.id, label: q.label, period: `${y - n + 1}–${y}`,
+        id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`,
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(yearEnd(y)), parts: q.categories ? undefined : parts,
       });
@@ -388,12 +406,12 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     }
     if (q.scope === "calendar_years_or_current") {
       // Met by the N prior calendar years together, or by the current year alone — whichever has more.
-      const y = Number(asOf.slice(0, 4)), n = q.years ?? 0;
+      const y = fyIndex(asOf, sm), n = q.years ?? 0;
       const prior = sum(yearStart(y - n), yearEnd(y - 1), q.categories);
       const current = sum(yearStart(y), yearEnd(y), q.categories);
       const earned = Math.max(prior, current);
       lines.push({
-        id: q.id, label: q.label, period: `${y - n}–${y - 1}, or ${y} on its own`,
+        id: q.id, label: q.label, period: `${yl(y - n)}–${yl(y - 1)}, or ${yl(y)} on its own`,
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(yearEnd(y)),
       });
@@ -425,6 +443,20 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours, note: q.note, deadline: iso(w.e),
         sub: w.sub ?? (q.subLabel ? { index: 1, label: q.subLabel, start: iso(w.s), end: iso(w.e) } : undefined),
       };
+      if (q.carryForwardMax && isCalendarYear(rules)) {
+        // CT: up to N hours over last year's requirement count toward this year. Last year's own carry-in doesn't.
+        const y = fyIndex(iso(w.s), sm);
+        const prev = sum(yearStart(y - 1), yearEnd(y - 1), q.categories);
+        const carry = round(Math.min(q.carryForwardMax, Math.max(0, prev - q.hours)));
+        line.parts = [
+          { label: `${yl(y)} courses`, logged: earned, counted: earned },
+          { label: `Carried forward from ${yl(y - 1)}`, logged: prev, counted: carry,
+            why: `hours over ${q.hours} carry, up to ${q.carryForwardMax}` },
+        ];
+        line.earned = round(earned + carry);
+        line.remaining = round(Math.max(0, q.hours - line.earned));
+        line.met = line.earned >= q.hours;
+      }
       if (q.orConcentrated) {
         // Best single area, e.g. 22 hrs of Taxation toward the 24-hour option.
         const best = q.orConcentrated.categories

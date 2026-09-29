@@ -17,7 +17,7 @@ const shortLabel = (l: Line) => l.sub ? l.label.replace(/ each year$/, "") : l.l
 // "7 hrs of technical for Year 1", "12 hrs for this reporting year", "55 hrs".
 function deadlineText(l: Line) {
   const name = shortLabel(l).replace(/\s*\(.*\)$/, "");
-  const what = /total/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
+  const what = /total|^annual/i.test(name) ? "" : ` of ${name.toLowerCase()}`;
   const when = l.sub ? ` for ${l.sub.label.startsWith("Year") ? l.sub.label : l.sub.label.toLowerCase()}` : "";
   return `${l.remaining} hrs${what}${when}`;
 }
@@ -141,8 +141,8 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     firstRenewal: !!license.first_renewal,
   };
   const plan = rules ? newLicenseePlan(profile, rules) : null;
-  const cycle: { start: string; end: string; calendarYear?: boolean } = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
-  const year = cycle.start.slice(0, 4);
+  const cycle: { start: string; end: string; calendarYear?: boolean; label?: string } = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
+  const year = cycle.label ?? cycle.start.slice(0, 4); // "2026", or "2026–27" for a July–June CPE year
   const tagCats = rules?.tagCategories ?? [];
   const catLabel = (c: string) => rules?.categoryLabels?.[c] ?? c;
   // The subject area a course counts as, e.g. "Technical" (CA) or "Taxation" (NY).
@@ -218,11 +218,11 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
           <Text style={ui.h2}>How your hours add up</Text>
           <Card>
             {total.parts.map(p => (
-              <Row key={p.label} label={`${p.label} courses`} value={p.counted !== p.logged ? `${p.logged} → ${p.counted}` : `${p.counted}`}
+              <Row key={p.label} label={p.label} value={p.counted !== p.logged ? `${p.logged} → ${p.counted}` : `${p.counted}`}
                 hint={p.why ? `${p.logged} logged — ${p.why}` : undefined} />
             ))}
             <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
-            <Row label={`Counted toward ${total.label.toLowerCase()}`} value={`${sumCounted}`} strong />
+            <Row label={`Counted toward ${total.label}`} value={`${sumCounted}`} strong />
             <Text style={[ui.hint, { color: Math.abs(sumCounted - total.earned) < 0.01 ? C.ok : C.danger, fontWeight: "700" }]}>
               {Math.abs(sumCounted - total.earned) < 0.01 ? `✓ Matches ${total.label} above (${total.earned} / ${total.required})` : `⚠ Doesn't match ${total.label} above (${total.earned}) — please report this`}
             </Text>

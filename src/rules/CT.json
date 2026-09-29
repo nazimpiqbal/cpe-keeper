@@ -1,0 +1,154 @@
+{
+  "state": "CT",
+  "board": "Connecticut State Board of Accountancy (Department of Consumer Protection)",
+  "sourceUrls": [
+    "https://portal.ct.gov/dcp/occupational-and-professional-division/occupational--profess/cpe-questions-and-answers",
+    "https://www.ctcpas.org/maintaining-your-cpa/cpe",
+    "https://www.nasbaregistry.org/cpe-requirements/connecticut"
+  ],
+  "lastVerified": "2026-09-28",
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 7,
+    "note": "Connecticut CPE years run July 1 – June 30. The report for each year is due the following December 31."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "carryForwardMax": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours between July 1 and June 30, reported to the Board by December 31. Up to 20 extra hours from last year carry forward (a carryover can't be carried again)."
+    },
+    {
+      "id": "attest",
+      "label": "Attest / compilation subjects",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "accounting_auditing"
+      ],
+      "when": "attest",
+      "group": "subject",
+      "note": "If you perform or supervise attest or compilation services, or sign financial statement reports: 8 of the 40 hours in those subjects."
+    },
+    {
+      "id": "gov",
+      "label": "Governmental (Yellow Book audits)",
+      "hours": 24,
+      "scope": "calendar_years_rolling",
+      "years": 2,
+      "categories": [
+        "government"
+      ],
+      "when": "government_audit",
+      "group": "subject",
+      "note": "Government auditors: 24 hours in government-related subjects every two years (GAO Yellow Book)."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics in every three CPE years."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE report is required for the CPE year in which your license was first issued."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Attest or compilation services"
+    },
+    {
+      "id": "government_audit",
+      "label": "Yellow Book (government) audits"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Connecticut CPE years run July 1 – June 30 regardless of this date; each year's report is due December 31.",
+  "issueDateHint": "If your license was first issued during the current CPE year (since July 1), no CPE report is due for it.",
+  "deadlineLabel": "License renews",
+  "yearEndNote": "report due Dec 31",
+  "renewalMonths": 24,
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "accounting_auditing": "Accounting & auditing",
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "accounting_auditing",
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "accounting_auditing": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "government": [
+      "Accounting (Governmental)",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor credit: max 20 hours a year (45 for teaching at educational institutions).",
+    "Peer review credit: max 16 hours a year.",
+    "Published articles/books: 10 per publication, 40 a year.",
+    "Technical meetings and non-qualifying programs: max 10 hours a year."
+  ],
+  "recordRetention": "Keep documentation for at least 3 years from each program's completion.",
+  "toVerify": [
+    "Ethics window: modelled as 4 hours in the current and two previous CPE years (the Board says the three-year clock resets when ethics is done early).",
+    "Attest/compilation hours matched on Accounting and Auditing fields ('financial statement preparation and reporting' per CTCPA).",
+    "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours ('a course which covers ethical behavior').",
+    "Connecticut license expiration timing — the app doesn't use it for CPE (the CPE year is fixed July–June)."
+  ]
+}
