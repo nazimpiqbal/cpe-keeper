@@ -52,7 +52,10 @@
       ],
       "when": "public_practice",
       "group": "subject",
-      "note": "24 hours in accounting or auditing (review and compilation count) if you're in the practice of public accountancy."
+      "note": "24 hours in accounting or auditing (review and compilation count) if you're in the practice of public accountancy.",
+      "partOf": [
+        "technical"
+      ]
     },
     {
       "id": "ethics",

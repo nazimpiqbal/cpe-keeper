@@ -5,6 +5,7 @@ import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { useCourses } from "../lib/courses";
+import { stillNeeded } from "../lib/summary";
 
 export { RULES };
 
@@ -137,6 +138,45 @@ function Requirements({ lines, groups, noteIds, warnings }: {
           </View>
         );
       })}
+    </>
+  );
+}
+
+// "What you still need": remaining hours in buckets that add up, earliest deadline first.
+function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
+  const sum = stillNeeded(lines, rules);
+  const onlyAnytime = sum.groups.length === 1 && sum.groups[0].key === "cycle";
+  return (
+    <>
+      <Text style={ui.h2}>What you still need</Text>
+      <Card>
+        {sum.total === 0 ? (
+          <Text style={{ color: C.ok, fontWeight: "700" }}>✓ Nothing left — every requirement is met.</Text>
+        ) : (<>
+          <View style={s.sumHead}>
+            <Text style={s.sumBig}>{sum.total}</Text>
+            <Text style={s.sumUnit}> {sum.total === 1 ? "hr" : "hrs"} to go</Text>
+          </View>
+          {sum.groups.map((g, gi) => (
+            <View key={g.key} style={[s.sumGroup, gi > 0 && s.sumGroupBorder]}>
+              <Text style={s.sumTitle}>
+                {g.key === "cycle" ? (onlyAnytime ? `By ${fmtDate(g.deadline)}` : `Any time by ${fmtDate(g.deadline)}`) : `${g.title} · by ${fmtDate(g.deadline)}`}
+              </Text>
+              {g.rows.map(r => (
+                <View key={r.label} style={{ marginTop: 4 }}>
+                  <View style={s.sumRow}>
+                    <Text style={[s.sumLabel, r.label === "Any subject" && { color: C.muted }]}>{r.label}</Text>
+                    <Text style={s.sumHrs}>{hrs(r.hours)}</Text>
+                  </View>
+                  {r.hint ? <Text style={[ui.hint, { marginTop: 0 }]}>{r.hint}</Text> : null}
+                </View>
+              ))}
+            </View>
+          ))}
+          {sum.notes.map(n => <Text key={n} style={[ui.hint, { marginTop: 8 }]}>{n}</Text>)}
+          <Text style={[ui.hint, { marginTop: 8 }]}>Each course counts once here. A course that fits two lines (say, ethics that's also technical) can cover both.</Text>
+        </>)}
+      </Card>
     </>
   );
 }
@@ -306,6 +346,8 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
       <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
 
+      {rules && <StillNeeded lines={lines} rules={rules} />}
+
       <Requirements lines={lines} groups={rules?.requirementGroups}
         noteIds={new Set([...(rules?.requirements ?? []), ...(rules?.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])]
           .filter(q => q.showNote).map(q => q.id))}
@@ -318,6 +360,15 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
 const s = StyleSheet.create({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
+  sumHead: { flexDirection: "row", alignItems: "baseline", marginBottom: 4 },
+  sumBig: { fontSize: 28, fontWeight: "800", color: C.ink, fontVariant: ["tabular-nums"] },
+  sumUnit: { fontSize: 15, color: C.muted, fontWeight: "600" },
+  sumGroup: { paddingTop: 10, paddingBottom: 4 },
+  sumGroupBorder: { borderTopWidth: 1, borderTopColor: C.line, marginTop: 6 },
+  sumTitle: { fontSize: 12, fontWeight: "800", color: C.accent, letterSpacing: 0.4, textTransform: "uppercase" },
+  sumRow: { flexDirection: "row", justifyContent: "space-between" },
+  sumLabel: { color: C.ink, fontWeight: "600", flex: 1, paddingRight: 8 },
+  sumHrs: { color: C.ink, fontWeight: "700", fontVariant: ["tabular-nums"] },
   opt: { flex: 1, borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 10, backgroundColor: "#fff" },
   optMet: { borderColor: C.ok, backgroundColor: "#F0FDF4" },
   optTitle: { fontSize: 17, fontWeight: "800", color: C.ink },

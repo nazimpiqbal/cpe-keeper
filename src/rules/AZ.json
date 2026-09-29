@@ -32,7 +32,8 @@
       ],
       "group": "overall",
       "showNote": true,
-      "note": "At least 16 hours in a classroom or live interactive webinar (or as a lecturer). We count courses marked Group Live or Group Internet Based — set the delivery method on each course."
+      "note": "At least 16 hours in a classroom or live interactive webinar (or as a lecturer). We count courses marked Group Live or Group Internet Based — set the delivery method on each course.",
+      "summaryFormat": true
     },
     {
       "id": "core",
@@ -53,7 +54,10 @@
         "aat"
       ],
       "group": "subject",
-      "note": "At least 16 of the 40 in accounting, auditing or taxation."
+      "note": "At least 16 of the 40 in accounting, auditing or taxation.",
+      "partOf": [
+        "core"
+      ]
     },
     {
       "id": "computer_max",

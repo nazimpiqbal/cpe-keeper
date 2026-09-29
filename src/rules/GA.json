@@ -71,7 +71,10 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "1 of the 4 ethics credits must cover the laws, rules and policies of the Georgia Board. We count courses with \"Georgia\" and \"ethics\" or \"rules\" in the title."
+      "note": "1 of the 4 ethics credits must cover the laws, rules and policies of the Georgia Board. We count courses with \"Georgia\" and \"ethics\" or \"rules\" in the title.",
+      "partOf": [
+        "ethics"
+      ]
     }
   ],
   "newLicensee": {

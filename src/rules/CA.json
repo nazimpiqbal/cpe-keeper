@@ -80,7 +80,10 @@
         "regulatory_review"
       ],
       "note": "Required if more than six years have lapsed since the last one. Not interchangeable with ethics. Must carry a CBA approval number (RRL-/RRS-).",
-      "group": "special"
+      "group": "special",
+      "partOf": [
+        "technical_total"
+      ]
     },
     {
       "id": "aa",
@@ -91,7 +94,10 @@
         "accounting_auditing"
       ],
       "when": "attest",
-      "group": "subject"
+      "group": "subject",
+      "partOf": [
+        "technical_total"
+      ]
     },
     {
       "id": "gov",
@@ -102,7 +108,10 @@
         "government"
       ],
       "when": "government_audit",
-      "group": "subject"
+      "group": "subject",
+      "partOf": [
+        "technical_total"
+      ]
     },
     {
       "id": "prep",
@@ -115,7 +124,10 @@
       "when": "preparation_engagement",
       "unless": "attest",
       "note": "8 hours in preparation engagement subject matter. Covered by the 24 A&A hours if you also do audit/attest work.",
-      "group": "subject"
+      "group": "subject",
+      "partOf": [
+        "technical_total"
+      ]
     },
     {
       "id": "fraud",
@@ -131,7 +143,12 @@
         "preparation_engagement"
       ],
       "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements — one requirement, not one per activity.",
-      "group": "subject"
+      "group": "subject",
+      "partOf": [
+        "aa",
+        "gov",
+        "prep"
+      ]
     }
   ],
   "newLicensee": {
