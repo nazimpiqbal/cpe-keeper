@@ -36,6 +36,13 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   };
   const add = (g: SummaryGroup, label: string, hours: number, hint?: string) => { if (r2(hours) > 0) g.rows.push({ label, hours: r2(hours), hint }); };
 
+  // When a cap is already full (CA: 40 non-technical), every further hour must be in the capped-out subject's
+  // counterpart — the cycle subject that also has yearly minimums (CA technical). "Any subject" becomes that subject.
+  const capFull = lines.some(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
+  const flex = capFull ? lines.find(l => !l.sub && l.kind !== "max" && hasCats(l) &&
+    lines.some(y => y.sub && key(reqOf(y)) === key(reqOf(l)))) : undefined;
+  const yearShown = new Map<Line, number>(); // hours shown for a year's subject line (may absorb "any subject")
+
   // 1. Per-year lines.
   const yearLines = open.filter(l => l.sub && !isFormat(l));
   const years = [...new Set(yearLines.map(l => l.sub!.index))].sort((a, b) => a - b);
@@ -44,18 +51,30 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     const sub = ls[0].sub!;
     const g = group(`y${n}`, sub.label, sub.end);
     const subjects = ls.filter(hasCats);
-    for (const l of subjects) add(g, clean(l.label), l.remaining);
     const yearTotal = ls.find(l => !hasCats(l));
-    if (yearTotal) add(g, "Any subject", yearTotal.remaining - subjects.reduce((a, l) => a + l.remaining, 0));
+    let any = yearTotal ? yearTotal.remaining - subjects.reduce((a, l) => a + l.remaining, 0) : 0;
+    for (const l of subjects) {
+      let h = l.remaining;
+      if (flex && key(reqOf(l)) === key(reqOf(flex)) && any > 0) { h += any; any = 0; }
+      yearShown.set(l, h);
+      add(g, clean(l.label), h);
+    }
+    if (yearTotal && any > 0 && flex && !subjects.length) {
+      // No yearly subject line this year, but only the flex subject can count now.
+      add(g, clean(flex.label), any); any = 0;
+    }
+    add(g, "Any subject", any);
   }
 
   // 2. Whole-cycle subject lines, less what per-year and nested lines already cover.
   const cycleTotal = lines.find(l => !l.sub && l.kind !== "max" && !hasCats(l) && !l.id.includes("_prior"));
   const cycleDeadline = cycleTotal?.deadline ?? open.filter(l => !l.sub).map(l => l.deadline).sort().pop() ?? "";
   const anytime = group("cycle", "", cycleDeadline);
-  for (const l of open.filter(l => !l.sub && hasCats(l) && !isFormat(l))) {
+  const cycleSubjects = open.filter(l => !l.sub && hasCats(l) && !isFormat(l));
+  for (const l of cycleSubjects) {
     const inside = open.filter(c => c !== l && ((c.sub && key(reqOf(c)) === key(reqOf(l))) || parentOf(c) === l));
-    add(anytime, clean(l.label), l.remaining - inside.reduce((a, c) => a + c.remaining, 0));
+    const covered = inside.reduce((a, c) => a + (yearShown.get(c) ?? c.remaining), 0);
+    add(anytime, clean(l.label), l.remaining - covered);
   }
 
   // 3. Whatever the cycle total still needs beyond all of the above, in any subject.

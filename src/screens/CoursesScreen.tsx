@@ -8,9 +8,9 @@ import { normalizeDelivery } from "../lib/delivery";
 import { useCourses } from "../lib/courses";
 
 // The course list: this cycle (or year), courses dated after it, and earlier ones.
-export default function CoursesScreen({ userId, email, license, onAddCourse, onScan, onEditCourse }: {
+export default function CoursesScreen({ userId, email, license, onAddCourse, onScan, onEditCourse, onScenarios }: {
   userId: string; email: string; license: License; onAddCourse: () => void; onScan: () => void;
-  onEditCourse: (row: CpeRow) => void;
+  onEditCourse: (row: CpeRow) => void; onScenarios?: () => void;
 }) {
   const { rows, loading, error, setError, load, dupeIds, confirmDelete } = useCourses();
 
@@ -134,6 +134,7 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
       </>)}
 
       <View style={{ height: 16 }} />
+      {__DEV__ && onScenarios && <Button kind="secondary" title="🧪 Test scenarios (dev only)" onPress={onScenarios} />}
       <Text style={[ui.muted, { textAlign: "center" }]}>Signed in as {email}</Text>
       <Button kind="link" title="Sign out" onPress={() => supabase.auth.signOut()} />
     </ScrollView>

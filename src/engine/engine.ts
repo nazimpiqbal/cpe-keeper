@@ -51,7 +51,7 @@ export type Req = {
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
-  unless?: string;       // skipped if the licensee does this (e.g. prep's 8 hrs are covered by A&A's 24)
+  unless?: string | string[]; // skipped if the licensee does this / any of these (CA prep is covered by A&A or government)
 };
 
 export type Rules = {
@@ -497,7 +497,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   for (const q of rules.requirements) {
     if (q.when && !profile.practice.includes(q.when)) continue;
     if (q.whenAny && !q.whenAny.some(p => profile.practice.includes(p))) continue;
-    if (q.unless && profile.practice.includes(q.unless)) continue;
+    if (q.unless && [q.unless].flat().some(p => profile.practice.includes(p))) continue;
     if (q.scope === "lookback_years") {
       // Due date: board-portal date if given, else last course (or licensure) + N years.
       const base = profile.lastRegulatoryReview ?? profile.licenseIssued;

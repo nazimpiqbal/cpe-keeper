@@ -55,16 +55,23 @@ const lnNt = ln.find(l => l.id === "non_technical_max")!, lnTot = ln.find(l => l
 console.log(`Lots of non-technical: non-tech ${lnNt.earned} (over ${lnNt.over}), total counts ${lnTot.earned}`);
 assert(lnNt.over === 7.3 && lnTot.earned === 48.5, "7.3 non-technical hrs over the 40 ceiling don't count toward 80");
 
-// Fraud shows once no matter how many activities; prep's 8 A&A hrs fold into A&A's 24.
+// Fraud shows once no matter how many activities. Government hours cover A&A, and A&A or government covers prep (CBA).
 const all3 = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest", "government_audit", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
 assert(all3.filter(l => l.label === "Fraud").length === 1, "one Fraud line for A&A + government + prep");
-assert(!all3.some(l => l.id === "prep") && all3.some(l => l.id === "aa") && all3.some(l => l.id === "gov"), "prep folded into A&A; government still separate");
+assert(!all3.some(l => l.id === "prep") && !all3.some(l => l.id === "aa") && all3.some(l => l.id === "gov"), "government covers A&A and prep");
+const aaPrep = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
+assert(aaPrep.some(l => l.id === "aa") && !aaPrep.some(l => l.id === "prep"), "A&A covers prep");
+const govPrep = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["government_audit", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
+assert(govPrep.some(l => l.id === "gov") && !govPrep.some(l => l.id === "prep"), "government covers prep");
 const prepOnly = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
 assert(prepOnly.some(l => l.id === "prep") && prepOnly.filter(l => l.label === "Fraud").length === 1, "prep-only: prep 8 hrs + one Fraud line");
 assert(!lines.some(l => l.label === "Fraud"), "no fraud line when no practice selected");
 const withFraud: Record[] = [...records, { title: "Fraud Risk in Revenue Recognition", provider: "X", date: "2026-07-01", hours: 2, fieldOfStudy: "Auditing" }];
 const wf = evaluate(withFraud, { licenseExpiration: "2028-01-31", practice: ["attest"], licenseIssued: "2022-04-01" }, rules);
-assert(wf.find(l => l.label === "Fraud")!.earned === 2 && wf.find(l => l.id === "aa")!.earned >= 2, "fraud-titled Auditing course counts toward Fraud and A&A");
+const wfBase = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest"], licenseIssued: "2022-04-01" }, rules);
+assert(wf.find(l => l.label === "Fraud")!.earned === 2, "fraud-titled course counts toward Fraud");
+assert(wf.find(l => l.id === "aa")!.earned === wfBase.find(l => l.id === "aa")!.earned, "…but not toward the 24 A&A (CBA: 24 hrs plus 4 fraud)");
+assert(wf.find(l => l.id === "technical_total")!.earned === wfBase.find(l => l.id === "technical_total")!.earned + 2, "…and it is technical");
 
 // After Year 1 ends (1/31/2027), a Year 1 shortfall is "short", not "to go", and no longer holds back the 40 technical.
 const later = evaluate(records, { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules, "2027-03-01");
@@ -76,4 +83,9 @@ const now = evaluate(records, { licenseExpiration: "2028-01-31", practice: [], l
 assert(!now.some(l => l.past), "nothing past during Year 1");
 const ttLater = later.find(l => l.id === "technical_total")!;
 assert(!(ttLater.reserved?.label ?? "").includes("Year 1"), "ended Year 1 isn't listed as still owing");
+// Regulatory Review is technical but not interchangeable with ethics (CBA quick reference).
+const rr = evaluate([...records, { title: "Regulatory Review for California CPAs", provider: "CalCPA", date: "2026-08-01", hours: 2, fieldOfStudy: "Regulatory Ethics" }],
+  { licenseExpiration: "2028-01-31", practice: [], licenseIssued: "2022-04-01" }, rules);
+assert(rr.find(l => l.id === "ethics")!.earned === lines.find(l => l.id === "ethics")!.earned, "RR course doesn't count toward the 4 ethics");
+assert(rr.find(l => l.id === "technical_total")!.earned > lines.find(l => l.id === "technical_total")!.earned, "RR course is technical");
 console.log("\nAll assertions passed.");

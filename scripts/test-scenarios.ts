@@ -1,0 +1,45 @@
+// Runs every scenario in src/dev/scenarios.ts and checks the dashboard lines and "What you still need"
+// against the hand-worked expectations. As of mid-October 2026.
+import { readFileSync } from "fs";
+import assert from "assert";
+import { evaluate, Rules, Line } from "../src/engine/engine";
+import { stillNeeded } from "../src/lib/summary";
+import { findDuplicateIds } from "../src/lib/duplicates";
+import { SCENARIOS } from "../src/dev/scenarios";
+
+const asOf = process.argv[2] ?? "2026-10-15";
+const only = process.argv[3];
+let failures = 0;
+for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
+  const rules: Rules = JSON.parse(readFileSync(__dirname + `/../src/rules/${sc.state}.json`, "utf8"));
+  const recs = sc.courses.map((c, i) => ({ id: String(i), title: c.title, provider: c.provider, date: c.date, hours: c.hours, fieldOfStudy: c.field, delivery: c.delivery }));
+  const dup = findDuplicateIds(recs.map(r => ({ id: r.id, title: r.title, date: r.date, hours: r.hours, createdAt: r.date })));
+  const lines = evaluate(recs.filter(r => !dup.has(r.id)), {
+    licenseExpiration: sc.license.expiration, licenseIssued: sc.license.issued, practice: sc.license.practice ?? [],
+    firstRenewal: !!sc.license.firstRenewal, regulatoryReviewDue: sc.license.regulatoryReviewDue,
+  }, rules, asOf);
+  const problems: string[] = [];
+  for (const e of sc.expect) {
+    const l = lines.find((x: Line) => x.id === e.id && (e.y == null ? !x.sub : x.sub?.index === e.y));
+    const name = `${e.id}${e.y ? ` (Year ${e.y})` : ""}`;
+    if (e.absent) { if (l && l.required > 0) problems.push(`${name} should not appear, got ${l.earned}/${l.required}`); continue; }
+    if (!l) { problems.push(`${name} missing`); continue; }
+    const got = { earned: l.earned, required: l.required, remaining: l.remaining, met: l.met, past: !!l.past, over: l.over ?? 0 };
+    if (got.earned !== e.earned || got.required !== e.required) problems.push(`${name}: expected ${e.earned}/${e.required}, got ${got.earned}/${got.required}`);
+    if (e.remaining != null && got.remaining !== e.remaining) problems.push(`${name}: expected ${e.remaining} to go, got ${got.remaining}`);
+    if (e.met != null && got.met !== e.met) problems.push(`${name}: expected met=${e.met}`);
+    if ((e.past ?? false) !== got.past && l.kind !== "max") problems.push(`${name}: expected past=${!!e.past}`);
+    if (e.over != null && got.over !== e.over) problems.push(`${name}: expected ${e.over} over, got ${got.over}`);
+  }
+  if (sc.stillNeeded) {
+    const s = stillNeeded(lines, rules);
+    const rows = s.groups.flatMap(g => g.rows.map(r => `${g.key === "cycle" ? "Any time" : g.title}: ${r.label} ${r.hours}`));
+    if (s.total !== sc.stillNeeded.total) problems.push(`still needed total: expected ${sc.stillNeeded.total}, got ${s.total}`);
+    if (JSON.stringify(rows) !== JSON.stringify(sc.stillNeeded.rows)) problems.push(`still needed rows:\n      expected ${JSON.stringify(sc.stillNeeded.rows)}\n      got      ${JSON.stringify(rows)}`);
+  }
+  console.log(`${problems.length ? "❌" : "✅"} ${sc.id} ${sc.title}`);
+  problems.forEach(p => console.log("    " + p));
+  failures += problems.length ? 1 : 0;
+}
+assert.equal(failures, 0, `${failures} scenario(s) failed`);
+console.log("scenario tests passed");

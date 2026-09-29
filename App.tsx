@@ -14,10 +14,11 @@ import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 import CertificatesScreen from "./src/screens/CertificatesScreen";
 import CoursesScreen from "./src/screens/CoursesScreen";
 import ExportScreen from "./src/screens/ExportScreen";
+import ScenarioScreen from "./src/screens/ScenarioScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
@@ -99,6 +100,10 @@ export default function App() {
     <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
+  else if (view === "scenarios" && __DEV__) screen = (
+    <ScenarioScreen userId={session.user.id} license={license} onClose={() => setView("courses")}
+      onLoaded={() => { setTab("dashboard"); setView("dashboard"); setDashKey(k => k + 1); loadLicense(); }} />
+  );
   else if (view === "export") screen = <ExportScreen license={license} onClose={() => setView(tab)} />;
   else if (view === "certificates") screen = (
     <Tabs active="certificates" onChange={goTab}>
@@ -111,7 +116,7 @@ export default function App() {
       <CoursesScreen key={dashKey} userId={session.user.id} email={session.user.email ?? ""} license={license}
         onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
         onScan={() => setView("scan")}
-        onEditCourse={row => { setEditing(row); setView("editCourse"); }} />
+        onEditCourse={row => { setEditing(row); setView("editCourse"); }} onScenarios={() => setView("scenarios")} />
     </Tabs>
   );
   else screen = (

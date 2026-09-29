@@ -3,9 +3,11 @@
   "board": "California Board of Accountancy",
   "sourceUrls": [
     "https://www.dca.ca.gov/cba/licensees/cequickref.shtml",
-    "https://www.dca.ca.gov/cba/licensees/overview-of-renewal-process.pdf"
+    "https://www.dca.ca.gov/cba/licensees/overview-of-renewal-process.pdf",
+    "https://solid.dca.ca.gov/cba/licensees/acctaudit.shtml",
+    "https://www.dca.ca.gov/cba/licensees/renewal.pdf"
   ],
-  "lastVerified": "2026-09-25",
+  "lastVerified": "2026-09-29",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -68,7 +70,10 @@
       "categories": [
         "ethics"
       ],
-      "group": "special"
+      "group": "special",
+      "partOf": [
+        "technical_total"
+      ]
     },
     {
       "id": "regulatory_review",
@@ -97,7 +102,9 @@
       "group": "subject",
       "partOf": [
         "technical_total"
-      ]
+      ],
+      "unless": "government_audit",
+      "note": "Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A."
     },
     {
       "id": "gov",
@@ -111,7 +118,8 @@
       "group": "subject",
       "partOf": [
         "technical_total"
-      ]
+      ],
+      "note": "Fraud courses don't count toward these hours. Meeting this and the fraud requirement also covers the A&A requirement."
     },
     {
       "id": "prep",
@@ -122,8 +130,11 @@
         "accounting_auditing"
       ],
       "when": "preparation_engagement",
-      "unless": "attest",
-      "note": "8 hours in preparation engagement subject matter. Covered by the 24 A&A hours if you also do audit/attest work.",
+      "unless": [
+        "attest",
+        "government_audit"
+      ],
+      "note": "8 hours in preparation engagement subject matter. Covered by the A&A or government hours if you also do that work.",
       "group": "subject",
       "partOf": [
         "technical_total"
@@ -142,12 +153,10 @@
         "government_audit",
         "preparation_engagement"
       ],
-      "note": "4 hours of fraud CE if you perform A&A, government audits or preparation engagements — one requirement, not one per activity.",
+      "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours — fraud courses don't count toward those. One requirement, not one per activity.",
       "group": "subject",
       "partOf": [
-        "aa",
-        "gov",
-        "prep"
+        "technical_total"
       ]
     }
   ],
@@ -218,8 +227,9 @@
           "accounting_auditing"
         ],
         "when": "attest",
-        "note": "6 hours for every 20 hours required.",
-        "group": "subject"
+        "note": "6 hours for every 20 hours required. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A.",
+        "group": "subject",
+        "unless": "government_audit"
       },
       {
         "id": "gov",
@@ -242,8 +252,11 @@
           "accounting_auditing"
         ],
         "when": "preparation_engagement",
-        "unless": "attest",
-        "note": "2 hours for every 20 hours required. Covered by the A&A hours if you also do audit/attest work.",
+        "unless": [
+          "attest",
+          "government_audit"
+        ],
+        "note": "2 hours for every 20 hours required. Covered by the A&A or government hours if you also do that work.",
         "group": "subject"
       },
       {
@@ -260,7 +273,8 @@
           "preparation_engagement"
         ],
         "minTotal": 80,
-        "group": "subject"
+        "group": "subject",
+        "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours — fraud courses don't count toward those. One requirement, not one per activity."
       }
     ]
   },
@@ -319,8 +333,8 @@
   "recordRetentionYears": 4,
   "toVerify": [
     "Exact CA mapping of NASBA fields of study to technical vs non-technical (esp. Business Management and Organization, Computer Software and Applications).",
-    "Whether CA counts ethics hours toward the technical minimums.",
-    "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule."
+    "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule.",
+    "Whether governmental accounting/auditing fields also count toward the 24 A&A hours (we count only Accounting and Auditing)."
   ],
   "titleKeywordMap": {
     "fraud": [
@@ -367,5 +381,14 @@
     }
   ],
   "renewalMonths": 24,
-  "expiresEndOfMonth": true
+  "expiresEndOfMonth": true,
+  "categoryExcludes": {
+    "fraud": [
+      "accounting_auditing",
+      "government"
+    ],
+    "regulatory_review": [
+      "ethics"
+    ]
+  }
 }
