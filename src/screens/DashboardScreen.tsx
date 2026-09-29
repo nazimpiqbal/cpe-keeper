@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useMemo } from "react";
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
-import { sampleRecords } from "../data/sampleRecords";
-import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
+import { toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
-import { findDuplicateIds } from "../lib/duplicates";
-import { normalizeDelivery } from "../lib/delivery";
+import { useCourses } from "../lib/courses";
 
 export { RULES };
 
@@ -117,26 +115,12 @@ function Requirements({ lines, groups, noteIds, warnings }: {
   );
 }
 
-export default function DashboardScreen({ userId, email, license, onAddCourse, onScan, onEditLicense, onEditCourse }: {
-  userId: string; email: string; license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void;
-  onEditCourse: (row: CpeRow) => void;
+export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense }: {
+  license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void;
 }) {
-  const [rows, setRows] = useState<CpeRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from("cpe_records").select("*").order("completed_on", { ascending: false });
-    setLoading(false);
-    if (error) return setError(friendlyError(error.message));
-    setError(null);
-    setRows(data as CpeRow[]);
-  }, []);
-  useEffect(() => { load(); }, [load]);
+  const { rows, loading, error, load, dupeIds } = useCourses();
 
   const rules = RULES[license.state];
-  const dupeIds = useMemo(() => findDuplicateIds(rows.map(r => ({ id: r.id, title: r.title, date: r.completed_on, hours: Number(r.hours), createdAt: r.created_at }))), [rows]);
   // Duplicates are shown but NOT counted toward requirements.
   const counted = useMemo(() => rows.filter(r => !dupeIds.has(r.id)), [rows, dupeIds]);
   const records = useMemo(() => counted.map(toEngineRecord), [counted]);
@@ -157,34 +141,6 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     return hit ? catLabel(hit) : "No subject area";
   };
   const current = rows.filter(r => r.completed_on >= cycle.start && r.completed_on <= cycle.end);
-  const earlier = rows.filter(r => r.completed_on < cycle.start);
-  const later = rows.filter(r => r.completed_on > cycle.end);
-
-  // Banner shown inside each section, counting only that section's duplicates.
-  const DupeBanner = ({ rows: section }: { rows: CpeRow[] }) => {
-    const n = section.filter(r => dupeIds.has(r.id)).length;
-    if (n === 0) return null;
-    return (
-      <View style={[s.alert, { marginTop: 0, marginBottom: 8 }]}>
-        <Text style={s.alertText}>
-          {n === 1 ? "1 course here looks like a duplicate" : `${n} courses here look like duplicates`} — not counted. Tap it to delete.
-        </Text>
-      </View>
-    );
-  };
-
-  // Red banner: courses whose field of study was a best guess and still needs the user's confirmation.
-  const ConfirmBanner = ({ rows: section }: { rows: CpeRow[] }) => {
-    const n = section.filter(r => r.needs_review && !dupeIds.has(r.id)).length;
-    if (n === 0) return null;
-    return (
-      <View style={s.confirmBox}>
-        <Text style={s.confirmText}>
-          {n === 1 ? "1 course needs" : `${n} courses need`} the field of study confirmed. Tap each one marked below — it affects whether hours count as technical.
-        </Text>
-      </View>
-    );
-  };
 
   // "How your hours add up": ties the course list (This cycle) to the Total CE requirement.
   const Reconciliation = () => {
@@ -265,53 +221,11 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
     );
   };
 
-  const renderRow = (r: CpeRow, i: number, outside = false) => {
-    const rec = toEngineRecord(r);
-    const isDupe = dupeIds.has(r.id);
-    return (
-      <Pressable key={r.id} onPress={() => onEditCourse(r)} onLongPress={() => confirmDelete(r)}
-        style={[s.row, i > 0 && s.rowBorder, (isDupe || outside) && { opacity: isDupe ? 0.55 : 0.75 }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={s.rowTitle}>{r.title}</Text>
-          <Text style={ui.muted}>{r.provider ? `${r.provider} · ` : ""}{fmtDate(r.completed_on)}</Text>
-          <Text style={s.tag}>
-            {tagOf(r)} · {r.field_of_study}{rules?.deliveryMap ? ` · ${normalizeDelivery(r.delivery_method) ?? "Format not set"}` : ""}
-          </Text>
-          {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
-          {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
-          {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>{cycle.calendarYear ? `Not counted toward ${year}'s hours` : "Not counted in current cycle"}</Text>}
-        </View>
-        <View style={{ alignItems: "flex-end", marginLeft: 12 }}>
-          <Text style={[s.hours, { marginLeft: 0 }]}>{Number(r.hours)}</Text>
-          <Text style={{ color: C.muted, fontSize: 18, marginTop: 2 }}>›</Text>
-        </View>
-      </Pressable>
-    );
-  };
   const lines = useMemo(() => rules ? evaluate(records, profile, rules) : [], [records, license, rules]);
 
   const urgent = lines.filter(l => !l.met && l.remaining > 0)
     // Earliest deadline first; on the same date, the biggest shortfall (meeting it usually covers the smaller ones).
     .sort((a, b) => a.deadline.localeCompare(b.deadline) || b.remaining - a.remaining)[0];
-
-  async function loadTestRecords() {
-    const { error } = await supabase.from("cpe_records").insert(sampleRecords.map(r => ({
-      user_id: userId, title: r.title, provider: r.provider, completed_on: r.date, hours: r.hours,
-      field_of_study: r.fieldOfStudy, delivery_method: r.delivery ?? null, needs_review: !!r.needsReview, source: "import",
-    })));
-    if (error) return setError(friendlyError(error.message));
-    load();
-  }
-
-  function confirmDelete(row: CpeRow) {
-    Alert.alert("Delete course?", row.title, [
-      { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: async () => {
-        const { error } = await supabase.from("cpe_records").delete().eq("id", row.id);
-        if (error) setError(friendlyError(error.message)); else load();
-      } },
-    ]);
-  }
 
   return (
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}
@@ -371,39 +285,6 @@ export default function DashboardScreen({ userId, email, license, onAddCourse, o
         warnings={new Map((rules?.requirements ?? []).filter(q => q.warning).map(q => [q.id, q.warning!]))} />
 
       {current.length > 0 && <Reconciliation />}
-
-      {rows.length > 0 && <Text style={[ui.hint, { marginBottom: 6 }]}>Tap a course to edit or delete it.</Text>}
-      <Text style={ui.h2}>{cycle.calendarYear ? `This year — ${year}` : "This cycle"} ({current.length})</Text>
-      <Card>
-        {rows.length === 0 && !loading && (
-          <View>
-            <Text style={ui.muted}>No courses yet. Tap "Upload certificate or transcript" to add your first ones.</Text>
-            {__DEV__ && <Button kind="secondary" title="Load Nazim's test records" onPress={loadTestRecords} />}
-          </View>
-        )}
-        <ConfirmBanner rows={current} />
-        <DupeBanner rows={current} />
-        {current.length === 0 && rows.length > 0 && <Text style={ui.muted}>No courses in {cycle.calendarYear ? year : "this cycle"} yet.</Text>}
-        {current.map((r, i) => renderRow(r, i))}
-      </Card>
-
-      {later.length > 0 && (<>
-        <Text style={ui.h2}>{cycle.calendarYear ? "Next year" : "After this renewal"} ({later.length})</Text>
-        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>Dated after {fmtDate(cycle.end)} — these will count toward your next {cycle.calendarYear ? "year" : "cycle"}.</Text>
-        <Card><ConfirmBanner rows={later} /><DupeBanner rows={later} />{later.map((r, i) => renderRow(r, i, true))}</Card>
-      </>)}
-
-      {earlier.length > 0 && (<>
-        <Text style={ui.h2}>{cycle.calendarYear ? "Earlier years" : "Earlier courses"} ({earlier.length})</Text>
-        <Text style={[ui.muted, { marginTop: -4, marginBottom: 8 }]}>{cycle.calendarYear
-          ? `Completed before ${fmtDate(cycle.start)} — they don't count toward ${year}'s hours, but can still count toward multi-year requirements.`
-          : `Completed before ${fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.`}</Text>
-        <Card><ConfirmBanner rows={earlier} /><DupeBanner rows={earlier} />{earlier.map((r, i) => renderRow(r, i, true))}</Card>
-      </>)}
-
-
-      <Text style={[ui.muted, { textAlign: "center" }]}>Signed in as {email}</Text>
-      <Button kind="link" title="Sign out" onPress={() => supabase.auth.signOut()} />
     </ScrollView>
   );
 }
