@@ -125,8 +125,10 @@ function Requirements({ lines, groups, noteIds, warnings }: {
       {sections.map(g => {
         const ls = inSection(g.id);
         if (!ls.length) return null;
-        // Covered lines ("covered by your government hours") go after the requirements that cover them.
-        const whole = [...ls.filter(l => !l.sub && !l.covered), ...ls.filter(l => !l.sub && l.covered)];
+        // A covered line ("covered by your government hours") sits right under the requirement that covers it.
+        const covered = ls.filter(l => !l.sub && l.covered);
+        const whole = ls.filter(l => !l.sub && !l.covered).flatMap(l => [l, ...covered.filter(c => c.covered!.by === l.label)]);
+        whole.push(...covered.filter(c => !whole.includes(c))); // coverer in another section: keep at the end
         const years = [...new Set(ls.filter(l => l.sub).map(l => l.sub!.index))].sort();
         return (
           <View key={g.id}>
