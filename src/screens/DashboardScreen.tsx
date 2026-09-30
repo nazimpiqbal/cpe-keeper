@@ -331,7 +331,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
             <Text style={s.firstTitle}>First renewal · new-licensee rules</Text>
             <Text style={s.firstText}>
               {plan.totalHours === 0
-                ? `Licensed ${fmtDate(plan.start)} — less than six full months before your first expiration, so no CE is required this time.`
+                ? `Licensed ${fmtDate(plan.start)} — less than six full months before your first expiration, so no CE hours are required this time.${lines.some(l => l.id === "regulatory_review" && l.required > 0) ? " You still need the 2-hour Regulatory Review course (licensed on or after July 1, 2024)." : ""}`
                 : `Licensed ${fmtDate(plan.start)}: ${plan.fullPeriods} full six-month period${plan.fullPeriods > 1 ? "s" : ""} × 20 = ${plan.totalHours} hours, counted from your issue date. No yearly minimum.`}
             </Text>
           </View>
