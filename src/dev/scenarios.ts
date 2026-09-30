@@ -4,7 +4,7 @@
 
 export type ScenarioCourse = { title: string; provider: string; date: string; hours: number; field: string; delivery?: string };
 // A dashboard line and what it should read. `y` = the year box (sub-period index), omitted for whole-cycle lines.
-export type Expect = { id: string; y?: number; earned: number; required: number; remaining?: number; met?: boolean; past?: boolean; over?: number; absent?: boolean };
+export type Expect = { id: string; y?: number; earned: number; required: number; remaining?: number; met?: boolean; past?: boolean; over?: number; absent?: boolean; coveredBy?: string };
 export type Scenario = {
   id: string; state: string; title: string; checks: string;
   license: { expiration: string; issued?: string; practice?: string[]; firstRenewal?: boolean; regulatoryReviewDue?: string };
@@ -138,8 +138,8 @@ export const SCENARIOS: Scenario[] = [
     expect: [
       { id: "gov", earned: 14, required: 24, remaining: 10 },
       { id: "fraud", earned: 0, required: 4, remaining: 4 },
-      { id: "aa", earned: 0, required: 0, absent: true },
-      { id: "prep", earned: 0, required: 0, absent: true },
+      { id: "aa", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
+      { id: "prep", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
       { id: "technical_total", earned: 14, required: 40, remaining: 26 },
     ],
   },
@@ -225,8 +225,8 @@ export const SCENARIOS: Scenario[] = [
     expect: [
       { id: "gov", earned: 14, required: 24, remaining: 10 },
       { id: "fraud", earned: 4, required: 4, met: true },
-      { id: "aa", earned: 0, required: 0, absent: true },
-      { id: "prep", earned: 0, required: 0, absent: true },
+      { id: "aa", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
+      { id: "prep", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
       { id: "technical_total", earned: 28, required: 40, remaining: 12 }, // 32 logged; Year 2 still owes 12
       { id: "technical_annual", y: 1, earned: 32, required: 12, met: true },
       { id: "total", earned: 32, required: 80, remaining: 48 },
@@ -246,7 +246,7 @@ export const SCENARIOS: Scenario[] = [
     expect: [
       { id: "aa", earned: 20, required: 24, remaining: 4 },
       { id: "fraud", earned: 4, required: 4, met: true },
-      { id: "prep", earned: 0, required: 0, absent: true },
+      { id: "prep", earned: 0, required: 0, coveredBy: "Accounting & auditing" },
       { id: "gov", earned: 0, required: 0, absent: true },
       { id: "technical_total", earned: 24, required: 40, remaining: 16 },
     ],
@@ -280,8 +280,8 @@ export const SCENARIOS: Scenario[] = [
     expect: [
       { id: "total", earned: 16, required: 40, remaining: 24 },
       { id: "gov", earned: 8, required: 12, remaining: 4 },
-      { id: "aa", earned: 0, required: 0, absent: true },
-      { id: "prep", earned: 0, required: 0, absent: true },
+      { id: "aa", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
+      { id: "prep", earned: 0, required: 0, coveredBy: "Governmental accounting & auditing" },
       { id: "fraud", earned: 0, required: 0, absent: true },
       { id: "ethics", earned: 0, required: 0, absent: true },
       { id: "technical_total", earned: 16, required: 20, remaining: 4 },

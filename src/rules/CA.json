@@ -106,7 +106,10 @@
         "technical_total"
       ],
       "unless": "government_audit",
-      "note": "Financial statement preparation, auditing, reviews, compilations, attestation and assurance; governmental accounting and auditing courses count too. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A."
+      "note": "Financial statement preparation, auditing, reviews, compilations, attestation and assurance; governmental accounting and auditing courses count too. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A.",
+      "coveredNotes": {
+        "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement.\""
+      }
     },
     {
       "id": "gov",
@@ -140,7 +143,11 @@
       "group": "subject",
       "partOf": [
         "technical_total"
-      ]
+      ],
+      "coveredNotes": {
+        "attest": "CBA: \"If you fulfill the A&A CE requirement, you are deemed to have met the preparation engagement CE requirement.\"",
+        "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" — and A&A covers preparation engagements."
+      }
     },
     {
       "id": "fraud",
@@ -231,7 +238,10 @@
         "when": "attest",
         "note": "6 hours for every 20 hours required. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A.",
         "group": "subject",
-        "unless": "government_audit"
+        "unless": "government_audit",
+        "coveredNotes": {
+          "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement.\""
+        }
       },
       {
         "id": "gov",
@@ -259,7 +269,11 @@
           "government_audit"
         ],
         "note": "2 hours for every 20 hours required. Covered by the A&A or government hours if you also do that work.",
-        "group": "subject"
+        "group": "subject",
+        "coveredNotes": {
+          "attest": "CBA: \"If you fulfill the A&A CE requirement, you are deemed to have met the preparation engagement CE requirement.\"",
+          "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" — and A&A covers preparation engagements."
+        }
       },
       {
         "id": "fraud",

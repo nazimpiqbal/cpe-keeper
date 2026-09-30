@@ -58,11 +58,14 @@ assert(lnNt.over === 7.3 && lnTot.earned === 48.5, "7.3 non-technical hrs over t
 // Fraud shows once no matter how many activities. Government hours cover A&A, and A&A or government covers prep (CBA).
 const all3 = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest", "government_audit", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
 assert(all3.filter(l => l.label === "Fraud").length === 1, "one Fraud line for A&A + government + prep");
-assert(!all3.some(l => l.id === "prep") && !all3.some(l => l.id === "aa") && all3.some(l => l.id === "gov"), "government covers A&A and prep");
+const cov = (ls: typeof all3, id: string) => ls.find(l => l.id === id)?.covered?.by;
+assert(cov(all3, "aa") === "Governmental accounting & auditing" && cov(all3, "prep") === "Governmental accounting & auditing" && all3.find(l => l.id === "gov")!.required === 24, "government covers A&A and prep (shown as covered)");
+assert(all3.find(l => l.id === "aa")!.covered!.note!.includes("deemed to have met the A&A"), "A&A covered line quotes the CBA");
 const aaPrep = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["attest", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
-assert(aaPrep.some(l => l.id === "aa") && !aaPrep.some(l => l.id === "prep"), "A&A covers prep");
+assert(aaPrep.find(l => l.id === "aa")!.required === 24 && cov(aaPrep, "prep") === "Accounting & auditing", "A&A covers prep");
+assert(aaPrep.find(l => l.id === "prep")!.covered!.note!.includes("preparation engagement CE requirement"));
 const govPrep = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["government_audit", "preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
-assert(govPrep.some(l => l.id === "gov") && !govPrep.some(l => l.id === "prep"), "government covers prep");
+assert(govPrep.some(l => l.id === "gov") && cov(govPrep, "prep") === "Governmental accounting & auditing" && !govPrep.some(l => l.id === "aa"), "government covers prep; no A&A line when A&A isn't selected");
 const prepOnly = evaluate(records, { licenseExpiration: "2028-01-31", practice: ["preparation_engagement"], licenseIssued: "2022-04-01" }, rules);
 assert(prepOnly.some(l => l.id === "prep") && prepOnly.filter(l => l.label === "Fraud").length === 1, "prep-only: prep 8 hrs + one Fraud line");
 assert(!lines.some(l => l.label === "Fraud"), "no fraud line when no practice selected");

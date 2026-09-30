@@ -52,6 +52,9 @@ export type Req = {
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string | string[]; // skipped if the licensee does this / any of these (CA prep is covered by A&A or government)
+  // Shown instead when `unless` applies, keyed by the covering practice: the board's wording, so the missing line
+  // doesn't look like a glitch (CA: "…deemed to have met the A&A CE requirement").
+  coveredNotes?: { [practice: string]: string };
 };
 
 export type Rules = {
@@ -142,6 +145,7 @@ export type Line = {
   parts?: { label: string; logged: number; counted: number; why?: string }[]; // per-year breakdown for rolling totals (ID)
   carried?: number; // hours carried in from the previous year (MI per-year lines)
   group?: string;          // dashboard section (from the rule file)
+  covered?: { by: string; note?: string }; // not needed on its own: another requirement you have covers it (CA A&A ← government)
   past?: boolean;          // an earlier reporting year whose deadline has passed — shown for the record, never "to go"
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
 };
@@ -507,7 +511,19 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
   for (const q of rules.requirements) {
     if (q.when && !profile.practice.includes(q.when)) continue;
     if (q.whenAny && !q.whenAny.some(p => profile.practice.includes(p))) continue;
-    if (q.unless && [q.unless].flat().some(p => profile.practice.includes(p))) continue;
+    if (q.unless && [q.unless].flat().some(p => profile.practice.includes(p))) {
+      // Covered by another requirement the licensee has — show that, rather than silently dropping the line.
+      // The coverer is the first listed practice whose own requirement isn't itself covered (prep ← A&A ← government).
+      const selfCovered = (r: Req) => !!r.unless && [r.unless].flat().some(p => profile.practice.includes(p));
+      const practice = [q.unless].flat().find(p => profile.practice.includes(p) &&
+        rules.requirements.some(r => r.when === p && !selfCovered(r))) ?? [q.unless].flat().find(p => profile.practice.includes(p))!;
+      const by = rules.requirements.find(r => r.when === practice);
+      lines.push({
+        id: q.id, label: q.label, period: "", required: 0, earned: 0, remaining: 0, met: true, deadline: iso(end),
+        group: q.group, covered: { by: by?.label ?? practice, note: q.coveredNotes?.[practice] },
+      });
+      continue;
+    }
     if (q.scope === "lookback_years") {
       // Due date: board-portal date if given, else last course (or licensure) + N years.
       // An estimate that falls before this cycle is assumed done then, so it rolls forward every N years

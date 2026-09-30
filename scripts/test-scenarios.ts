@@ -22,7 +22,13 @@ for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
   for (const e of sc.expect) {
     const l = lines.find((x: Line) => x.id === e.id && (e.y == null ? !x.sub : x.sub?.index === e.y));
     const name = `${e.id}${e.y ? ` (Year ${e.y})` : ""}`;
-    if (e.absent) { if (l && l.required > 0) problems.push(`${name} should not appear, got ${l.earned}/${l.required}`); continue; }
+    if (e.absent) { if (l && (l.required > 0 || l.covered)) problems.push(`${name} should not appear, got ${l.covered ? "covered" : `${l.earned}/${l.required}`}`); continue; }
+    if (e.coveredBy) {
+      if (!l?.covered) problems.push(`${name} should show as covered by ${e.coveredBy}`);
+      else if (l.covered.by !== e.coveredBy) problems.push(`${name}: covered by ${l.covered.by}, expected ${e.coveredBy}`);
+      else if (!l.covered.note) problems.push(`${name}: covered line has no board quote`);
+      continue;
+    }
     if (!l) { problems.push(`${name} missing`); continue; }
     const got = { earned: l.earned, required: l.required, remaining: l.remaining, met: l.met, past: !!l.past, over: l.over ?? 0 };
     if (got.earned !== e.earned || got.required !== e.required) problems.push(`${name}: expected ${e.earned}/${e.required}, got ${got.earned}/${got.required}`);

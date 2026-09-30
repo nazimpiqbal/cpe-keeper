@@ -42,6 +42,19 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
       </View>
     );
   }
+  if (line.covered) {
+    // Not needed on its own: another requirement covers it (CA: government covers A&A, A&A covers prep).
+    return (
+      <View style={[s.req, s.coveredBox]}>
+        <View style={s.reqTop}>
+          <Text style={[s.reqLabel, { color: C.muted }]}>✓ {line.label}</Text>
+          <Text style={[s.reqNum, { color: C.ok, fontSize: 12 }]}>COVERED</Text>
+        </View>
+        <Text style={s.coveredText}>Covered by your {line.covered.by} hours — no separate hours needed.</Text>
+        {line.covered.note ? <Text style={s.coveredQuote}>{line.covered.note}</Text> : null}
+      </View>
+    );
+  }
   if (line.alt) {
     // Two ways to meet it (NY): e.g. 40 in any subjects OR 24 in one subject — shown side by side.
     const a = line.alt;
@@ -112,7 +125,8 @@ function Requirements({ lines, groups, noteIds, warnings }: {
       {sections.map(g => {
         const ls = inSection(g.id);
         if (!ls.length) return null;
-        const whole = ls.filter(l => !l.sub);
+        // Covered lines ("covered by your government hours") go after the requirements that cover them.
+        const whole = [...ls.filter(l => !l.sub && !l.covered), ...ls.filter(l => !l.sub && l.covered)];
         const years = [...new Set(ls.filter(l => l.sub).map(l => l.sub!.index))].sort();
         return (
           <View key={g.id}>
@@ -365,6 +379,9 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
 const s = StyleSheet.create({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
+  coveredBox: { backgroundColor: "#F9FAFB", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line },
+  coveredText: { color: C.ink, fontSize: 13, marginTop: 4 },
+  coveredQuote: { color: C.muted, fontSize: 12, marginTop: 4, fontStyle: "italic" },
   topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   auditBtn: { borderWidth: 1, borderColor: C.accent, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: "#fff" },
   auditText: { color: C.accent, fontWeight: "700", fontSize: 13 },

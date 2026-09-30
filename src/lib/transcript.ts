@@ -36,6 +36,7 @@ export function subjectArea(r: CpeRow, rules?: Rules) {
 }
 
 export function status(l: Line) {
+  if (l.covered) return `Covered by ${l.covered.by}`;
   if (l.kind === "max") return (l.over ?? 0) > 0 ? `${r2(l.over!)} over maximum` : "Within maximum";
   if (!l.required) return "Not due";
   if (l.met) return "Met";
@@ -52,7 +53,7 @@ export function transcriptHtml(t: TranscriptInput, certs: CertPage[], cssMargins
   const total = r2(rows.reduce((a, r) => a + Number(r.hours), 0));
   const showDelivery = !!t.rules?.deliveryMap || rows.some(r => r.delivery_method);
   const showCert = rows.some(r => r.certificate_path);
-  const reqs = t.lines.filter(l => l.required > 0 || l.kind === "max");
+  const reqs = t.lines.filter(l => l.required > 0 || l.kind === "max" || !!l.covered);
   const info = [
     t.name && ["Licensee", t.name],
     ["State", `${t.stateName} CPA`],
@@ -95,7 +96,7 @@ export function transcriptHtml(t: TranscriptInput, certs: CertPage[], cssMargins
       const cls = l.kind === "max" ? "muted" : l.met || !l.required ? "met" : l.past ? "short" : "due";
       const label = l.sub ? `${l.label} — ${l.sub.label}` : l.label;
       const period = l.sub ? `${usDate(l.sub.start)} – ${usDate(l.sub.end)}` : usDates(l.period);
-      return `<tr><td>${esc(label)}</td><td class="muted">${esc(period)}</td><td class="num">${l.kind === "max" ? `max ${l.required}` : l.required}</td><td class="num">${l.earned}</td><td class="${cls}">${esc(st)}</td></tr>`;
+      return `<tr><td>${esc(label)}</td><td class="muted">${esc(period)}</td><td class="num">${l.covered ? "—" : l.kind === "max" ? `max ${l.required}` : l.required}</td><td class="num">${l.covered ? "—" : l.earned}</td><td class="${cls}">${esc(st)}</td></tr>`;
     }).join("")}</table>` : ""}
 
     <h2>Courses (${rows.length})</h2>
@@ -140,10 +141,10 @@ export function transcriptWorkbookBase64(t: TranscriptInput): string {
     ["Prepared", usDate(t.generatedOn)],
     [],
     ["Requirement", "Period", "Required", "Completed", "Status"],
-    ...t.lines.filter(l => l.required > 0 || l.kind === "max").map(l => [
+    ...t.lines.filter(l => l.required > 0 || l.kind === "max" || !!l.covered).map(l => [
       l.sub ? `${l.label} — ${l.sub.label}` : l.label,
       l.sub ? `${usDate(l.sub.start)} – ${usDate(l.sub.end)}` : usDates(l.period),
-      l.kind === "max" ? `max ${l.required}` : l.required, l.earned, status(l),
+      l.covered ? "—" : l.kind === "max" ? `max ${l.required}` : l.required, l.covered ? "—" : l.earned, status(l),
     ]),
   ];
   const s1 = XLSX.utils.aoa_to_sheet(info);
