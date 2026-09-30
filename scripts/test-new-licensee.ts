@@ -34,11 +34,16 @@ assert.ok(!get(ex, "annual_total") && !get(ex, "technical_annual"), "no yearly m
 assert.ok(!get(ex, "ethics") && !get(ex, "fraud"), "no ethics/fraud under 80 hrs");
 assert.deepEqual(cycleBounds("2027-03-31", rules, example), { start: "2026-01-24", end: "2027-03-31" });
 
-// Under six full months → nothing required.
+// Under six full months → no hours; licensed on or after 7/1/2024 → the Regulatory Review course is still due (CBA overview p. 9).
 const none = evaluate(recs, { ...example, licenseExpiration: "2026-06-30" }, rules);
-assert.equal(none.length, 1);
-assert.equal(none[0].required, 0);
-assert.equal(none[0].met, true);
+assert.equal(get(none, "total")!.required, 0);
+assert.equal(get(none, "total")!.met, true);
+assert.equal(get(none, "regulatory_review")!.required, 2);
+assert.equal(none.length, 2);
+// Licensed before 7/1/2024 with under six months → nothing at all.
+const older = evaluate([], { licenseExpiration: "2024-05-31", licenseIssued: "2024-01-15", practice: [], firstRenewal: true }, rules, "2024-03-01");
+assert.equal(older.length, 1);
+assert.equal(older[0].required, 0);
 
 // A&A / prep scale with hours: 40 required → A&A 12, prep 4 (prep folds into A&A if both).
 const aa = evaluate(recs, { ...example, practice: ["attest"] }, rules);

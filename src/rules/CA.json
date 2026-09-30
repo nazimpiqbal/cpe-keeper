@@ -7,7 +7,7 @@
     "https://solid.dca.ca.gov/cba/licensees/acctaudit.shtml",
     "https://www.dca.ca.gov/cba/licensees/renewal.pdf"
   ],
-  "lastVerified": "2026-09-29",
+  "lastVerified": "2026-09-30",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -73,7 +73,9 @@
       "group": "special",
       "partOf": [
         "technical_total"
-      ]
+      ],
+      "note": "4 hours of technical ethics (codes of conduct, ethical dilemmas, case studies). We count Regulatory Ethics courses; Behavioral Ethics is non-technical in California and doesn't count toward these 4.",
+      "showNote": true
     },
     {
       "id": "regulatory_review",
@@ -104,7 +106,7 @@
         "technical_total"
       ],
       "unless": "government_audit",
-      "note": "Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A."
+      "note": "Financial statement preparation, auditing, reviews, compilations, attestation and assurance; governmental accounting and auditing courses count too. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A."
     },
     {
       "id": "gov",
@@ -276,7 +278,8 @@
         "group": "subject",
         "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours — fraud courses don't count toward those. One requirement, not one per activity."
       }
-    ]
+    ],
+    "regulatoryReviewAlwaysIfIssuedFrom": "2024-07-01"
   },
   "fieldOfStudyMap": {
     "technical": [
@@ -292,7 +295,6 @@
       "Information Technology",
       "Specialized Knowledge",
       "Statistics",
-      "Behavioral Ethics",
       "Regulatory Ethics"
     ],
     "non_technical": [
@@ -301,15 +303,17 @@
       "Personnel/Human Resources",
       "Business Management and Organization",
       "Production",
-      "Computer Software and Applications"
+      "Computer Software and Applications",
+      "Behavioral Ethics"
     ],
     "ethics": [
-      "Behavioral Ethics",
       "Regulatory Ethics"
     ],
     "accounting_auditing": [
       "Accounting",
-      "Auditing"
+      "Auditing",
+      "Accounting (Governmental)",
+      "Auditing (Governmental)"
     ],
     "government": [
       "Accounting (Governmental)",
@@ -334,7 +338,7 @@
   "toVerify": [
     "Exact CA mapping of NASBA fields of study to technical vs non-technical (esp. Business Management and Organization, Computer Software and Applications).",
     "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule.",
-    "Whether governmental accounting/auditing fields also count toward the 24 A&A hours (we count only Accounting and Auditing)."
+    "Behavioral Ethics: CBA lists it as non-technical and requires 'technical ethics', so we don't count it toward the 4 ethics hours. A Behavioral Ethics course whose content is a code of conduct review might still qualify."
   ],
   "titleKeywordMap": {
     "fraud": [

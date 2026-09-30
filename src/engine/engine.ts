@@ -83,6 +83,7 @@ export type Rules = {
   newLicensee?: {
     // CA-style: hours scale with full six-month periods; per20 = hours for every 20 required, minTotal = only once total reaches it.
     hoursPerFullSixMonths?: number;
+    regulatoryReviewAlwaysIfIssuedFrom?: string; // CA: from this issue date the RR course is due at first renewal even under six months
     requirements?: (Req & { per20?: number; minTotal?: number })[];
     // NY-style: nothing is due until the first January 1 after licensure.
     exemptUntilFirstJanuary?: boolean;
@@ -425,11 +426,20 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
 function evaluateFirstRenewal(records: Record[], profile: Profile, rules: Rules, plan: NewLicenseePlan): Line[] {
   const nl = rules.newLicensee as Required<Pick<NonNullable<Rules["newLicensee"]>, "hoursPerFullSixMonths" | "requirements">>;
   if (plan.totalHours === 0) {
-    return [{
+    const none: Line = {
       id: "total", label: "Total CE", period: `Licensed ${plan.start} – first renewal ${plan.end}`,
-      required: 0, earned: 0, remaining: 0, met: true, deadline: plan.end,
-      note: "Less than six full months between your license issue date and first expiration — no CE is required for this renewal.",
-    }];
+      required: 0, earned: 0, remaining: 0, met: true, deadline: plan.end, group: "overall",
+      note: "Less than six full months between your license issue date and first expiration — no CE hours are required for this renewal.",
+    };
+    // CA: licensed on or after 7/1/2024 → the Regulatory Review course is still required, even under six months.
+    const rrFrom = rules.newLicensee?.regulatoryReviewAlwaysIfIssuedFrom;
+    const rr = nl.requirements.find(q => q.id === "regulatory_review");
+    if (rrFrom && rr && plan.start >= rrFrom) {
+      none.note = "Less than six full months between your license issue date and first expiration — no CE hours are required, but the Regulatory Review course is (licensed on or after July 1, 2024).";
+      const [line] = evaluateWindow(records, profile, { ...rules, requirements: [{ ...rr, note: "Required for your first renewal because you were licensed on or after July 1, 2024 — even with less than six months. Must carry a CBA approval number (RRL-/RRS-)." }] }, d(plan.start), d(plan.end), "Since licensed");
+      return line ? [none, line] : [none];
+    }
+    return [none];
   }
   const scale = plan.totalHours / 20;
   const requirements: Req[] = nl.requirements
