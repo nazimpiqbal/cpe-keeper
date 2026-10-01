@@ -252,8 +252,11 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
     const total = lines.find(l => l.id === "total");
     if (!total) return null; // states with only per-year totals (MI)
     const techLine = lines.find(l => l.id === "technical_total");
-    const ntLine = lines.find(l => l.kind === "max");
-    const over = ntLine?.over ?? 0;
+    // Every cap that's exceeded (TX: non-technical and nano-learning) takes its excess out of the total.
+    const ntLine = lines.find(l => l.kind === "max" && !l.sub && l.id.startsWith("non_technical")) ?? lines.find(l => l.kind === "max" && !l.sub);
+    const totalName = (lines.find(l => l.id === "total")?.label ?? "Total CE").replace(/\s*\(.*\)$/, ""); // "Total CPE (last 36 months)" → "Total CPE"
+    const overLines = lines.filter(l => l.kind === "max" && !l.sub && (l.over ?? 0) > 0);
+    const over = r2(overLines.reduce((a, l) => a + (l.over ?? 0), 0));
     const totalShown = total ? (total.logged ?? total.earned) : 0;
     const expected = r2(countedHrs - over);
     const matches = Math.abs(expected - totalShown) < 0.01;
@@ -302,14 +305,14 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
                 : c === "non_technical" && ntLine ? `Maximum ${ntLine.required} can count` : undefined} />
           ))}
           {other > 0 && <Row label="No field of study" value={`${other}`} indent muted hint="Counts toward the total only — edit the course to set a field." />}
-          {over > 0 && <Row label={`Less ${(ntLine?.label ?? "non-technical").toLowerCase()} over the maximum`} value={`−${over}`} muted />}
+          {overLines.map(l => <Row key={l.id} label={`Less ${l.label.toLowerCase()} over the maximum`} value={`−${l.over}`} muted />)}
           <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
-          <Row label="Counted toward Total CE" value={`${expected}`} strong />
+          <Row label={`Counted toward ${totalName}`} value={`${expected}`} strong />
           <Text style={[ui.hint, { color: matches ? C.ok : C.danger, fontWeight: "700" }]}>
-            {matches ? `✓ Matches Total CE above (${totalShown} / ${total?.required})` : `⚠ Doesn't match Total CE above (${totalShown}) — please report this`}
+            {matches ? `✓ Matches ${totalName} above (${totalShown} / ${total?.required})` : `⚠ Doesn't match ${totalName} above (${totalShown}) — please report this`}
           </Text>
           {total?.logged != null && total.reserved && (
-            <Text style={ui.hint}>Total CE shows {total.earned} for now because {total.reserved.hours} hrs must still come from {total.reserved.label}.</Text>
+            <Text style={ui.hint}>{totalName} shows {total.earned} for now because {total.reserved.hours} hrs must still come from {total.reserved.label}.</Text>
           )}
         </Card>
       </>
