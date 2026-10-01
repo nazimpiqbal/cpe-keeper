@@ -736,4 +736,109 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 50, rows: ["2026: Any subject 30", "Any time: Ethics 4", "Any time: Any subject 16"] },
   },
+  // ── Washington ── license expires 6/30/2028: CPE period 1/1/2025 – 12/31/2027, 120 hours, 20 each calendar year,
+  // at most 60 non-technical (so at least 60 technical), 4-hour Washington Board-approved ethics.
+  {
+    id: "WA-1", state: "WA", title: "Clean slate",
+    checks: "2025 has ended with 0 — red 'short'. 2026 and 2027 need 20 each; 120 total with at least 60 technical (the 4 Washington ethics hours count as technical).",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true }, { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 }, { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "technical_total", earned: 0, required: 60, remaining: 60 },
+      { id: "non_technical_max", earned: 0, required: 60 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 120, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Technical 56", "Any time: Washington Board-approved ethics 4", "Any time: Any subject 20"] },
+  },
+  {
+    id: "WA-2", state: "WA", title: "On track, technical met",
+    checks: "2025: 40 Taxes. 2026: 30 Accounting + the 4-hour Washington ethics course. 74 of 120; technical and ethics met; 2027 still needs its 20.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 40, field: "Taxes" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 30, field: "Accounting" },
+      { title: "Washington Ethics and Regulation", provider: P, date: "2026-05-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 74, required: 120, remaining: 46 },
+      { id: "annual_total", y: 1, earned: 40, required: 20, met: true }, { id: "annual_total", y: 2, earned: 34, required: 20, met: true }, { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "technical_total", earned: 74, required: 60, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 46, rows: ["2027: Any subject 20", "Any time: Any subject 26"] },
+  },
+  {
+    id: "WA-3", state: "WA", title: "Too much non-technical",
+    checks: "70 hours of personal development and communications — only 60 count (10 over). Everything left must be technical: 2027's 20, 36 more any time, and the Washington ethics course.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2025-03-01", hours: 40, field: "Personal Development" },
+      { title: "Business Writing", provider: P, date: "2026-03-01", hours: 30, field: "Communications and Marketing" },
+    ],
+    expect: [
+      { id: "total", earned: 60, required: 120, remaining: 60 },
+      { id: "technical_total", earned: 0, required: 60, remaining: 60 },
+      { id: "non_technical_max", earned: 70, required: 60, over: 10 },
+    ],
+    stillNeeded: { total: 60, rows: ["2027: Technical 20", "Any time: Technical 36", "Any time: Washington Board-approved ethics 4"] },
+  },
+  {
+    id: "WA-4", state: "WA", title: "Behavioral Ethics is technical; other ethics isn't the WA course",
+    checks: "In Washington all ethics, Behavioral included, is technical (WAC 4-30-132), but only a Washington Board-approved course meets the 4-hour ethics requirement. 54 technical so far; 6 more technical, 4 of them the Washington course.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 30, field: "Taxes" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 20, field: "Taxes" },
+      { title: "AICPA Ethics", provider: P, date: "2026-04-01", hours: 4, field: "Behavioral Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 54, required: 120, remaining: 66 },
+      { id: "technical_total", earned: 54, required: 60, remaining: 6 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 66, rows: ["2027: Any subject 20", "Any time: Technical 2", "Any time: Washington Board-approved ethics 4", "Any time: Any subject 40"] },
+  },
+  {
+    id: "WA-5", state: "WA", title: "Front-loaded hours",
+    checks: "120 hours already logged in 2025–2026, but 2027 still owes its own 20, so only 100 count for now. The Washington ethics course taken in 2027 counts toward 2027's 20 — so 20 more hours in 2027 finishes everything.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-03-01", hours: 80, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 100, required: 120, remaining: 20 },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 20, rows: ["2027: Any subject 16", "Any time: Washington Board-approved ethics 4"] },
+  },
+  {
+    id: "WA-6", state: "WA", title: "First period, licensed mid-2025",
+    checks: "Licensed 10/1/2025: the first period runs from the issue date to 12/31/2027 with the full 120, and the partial year 2025 still needs 20 (ACB first-period page). 10 in 2025 → red '10 short'.",
+    license: { expiration: "2028-06-30", issued: "2025-10-01" },
+    courses: [{ title: "Tax Basics", provider: P, date: "2025-11-01", hours: 10, field: "Taxes" }],
+    expect: [
+      { id: "total", earned: 10, required: 120, remaining: 110 },
+      { id: "annual_total", y: 1, earned: 10, required: 20, remaining: 10, past: true },
+    ],
+    stillNeeded: { total: 110, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Technical 46", "Any time: Washington Board-approved ethics 4", "Any time: Any subject 20"] },
+  },
+  {
+    id: "WA-7", state: "WA", title: "Courses outside the period",
+    checks: "A 2024 course (before the period) and a January 2028 course (after Dec 31, 2027) don't count. Only the 20 hours in 2026 count; 2025 is red 'short'.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Old Tax Course", provider: P, date: "2024-11-01", hours: 40, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2026-02-01", hours: 20, field: "Taxes" },
+      { title: "Late Webinar", provider: P, date: "2028-01-10", hours: 8, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 20, required: 120, remaining: 100 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true }, { id: "annual_total", y: 2, earned: 20, required: 20, met: true },
+    ],
+    stillNeeded: { total: 100, rows: ["2027: Any subject 20", "Any time: Technical 36", "Any time: Washington Board-approved ethics 4", "Any time: Any subject 40"] },
+  },
 ];

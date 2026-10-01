@@ -9,7 +9,7 @@
     "https://acb.wa.gov/individual-licensing/not-enough-cpe-renew-cpe-extension-requests",
     "https://www.nasbaregistry.org/cpe-requirements/washington"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-09-30",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 36,
@@ -39,6 +39,18 @@
       "group": "overall"
     },
     {
+      "id": "technical_total",
+      "label": "Technical",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "showNote": true,
+      "note": "At least 60 of the 120 must be technical, because no more than 60 non-technical hours count (WAC 4-30-134). Technical is everything except communication, personal development, client relations, practice development, motivational and speed-reading/memory courses — all ethics courses included."
+    },
+    {
       "id": "non_technical_max",
       "label": "Non-technical",
       "hours": 60,
@@ -48,7 +60,8 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 60 non-technical hours count: communication, interpersonal and leadership skills, personal development, client and public relations, practice development, motivational courses, speed reading and memory building."
+      "note": "Maximum, not a target. No more than 60 non-technical hours count: communication, interpersonal and leadership skills, personal development, client and public relations, practice development, motivational courses, speed reading and memory building.",
+      "otherLabel": "Technical"
     },
     {
       "id": "ethics",
@@ -60,7 +73,10 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "A 4-hour ethics and regulation course from a Washington Board-approved provider. Other ethics courses count toward the 120 but not this. We count courses with \"Washington\" and \"ethics\" in the title — edit the title if yours isn't picked up."
+      "note": "A 4-hour ethics and regulation course from a Washington Board-approved provider. Other ethics courses count toward the 120 but not this. We count courses with \"Washington\" and \"ethics\" in the title — edit the title if yours isn't picked up.",
+      "partOf": [
+        "technical_total"
+      ]
     }
   ],
   "newLicensee": {

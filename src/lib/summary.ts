@@ -48,6 +48,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   const flex = capFull ? lines.find(l => !l.sub && l.kind !== "max" && hasCats(l) &&
     lines.some(y => y.sub && key(reqOf(y)) === key(reqOf(l)))) : undefined;
   const yearShown = new Map<Line, number>(); // hours shown for a year's subject line (may absorb "any subject")
+  let yearAnyAsOther = 0; // with a cap full, a year's "any subject" rows are really the cap's counterpart (WA/TX: Technical)
 
   // 1. Per-year lines.
   const yearLines = open.filter(l => l.sub && !isFormat(l));
@@ -69,6 +70,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
       // No yearly subject line this year, but only the flex subject can count now.
       add(g, clean(flex.label), any); any = 0;
     }
+    if (capFull && anyLabel !== "Any subject" && any > 0) yearAnyAsOther += any;
     add(g, anyLabel, any);
   }
 
@@ -79,7 +81,9 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   const cycleSubjects = open.filter(l => !l.sub && hasCats(l) && !isFormat(l));
   for (const l of cycleSubjects) {
     const inside = open.filter(c => c !== l && ((c.sub && key(reqOf(c)) === key(reqOf(l))) || parentOf(c) === l));
-    const covered = inside.reduce((a, c) => a + (yearShown.get(c) ?? c.remaining), 0);
+    let covered = inside.reduce((a, c) => a + (yearShown.get(c) ?? c.remaining), 0);
+    // Year rows already labelled with this subject (cap full) are part of it, not extra.
+    if (clean(l.label) === anyLabel) covered += yearAnyAsOther;
     add(anytime, clean(l.label), l.remaining - covered);
   }
 
@@ -105,7 +109,26 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     }
   }
 
+  // Year minimums and whole-cycle subjects can be met by the same course (WA: Washington ethics taken in 2027
+  // counts toward 2027's 20). If the rows add up to more than the total still needed, the year "any subject"
+  // rows are trimmed (latest year first) so the card never asks for more than the total.
+  let trimNote: string | undefined;
+  if (cycleTotal && !cycleTotal.alt && cycleTotal.canStillCount == null && !cycleTotal.past) {
+    let excess = r2([...groups.values()].reduce((a, g) => a + g.rows.reduce((b, r) => b + r.hours, 0), 0) - cycleTotal.remaining);
+    const trimmed: string[] = [];
+    for (const g of [...groups.values()].filter(g => g !== anytime).reverse()) {
+      for (const row of g.rows.filter(row => row.label === anyLabel)) {
+        if (excess <= 0) break;
+        const cut = Math.min(excess, row.hours); row.hours = r2(row.hours - cut); excess = r2(excess - cut);
+        trimmed.push(g.title);
+      }
+      g.rows = g.rows.filter(row => row.hours > 0);
+    }
+    if (trimmed.length) trimNote = `This assumes the "any time" courses are taken in ${trimmed.reverse().join(" and ")}, so they also count toward that year's minimum.`;
+  }
   const notes = open.filter(isFormat).map(l => `At least ${l.remaining} more of these must be ${clean(l.label).toLowerCase()}.`);
+
+  if (trimNote) notes.push(trimNote);
 
   // ID: past years are closed and each open year counts at most 50, so only so many more hours can count.
   // Trim "any subject" (the whole-cycle row first) to that, and say how far short it still leaves you.
