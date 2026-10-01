@@ -38,6 +38,20 @@
       "group": "overall"
     },
     {
+      "id": "technical_total",
+      "role": "min_share",
+      "share": 0.5,
+      "label": "Technical",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "showNote": true,
+      "note": "At least half of the required credits must be technical, because no more than half can be non-technical (§ 523.118(a)). Technical: accounting, attest, tax, consulting, economics, finance, IT, regulatory ethics."
+    },
+    {
       "id": "non_technical_max",
       "role": "max_share",
       "share": 0.5,
@@ -80,7 +94,10 @@
       "minRenewal": 2,
       "group": "special",
       "note": "A 4-hour TSBPA-approved ethics course every two years. We count courses with \"Texas\" and \"ethics\" (or \"TSBPA\") in the title — edit the title if yours isn't picked up. Out-of-state licensees with no Texas clients may meet their home state's ethics rule instead.",
-      "showNote": true
+      "showNote": true,
+      "partOf": [
+        "technical_total"
+      ]
     }
   ],
   "newLicensee": {

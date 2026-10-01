@@ -35,7 +35,7 @@ export type Req = {
   // (TX: the 36-month look-back covers this year and the two before it, each of which needed 20).
   priorYears?: number;
   nextYears?: number; // calendar-year cycles: also show this many later years (ID: next year's 30-hour minimum)
-  role?: "total" | "annual" | "max_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
+  role?: "total" | "annual" | "max_share" | "min_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
@@ -477,7 +477,7 @@ function evaluatePhaseIn(records: Record[], profile: Profile, rules: Rules, n: n
     .map(q =>
       q.role === "total" ? { ...q, hours: stage.total!, label: `Total CPE (last ${stage.months} months)` } :
       q.role === "annual" ? { ...q, hours: stage.annual ?? q.hours } :
-      q.role === "max_share" ? { ...q, hours: round((q.share ?? 0.5) * (stage.total ?? stage.annual ?? q.hours)) } : q);
+      q.role === "max_share" || q.role === "min_share" ? { ...q, hours: round((q.share ?? 0.5) * (stage.total ?? stage.annual ?? q.hours)) } : q);
   const start = addDays(addMonths(end, -(stage.months ?? 12)), 1);
   const lines = evaluateWindow(records, profile, { ...rules, requirements }, start, end, `Last ${stage.months ?? 12} months`);
   const first = lines.find(l => l.group === "overall") ?? lines[0];

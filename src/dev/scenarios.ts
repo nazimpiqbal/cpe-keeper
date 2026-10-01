@@ -325,7 +325,7 @@ export const SCENARIOS: Scenario[] = [
   // All but the new-licensee ones: renewal 03/31/2027 → look-back Apr 1, 2024 – Mar 31, 2027.
   {
     id: "TX-1", state: "TX", title: "Clean slate",
-    checks: "120 hours over three reporting years, 20 in each. With no courses the two earlier reporting years show red 'short'; this year and the 120 are still to go; ethics 0 / 4.",
+    checks: "120 hours over three reporting years, 20 in each, at least 60 technical. With no courses the two earlier reporting years show red 'short'; this year and the 120 are still to go; ethics 0 / 4.",
     license: { expiration: "2027-03-31", issued: "2012-06-15" },
     courses: [],
     expect: [
@@ -334,10 +334,11 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total_prior1", y: 8, earned: 0, required: 20, remaining: 20, past: true },
       { id: "annual_total_prior2", y: 7, earned: 0, required: 20, remaining: 20, past: true },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "technical_total", earned: 0, required: 60, remaining: 60 },
       { id: "non_technical_max", earned: 0, required: 60 },
       { id: "nano_max", earned: 0, required: 60 },
     ],
-    stillNeeded: { total: 120, rows: ["This reporting year: Any subject 20", "Any time: Board-approved Texas ethics course 4", "Any time: Any subject 96"] },
+    stillNeeded: { total: 120, rows: ["This reporting year: Any subject 20", "Any time: Technical 56", "Any time: Board-approved Texas ethics course 4", "Any time: Any subject 40"] },
   },
   {
     id: "TX-2", state: "TX", title: "Typical three years",
@@ -360,7 +361,7 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     id: "TX-3", state: "TX", title: "Too much non-technical",
-    checks: "Only 60 non-technical credits count (§ 523.118(a)); the 10 extra don't count toward the 120, and what's left must be technical.",
+    checks: "Only 60 non-technical credits count (§ 523.118(a)), so Technical shows 50 / 60; the 10 extra don't count toward the 120, and what's left must be technical.",
     license: { expiration: "2027-03-31", issued: "2012-06-15" },
     courses: [
       { title: "Leadership Academy", provider: P, date: "2024-09-10", hours: 40, field: "Personal Development" },
@@ -369,10 +370,11 @@ export const SCENARIOS: Scenario[] = [
     ],
     expect: [
       { id: "non_technical_max", earned: 70, required: 60, over: 10 },
+      { id: "technical_total", earned: 50, required: 60, remaining: 10 },
       { id: "total", earned: 110, required: 120, remaining: 10 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 10, rows: ["Any time: Board-approved Texas ethics course 4", "Any time: Technical 6"] },
+    stillNeeded: { total: 10, rows: ["Any time: Technical 6", "Any time: Board-approved Texas ethics course 4"] },
   },
   {
     id: "TX-4", state: "TX", title: "Too much nano-learning",
@@ -404,12 +406,13 @@ export const SCENARIOS: Scenario[] = [
     ],
     expect: [
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "technical_total", earned: 48, required: 60, remaining: 12 },
       { id: "total", earned: 48, required: 120, remaining: 72 },
       { id: "annual_total_prior2", y: 7, earned: 4, required: 20, remaining: 16, past: true },
       { id: "annual_total_prior1", y: 8, earned: 24, required: 20, met: true },
       { id: "annual_total", y: 9, earned: 20, required: 20, met: true },
     ],
-    stillNeeded: { total: 72, rows: ["Any time: Board-approved Texas ethics course 4", "Any time: Any subject 68"] },
+    stillNeeded: { total: 72, rows: ["Any time: Technical 8", "Any time: Board-approved Texas ethics course 4", "Any time: Any subject 60"] },
   },
   {
     id: "TX-6", state: "TX", title: "New licensee, second full license year",
@@ -424,6 +427,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "total", earned: 0, required: 0, absent: true },
       { id: "ethics", earned: 0, required: 0, absent: true },
       { id: "annual_total_prior1", y: 8, earned: 0, required: 0, absent: true },
+      { id: "technical_total", earned: 12, required: 10, met: true },
       { id: "non_technical_max", earned: 4, required: 10 },
       { id: "nano_max", earned: 0, required: 10 },
     ],
@@ -445,6 +449,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total_prior1", y: 8, earned: 25, required: 20, met: true },
       { id: "annual_total_prior2", y: 7, earned: 0, required: 0, absent: true },
       { id: "ethics", earned: 4, required: 4, met: true },
+      { id: "technical_total", earned: 44, required: 30, met: true },
       { id: "non_technical_max", earned: 0, required: 30 },
     ],
     stillNeeded: { total: 16, rows: ["This reporting year: Any subject 1", "Any time: Any subject 15"] },
