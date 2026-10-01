@@ -47,7 +47,8 @@
       "categories": [
         "ethics"
       ],
-      "note": "4 hours in the three calendar years before your registration renews. If your principal place of business is in New York, it must be a New York State-specific ethics course.",
+      "note": "If New York is your principal place of business, only an ethics course approved by NYSED is acceptable.",
+      "showNote": true,
       "group": "special"
     },
     {
@@ -138,7 +139,7 @@
     "Ethics window: we use the three full calendar years before the registration renewal year. Confirm whether ethics taken earlier in the renewal year also counts.",
     "Whether NY treats NASBA 'Behavioral Ethics' strictly as Advisory Services (per the NYSED Q&A) — it does not count toward the 4 ethics hours.",
     "Courses on marketing professional services or firm profitability get no NY credit; Communications and Marketing courses are counted as advisory unless the user changes them.",
-    "The New York State-specific ethics requirement (principal place of business in NY) can't be verified from a certificate — shown as a reminder only."
+    "The NYSED-approved ethics requirement (principal place of business in NY) can't be verified from a certificate — shown as a note under the ethics line."
   ],
   "requirementGroups": [
     {
