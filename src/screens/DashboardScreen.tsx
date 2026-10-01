@@ -114,9 +114,15 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
   );
 }
 
-function Requirements({ lines, groups, noteIds, warnings }: {
-  lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string>; warnings: Map<string, string>;
+function Requirements({ lines, groups, noteIds, warnings, rules }: {
+  lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string>; warnings: Map<string, string>; rules?: Rules;
 }) {
+  // A year box belongs right under the whole-cycle requirement in the same subjects
+  // (Total CE → Year 1 / Year 2 totals; Technical subject matter → Year 1 / Year 2 technical).
+  const catKey = (l: Line) => {
+    const q = rules?.requirements.find(r => r.id === l.id) ?? rules?.requirements.find(r => l.id.startsWith(r.id + "_"));
+    return JSON.stringify([...(q?.categories ?? [])].sort());
+  };
   const today = new Date().toISOString().slice(0, 10);
   const sections = groups?.length ? groups : [{ id: "", label: "Requirements" }];
   const inSection = (g: string) => lines.filter(l => !groups?.length || (l.group ?? "overall") === g);
@@ -130,11 +136,16 @@ function Requirements({ lines, groups, noteIds, warnings }: {
         const whole = ls.filter(l => !l.sub && !l.covered).flatMap(l => [l, ...covered.filter(c => c.covered!.by === l.label)]);
         whole.push(...covered.filter(c => !whole.includes(c))); // coverer in another section: keep at the end
         const years = [...new Set(ls.filter(l => l.sub).map(l => l.sub!.index))].sort();
+        const yearKeys = new Set(ls.filter(l => l.sub).map(catKey));
+        // Year boxes go after the first whole-cycle line they belong to; if none matches, at the end.
+        const anchor = whole.findIndex(l => !l.covered && l.kind !== "max" && yearKeys.has(catKey(l)));
+        const at = anchor === -1 ? whole.length : anchor + 1;
+        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />;
         return (
           <View key={g.id}>
             <Text style={ui.h2}>{g.label}</Text>
             <Card>
-              {whole.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />)}
+              {whole.slice(0, at).map(bar)}
               {years.map(n => {
                 const yl = ls.filter(l => l.sub?.index === n);
                 const sub = yl[0].sub!;
@@ -150,6 +161,7 @@ function Requirements({ lines, groups, noteIds, warnings }: {
                   </View>
                 );
               })}
+              {whole.slice(at).map((l, i) => bar(l, at + i))}
             </Card>
           </View>
         );
@@ -369,7 +381,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
       {rules && <StillNeeded lines={lines} rules={rules} />}
 
-      <Requirements lines={lines} groups={rules?.requirementGroups}
+      <Requirements lines={lines} groups={rules?.requirementGroups} rules={rules}
         noteIds={new Set([...(rules?.requirements ?? []), ...(rules?.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])]
           .filter(q => q.showNote).map(q => q.id))}
         warnings={new Map((rules?.requirements ?? []).filter(q => q.warning).map(q => [q.id, q.warning!]))} />
