@@ -1342,4 +1342,75 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 43, required: 120, remaining: 77 }, { id: "psr", earned: 0, required: 3, remaining: 3 }],
     stillNeeded: { total: 77, rows: ["2027: Any subject 20", "Any time: Professional Standards & Responsibilities 3", "Any time: Any subject 54"] },
   },
+  // ── Michigan ── license renews 7/31/2027; CE years 2025–26 (ended) and 2026–27 (current). Each year: 40 hours with
+  // 8 accounting & auditing and 2 ethics, at most 20 self-study/nano; carryforward up to 40 / 8 / 2; 1 Michigan rules hour per cycle.
+  {
+    id: "MI-1", state: "MI", title: "Clean slate",
+    checks: "2025–26 ended with nothing — red 'short' for 40, 8 A&A and 2 ethics. 2026–27 needs 40 with 8 A&A and 2 ethics, one of them on Michigan statutes & rules.",
+    license: { expiration: "2027-07-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "annual_total", y: 1, earned: 0, required: 40, remaining: 40, past: true }, { id: "annual_total", y: 2, earned: 0, required: 40, remaining: 40 },
+      { id: "aa_annual", y: 2, earned: 0, required: 8, remaining: 8 }, { id: "ethics_annual", y: 2, earned: 0, required: 2, remaining: 2 },
+      { id: "mi_rules", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 40, rows: ["2026–27: Accounting & auditing 8", "2026–27: Ethics 2", "2026–27: Any subject 30"] },
+  },
+  {
+    id: "MI-2", state: "MI", title: "Last year done, Michigan rules course taken",
+    checks: "2025–26: 30 Taxes + 8 Accounting + a 2-hour Michigan Rules and Ethics course = 40, all met; it also covers the Michigan rules hour for the cycle. 2026–27: 30 so far — 10 more, 8 A&A and 2 ethics.",
+    license: { expiration: "2027-07-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2025-10-01", hours: 8, field: "Accounting", delivery: "Group Live" },
+      { title: "Michigan Rules and Ethics", provider: P, date: "2025-11-01", hours: 2, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "Tax Planning", provider: P, date: "2026-08-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "annual_total", y: 1, earned: 40, required: 40, met: true }, { id: "annual_total", y: 2, earned: 30, required: 40, remaining: 10 },
+      { id: "mi_rules", earned: 2, required: 1, met: true },
+    ],
+    stillNeeded: { total: 10, rows: ["2026–27: Accounting & auditing 8", "2026–27: Ethics 2"] },
+  },
+  {
+    id: "MI-3", state: "MI", title: "Carryforward",
+    checks: "2025–26: 70 Accounting + 4 ethics = 74. Carries into 2026–27: 34 of the extra hours (40 max), 8 A&A, 2 ethics. With 10 Taxes this year, 2026–27 is met — only the Michigan rules hour is left.",
+    license: { expiration: "2027-07-31", issued: "2010-05-01" },
+    courses: [
+      { title: "GAAP Marathon", provider: P, date: "2025-09-01", hours: 70, field: "Accounting", delivery: "Group Live" },
+      { title: "AICPA Ethics", provider: P, date: "2025-10-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 10, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "annual_total", y: 2, earned: 44, required: 40, met: true }, { id: "aa_annual", y: 2, earned: 8, required: 8, met: true }, { id: "ethics_annual", y: 2, earned: 2, required: 2, met: true },
+      { id: "mi_rules", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 1, rows: ["Any time: Michigan statutes & rules 1"] },
+  },
+  {
+    id: "MI-4", state: "MI", title: "Self-study over 20",
+    checks: "2025–26: 30 Accounting self-study (only 20 count) + 10 Taxes live + 2 ethics = 32 of 40 — red '8 short'. The extra self-study doesn't count, so nothing carries into 2026–27 except 8 A&A.",
+    license: { expiration: "2027-07-31", issued: "2010-05-01" },
+    courses: [
+      { title: "GAAP Library", provider: P, date: "2025-09-01", hours: 30, field: "Accounting", delivery: "QAS Self Study" },
+      { title: "Tax Update", provider: P, date: "2025-10-01", hours: 10, field: "Taxes", delivery: "Group Live" },
+      { title: "AICPA Ethics", provider: P, date: "2025-11-01", hours: 2, field: "Regulatory Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "annual_total", y: 1, earned: 32, required: 40, remaining: 8, past: true }, { id: "self_study_max", y: 1, earned: 30, required: 20, over: 10 }, { id: "aa_annual", y: 1, earned: 20, required: 8, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 40, remaining: 40 }, { id: "aa_annual", y: 2, earned: 8, required: 8, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["2026–27: Ethics 2", "2026–27: Any subject 38"] },
+  },
+  {
+    id: "MI-5", state: "MI", title: "New licensee, prorated year",
+    checks: "Licensed 3/1/2026: no CE for 12 months (to 3/1/2027). 2025–26 isn't required; 2026–27 is prorated by the days after the exemption (13.5 hours, 3 A&A, 1 ethics). The Michigan rules hour still applies to the cycle.",
+    license: { expiration: "2027-07-31", issued: "2026-03-01" },
+    courses: [],
+    expect: [
+      { id: "annual_total", y: 1, earned: 0, required: 0, met: true }, { id: "annual_total", y: 2, earned: 0, required: 13.5, remaining: 13.5 },
+      { id: "aa_annual", y: 2, earned: 0, required: 3, remaining: 3 }, { id: "ethics_annual", y: 2, earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 13.5, rows: ["2026–27: Accounting & auditing 3", "2026–27: Ethics 1", "2026–27: Any subject 9.5"] },
+  },
 ];

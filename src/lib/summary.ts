@@ -80,6 +80,13 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   const anytime = group("cycle", "", cycleDeadline);
   const cycleSubjects = open.filter(l => !l.sub && hasCats(l) && !isFormat(l));
   for (const l of cycleSubjects) {
+    // A cycle requirement that sits inside a still-open year line (MI: the Michigan rules hour is one of the
+    // year's ethics hours) adds nothing beyond that year's row; it's named in the row's hint instead.
+    const yp = (reqOf(l)?.partOf ?? []).map(id => open.filter(x => x.id === id && x.sub).pop()).find(Boolean);
+    if (yp && yp.remaining >= l.remaining) {
+      const row = groups.get(`y${yp.sub!.index}`)?.rows.find(r => r.label === clean(yp.label));
+      if (row) { row.hint = `including ${l.remaining} on ${clean(l.label).replace(/\s*\(.*$/, "")}`; continue; }
+    }
     const inside = open.filter(c => c !== l && ((c.sub && key(reqOf(c)) === key(reqOf(l))) || parentOf(c) === l));
     let covered = inside.reduce((a, c) => a + (yearShown.get(c) ?? c.remaining), 0);
     // Year rows already labelled with this subject (cap full) are part of it, not extra.

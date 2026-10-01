@@ -7,7 +7,7 @@
     "https://www.micpa.org/advocacy/licensure/cpe-requirements-for-licensure",
     "https://www.nasbaregistry.org/cpe-requirements/michigan"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -38,7 +38,12 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 20 hours of self-study and nano-learning count per CE year (R 338.5215)."
+      "note": "Maximum, not a target. No more than 20 hours of self-study and nano-learning count per CE year (R 338.5215).",
+      "alsoReduces": [
+        "aa_annual",
+        "ethics_annual"
+      ],
+      "otherLabel": "Any course except self-study"
     },
     {
       "id": "aa_annual",
@@ -72,7 +77,10 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "1 of the 4 ethics hours in each two-year cycle must cover Michigan's accountancy statutes and rules (the MICPA course). We count courses with \"Michigan\" and \"rules\", \"statutes\" or \"ethics\" in the title."
+      "note": "1 of the 4 ethics hours in each two-year cycle must cover Michigan's accountancy statutes and rules (the MICPA course). We count courses with \"Michigan\" and \"rules\", \"statutes\" or \"ethics\" in the title.",
+      "partOf": [
+        "ethics_annual"
+      ]
     }
   ],
   "newLicensee": {

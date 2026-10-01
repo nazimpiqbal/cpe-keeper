@@ -824,16 +824,34 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       // MI: hours over last year's requirement carry into this year (up to carryForwardMax; carryovers don't chain).
       if (q.carryForwardMax && mine.length && !q.kind) {
+        // A year's own countable hours: what was logged, less anything over that year's caps (MI: self-study
+        // over 20 doesn't count, so it can't carry either). Mirrors applyMaximums, which runs later.
+        const countable = (s: Date, e: Date) => {
+          let h = sum(s, e, q.categories);
+          for (const m of rules.requirements.filter(m => m.kind === "max" && m.scope === "each_sub_period" && m.categories)) {
+            const mh = sum(s, e, m.categories), over = Math.max(0, mh - m.hours);
+            if (!over) continue;
+            if (!q.categories) h -= over;
+            else if (m.alsoReduces?.includes(q.id)) {
+              const both = round(records.filter(r => d(r.date) >= s && d(r.date) <= e)
+                .filter(r => { const c = categoriesOf(r, rules); return c.some(x => m.categories!.includes(x)) && c.some(x => q.categories!.includes(x)); })
+                .reduce((a, r) => a + r.hours, 0));
+              h -= Math.min(both, Math.max(0, over - (mh - both)));
+            }
+          }
+          return round(h);
+        };
         const s0 = d(mine[0].sub!.start);
-        let prevOwn = sum(addMonths(s0, -12), addDays(s0, -1), q.categories), prevReq = q.hours;
+        let prevOwn = countable(addMonths(s0, -12), addDays(s0, -1)), prevReq = q.hours;
         for (const l of mine) {
           const own = l.earned;
+          const ownCountable = countable(d(l.sub!.start), d(l.sub!.end));
           const carry = round(Math.min(q.carryForwardMax, Math.max(0, prevOwn - prevReq)));
           if (carry > 0) {
             l.carried = carry; l.earned = round(own + carry);
             l.remaining = round(Math.max(0, l.required - l.earned)); l.met = l.remaining === 0;
           }
-          prevOwn = own; prevReq = l.required;
+          prevOwn = ownCountable; prevReq = l.required;
         }
       }
     }
@@ -862,7 +880,7 @@ function applyMaximums(lines: Line[], rules: Rules) {
   // Excess that sat in a subject line (nano Taxes over the nano cap) doesn't count toward that subject either.
   for (const m of lines.filter(l => l.kind === "max" && l.overIn)) {
     for (const [id, h] of Object.entries(m.overIn!)) {
-      const t = lines.find(l => l.id === id && !l.sub && l.kind !== "max");
+      const t = lines.find(l => l.id === id && (m.sub ? l.sub?.index === m.sub.index : !l.sub) && l.kind !== "max");
       if (t) { t.earned = round(t.earned - h); t.remaining = round(Math.max(0, t.required - t.earned)); t.met = t.remaining === 0; }
     }
   }
