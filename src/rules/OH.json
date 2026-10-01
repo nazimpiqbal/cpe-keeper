@@ -7,7 +7,7 @@
     "https://acc.ohio.gov/maintaining-your-license/renewal-requirements",
     "https://www.nasbaregistry.org/cpe-requirements/ohio"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 36,
@@ -160,8 +160,9 @@
     ]
   },
   "limitsNotTracked": [
-    "Instruction: max 90 credits per period.",
-    "Live group study: max 8 credits in one day (for sessions of 400+ minutes)."
+    "Instruction: max 90 credits per period (OAC 4701-15-04).",
+    "Live group study: max 8 credits in one day.",
+    "Professional exams: max 40 credits per session; election official service: max 20 per period."
   ],
   "toVerify": [
     "Reporting period timing is per permit; the user enters their period end (Dec 31). New-licensee initial period detected when that end is Dec 31 of the year after the certificate year.",

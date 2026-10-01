@@ -1259,4 +1259,87 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Ohio ── triennial period 1/1/2025 – 12/31/2027: 120 credits, 20 by Dec 31 each year ($10 fine per missing credit),
+  // 3 PSR credits, 24 A&A for financial-reporting work and 24 tax for tax work.
+  {
+    id: "OH-1", state: "OH", title: "Clean slate",
+    checks: "120 credits, 20 each year (2025 has ended with 0 — red 'short'), 3 PSR. No A&A or tax lines unless that work is selected.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "psr", earned: 0, required: 3, remaining: 3 },
+      { id: "aa", earned: 0, required: 0, absent: true },
+      { id: "tax", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 120, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Professional Standards & Responsibilities 3", "Any time: Any subject 77"] },
+  },
+  {
+    id: "OH-2", state: "OH", title: "A&A, tax and PSR met",
+    checks: "Financial-reporting and tax work: 30 Auditing (2025), 30 Taxes + an Ohio PSR course (2026). 63 of 120; A&A, tax and PSR met.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01", practice: ["financial_reporting", "tax_work"] },
+    courses: [
+      { title: "Audit Update", provider: P, date: "2025-03-01", hours: 30, field: "Auditing" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes" },
+      { title: "Ohio PSR Course", provider: P, date: "2026-04-01", hours: 3, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 63, required: 120, remaining: 57 },
+      { id: "aa", earned: 30, required: 24, met: true },
+      { id: "tax", earned: 30, required: 24, met: true },
+      { id: "psr", earned: 3, required: 3, met: true },
+    ],
+    stillNeeded: { total: 57, rows: ["2027: Any subject 20", "Any time: Any subject 37"] },
+  },
+  {
+    id: "OH-3", state: "OH", title: "A short year",
+    checks: "2025 ended with 15 — red '5 short' (a $50 fine, not a lost renewal). 2026 met.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 15, field: "Taxes" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 55, required: 120, remaining: 65 },
+      { id: "annual_total", y: 1, earned: 15, required: 20, remaining: 5, past: true },
+    ],
+    stillNeeded: { total: 65, rows: ["2027: Any subject 20", "Any time: Professional Standards & Responsibilities 3", "Any time: Any subject 42"] },
+  },
+  {
+    id: "OH-4", state: "OH", title: "New CPA: initial period",
+    checks: "Certified 3/1/2026: the initial period runs 1/1/2026 – 12/31/2027 with 40 credits and no yearly minimum or subject requirements (OAC 4701-15-02).",
+    license: { expiration: "2027-12-31", issued: "2026-03-01" },
+    courses: [{ title: "Tax Basics", provider: P, date: "2026-05-01", hours: 10, field: "Taxes" }],
+    expect: [
+      { id: "total", earned: 10, required: 40, remaining: 30 },
+      { id: "annual_total", earned: 0, required: 0, absent: true },
+      { id: "psr", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 30, rows: ["Any time: Any subject 30"] },
+  },
+  {
+    id: "OH-5", state: "OH", title: "Front-loaded hours",
+    checks: "120 logged in 2025–2026, but 2027 still owes its own 20, so 100 count for now. A PSR course in 2027 also counts toward 2027's 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-03-01", hours: 60, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 60, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 100, required: 120, remaining: 20 }],
+    stillNeeded: { total: 20, rows: ["2027: Any subject 17", "Any time: Professional Standards & Responsibilities 3"] },
+  },
+  {
+    id: "OH-6", state: "OH", title: "Ethics that isn't PSR",
+    checks: "An AICPA ethics course isn't a Board-approved Professional Standards and Responsibilities course, so PSR is still 0 of 3.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "AICPA Ethics", provider: P, date: "2025-03-01", hours: 3, field: "Regulatory Ethics" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 43, required: 120, remaining: 77 }, { id: "psr", earned: 0, required: 3, remaining: 3 }],
+    stillNeeded: { total: 77, rows: ["2027: Any subject 20", "Any time: Professional Standards & Responsibilities 3", "Any time: Any subject 54"] },
+  },
 ];
