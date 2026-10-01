@@ -6,7 +6,7 @@
     "https://www.azaccountancy.gov/Renewals/CPE.aspx",
     "https://www.nasbaregistry.org/cpe-requirements/arizona"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -69,7 +69,29 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 20 hours of computer courses count per registration period."
+      "note": "Maximum, not a target. No more than 20 hours of computer courses count per registration period.",
+      "alsoReduces": [
+        "core",
+        "live"
+      ]
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than 4 hours of nano-learning count per registration period (R4-1-453). We use each course's delivery format — set it to Nano Learning for nano courses.",
+      "otherLabel": "Any course except Nano Learning",
+      "alsoReduces": [
+        "core",
+        "aat"
+      ]
     },
     {
       "id": "ethics",
@@ -87,10 +109,12 @@
   "newLicensee": {
     "prorateByQuarter": {
       "except": [
-        "ethics"
+        "ethics",
+        "computer_max",
+        "nano_max"
       ]
     },
-    "note": "Registration period shorter than two years: hours are prorated by quarter (ethics isn't)"
+    "note": "Registration period shorter than two years: required hours are prorated by quarter (ethics isn't). The computer and nano-learning maximums apply per renewal period and aren't prorated."
   },
   "practiceOptions": [],
   "licenseDateLabel": "Registration expiration date",
@@ -170,10 +194,12 @@
     "live": [
       "Group Live",
       "Group Internet Based"
+    ],
+    "nano": [
+      "Nano Learning"
     ]
   },
   "limitsNotTracked": [
-    "Nano-learning: max 4 hours per period.",
     "Authorship: max 20 hours; instruction plus authorship: max 40 hours."
   ],
   "recordRetention": "Keep CPE records for three years.",

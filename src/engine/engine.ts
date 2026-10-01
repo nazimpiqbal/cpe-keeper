@@ -149,6 +149,7 @@ export type Line = {
   kind?: "min" | "max";
   over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
   overIn?: { [lineId: string]: number }; // of those, hours that also sat in these lines (alsoReduces)
+  overLabels?: string[];  // names of those lines, for the dashboard
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
   alt?: { label: string; area: string; earned: number; required: number; remaining: number; plus?: { hours: number; label: string } };
@@ -741,7 +742,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         lines.push({
           id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",
           over, remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub,
-          ...(Object.keys(overIn).length ? { overIn } : {}),
+          ...(Object.keys(overIn).length ? { overIn, overLabels: Object.keys(overIn).map(t => rules.requirements.find(x => x.id === t)?.label ?? t) } : {}),
         });
         continue;
       }

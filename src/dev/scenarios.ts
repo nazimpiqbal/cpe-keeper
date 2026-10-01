@@ -958,4 +958,117 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 40, remaining: 40 }, { id: "ethics", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 40, rows: ["Any time: Any subject 40"] },
   },
+  // ── Arizona ── registration period 4/1/2025 – 3/31/2027: 80 hours; 40 in accounting/auditing/tax/business law/
+  // consulting (16 of them accounting/auditing/tax); 16 classroom or live webinar; 4 Arizona ethics; max 20 computer, 4 nano.
+  {
+    id: "AZ-1", state: "AZ", title: "Clean slate",
+    checks: "80 hours: 24 more in the five core subjects beyond the 16 accounting/auditing/tax, 4 ethics, 36 any subject; 16 of them must be classroom or live webinar.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "live", earned: 0, required: 16, remaining: 16 },
+      { id: "core", earned: 0, required: 40, remaining: 40 },
+      { id: "aat", earned: 0, required: 16, remaining: 16 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Accounting, auditing, tax, business law or consulting 24", "Any time: Accounting, auditing or tax 16", "Any time: Ethics 4", "Any time: Any subject 36"] },
+  },
+  {
+    id: "AZ-2", state: "AZ", title: "Everything met",
+    checks: "30 Taxes live + 20 Accounting self-study + 4 Arizona ethics webinar + 26 Finance self-study = 80; live 34; core 50; ethics met.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-06-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2025-09-01", hours: 20, field: "Accounting", delivery: "QAS Self Study" },
+      { title: "Arizona Ethics and Board Rules", provider: P, date: "2026-02-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+      { title: "Corporate Finance", provider: P, date: "2026-03-01", hours: 26, field: "Finance", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "live", earned: 34, required: 16, met: true },
+      { id: "core", earned: 50, required: 40, met: true },
+      { id: "aat", earned: 50, required: 16, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "AZ-3", state: "AZ", title: "Core met without accounting, auditing or tax",
+    checks: "40 in consulting and business law meets the 40 but not the 16 accounting/auditing/tax inside it. All self-study, so 16 live hours are still due. 20 more hours: 16 accounting/auditing/tax (live) + 4 ethics.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Consulting Skills", provider: P, date: "2025-06-01", hours: 30, field: "Management Advisory Services", delivery: "QAS Self Study" },
+      { title: "Contracts", provider: P, date: "2025-07-01", hours: 10, field: "Business Law", delivery: "QAS Self Study" },
+      { title: "Corporate Finance", provider: P, date: "2025-09-01", hours: 36, field: "Finance", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 76, required: 80, remaining: 4 },
+      { id: "live", earned: 0, required: 16, remaining: 16 },
+      { id: "core", earned: 40, required: 40, met: true },
+      { id: "aat", earned: 0, required: 16, remaining: 16 },
+    ],
+    stillNeeded: { total: 20, rows: ["Any time: Accounting, auditing or tax 16", "Any time: Ethics 4"] },
+  },
+  {
+    id: "AZ-4", state: "AZ", title: "Computer courses over 20",
+    checks: "30 hours of computer courses (live) — only 20 count, so 10 come off the total and off the live hours. 70 of 80; live 20.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Excel Mastery", provider: P, date: "2025-06-01", hours: 30, field: "Computer Software and Applications", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 50, field: "Taxes", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 70, required: 80, remaining: 10 },
+      { id: "computer_max", earned: 30, required: 20, over: 10 },
+      { id: "live", earned: 20, required: 16, met: true },
+    ],
+    stillNeeded: { total: 10, rows: ["Any time: Ethics 4", "Any time: Any subject 6"] },
+  },
+  {
+    id: "AZ-5", state: "AZ", title: "Nano-learning over 4",
+    checks: "10 hours of nano-learning (Taxes) — only 4 count (R4-1-453), so 6 come off the total and the core subjects. 44 of 80; further hours must not be nano.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Bites", provider: P, date: "2025-06-01", hours: 10, field: "Taxes", delivery: "Nano Learning" },
+      { title: "GAAP Update", provider: P, date: "2025-09-01", hours: 40, field: "Accounting", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 44, required: 80, remaining: 36 },
+      { id: "nano_max", earned: 10, required: 4, over: 6 },
+      { id: "core", earned: 44, required: 40, met: true },
+    ],
+    stillNeeded: { total: 36, rows: ["Any time: Ethics 4", "Any time: Any course except Nano Learning 32"] },
+  },
+  {
+    id: "AZ-6", state: "AZ", title: "Ethics must cover Arizona rules",
+    checks: "An AICPA ethics course doesn't meet Arizona's 4 hours, which must include at least 1 hour on Arizona Board statutes and rules. Ethics doesn't count toward the 40.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" },
+    courses: [
+      { title: "AICPA Ethics", provider: P, date: "2025-06-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 44, required: 80, remaining: 36 },
+      { id: "core", earned: 40, required: 40, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 36, rows: ["Any time: Ethics 4", "Any time: Any subject 32"] },
+  },
+  {
+    id: "AZ-7", state: "AZ", title: "Short first period (proration)",
+    checks: "Licensed 2/15/2026, period ends 3/31/2027: 5 quarters (part quarters rounded up) of 8, so 50 hours, 25 core, 10 accounting/auditing/tax, 10 live. Ethics stays 4; the computer and nano maximums aren't prorated.",
+    license: { expiration: "2027-03-31", issued: "2026-02-15" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 50, remaining: 50 },
+      { id: "live", earned: 0, required: 10, remaining: 10 },
+      { id: "core", earned: 0, required: 25, remaining: 25 },
+      { id: "aat", earned: 0, required: 10, remaining: 10 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "computer_max", earned: 0, required: 20 },
+      { id: "nano_max", earned: 0, required: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["Any time: Accounting, auditing, tax, business law or consulting 15", "Any time: Accounting, auditing or tax 10", "Any time: Ethics 4", "Any time: Any subject 21"] },
+  },
 ];

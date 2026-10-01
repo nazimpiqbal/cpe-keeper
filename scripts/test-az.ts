@@ -25,7 +25,7 @@ const recs = [
 const L = evaluate(recs, vet, rules);
 assert.equal(get(L, "aat").earned, 14);            // 10 tax + 4 auditing; 3/31/2026 course is before the period
 assert.equal(get(L, "core").earned, 34);           // + 20 business law
-assert.equal(get(L, "live").earned, 39);           // 10 live + 25 webinar + 4 webinar ethics
+assert.equal(get(L, "live").earned, 34);           // 10 live + 25 webinar + 4 webinar ethics − 5 computer over the max
 assert.equal(get(L, "computer_max").over, 5);
 assert.equal(get(L, "total").earned, 58);          // 63 in period − 5 computer over the max
 assert.equal(get(L, "ethics").met, true);
