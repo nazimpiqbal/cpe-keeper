@@ -105,7 +105,9 @@ export function transcriptHtml(t: TranscriptInput, certs: CertPage[], cssMargins
       const area = subjectArea(r, t.rules);
       const cert = r.certificate_path ? t.certNumber.get(r.certificate_path) : undefined;
       return `<tr><td class="num">${usDate(r.completed_on)}</td><td>${esc(r.title)}</td>` +
-        `<td>${esc(r.provider)}${r.sponsor_id ? `<div class="muted">Sponsor ID ${esc(r.sponsor_id)}</div>` : ""}</td>` +
+        `<td>${esc(r.provider)}${r.sponsor_id ? `<div class="muted">NASBA ID ${esc(r.sponsor_id)}</div>` : ""}` +
+        `${r.state_sponsor_id ? `<div class="muted">${esc(t.license.state)} sponsor ${esc(r.state_sponsor_id)}</div>` : ""}` +
+        `${r.not_on_registry ? `<div class="short">Not on NASBA Registry</div>` : !r.sponsor_id ? `<div class="short">No sponsor ID</div>` : ""}</td>` +
         `<td>${esc(r.field_of_study)}${area ? `<div class="muted">${esc(area)}</div>` : ""}</td>` +
         (showDelivery ? `<td>${esc(normalizeDelivery(r.delivery_method) ?? "")}</td>` : "") +
         `<td class="num">${Number(r.hours)}</td>` +
@@ -151,15 +153,17 @@ export function transcriptWorkbookBase64(t: TranscriptInput): string {
   s1["!cols"] = [{ wch: 44 }, { wch: 34 }, { wch: 10 }, { wch: 11 }, { wch: 18 }];
   XLSX.utils.book_append_sheet(wb, s1, "Summary");
 
-  const header = ["Date completed", "Course title", "Sponsor", "Sponsor ID", "Field of study", "Subject area", "Delivery format", "CPE hours", "Certificate on file"];
+  const header = ["Date completed", "Course title", "Sponsor", "NASBA sponsor ID", "State sponsor number", "Field of study", "Subject area", "Delivery format", "CPE hours", "Certificate on file"];
   const data = rows.map(r => [
-    usDate(r.completed_on), r.title, r.provider ?? "", r.sponsor_id ?? "", r.field_of_study ?? "", subjectArea(r, t.rules),
+    usDate(r.completed_on), r.title, r.provider ?? "",
+    r.sponsor_id ?? (r.not_on_registry ? "Not on NASBA Registry" : ""), r.state_sponsor_id ?? "",
+    r.field_of_study ?? "", subjectArea(r, t.rules),
     normalizeDelivery(r.delivery_method) ?? "", Number(r.hours), r.certificate_path ? "Yes" : "No",
   ]);
   const total = r2(rows.reduce((a, r) => a + Number(r.hours), 0));
-  const s2 = XLSX.utils.aoa_to_sheet([header, ...data, [], ["", "Total", "", "", "", "", "", total, ""]]);
-  s2["!cols"] = [{ wch: 14 }, { wch: 50 }, { wch: 28 }, { wch: 12 }, { wch: 24 }, { wch: 16 }, { wch: 20 }, { wch: 10 }, { wch: 12 }];
-  s2["!autofilter"] = { ref: `A1:I${data.length + 1}` };
+  const s2 = XLSX.utils.aoa_to_sheet([header, ...data, [], ["", "Total", "", "", "", "", "", "", total, ""]]);
+  s2["!cols"] = [{ wch: 14 }, { wch: 50 }, { wch: 28 }, { wch: 16 }, { wch: 16 }, { wch: 24 }, { wch: 16 }, { wch: 20 }, { wch: 10 }, { wch: 12 }];
+  s2["!autofilter"] = { ref: `A1:J${data.length + 1}` };
   XLSX.utils.book_append_sheet(wb, s2, "Courses");
 
   return XLSX.write(wb, { type: "base64", bookType: "xlsx" });

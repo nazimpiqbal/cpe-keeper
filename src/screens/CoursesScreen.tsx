@@ -6,6 +6,7 @@ import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import { normalizeDelivery } from "../lib/delivery";
 import { useCourses } from "../lib/courses";
+import { sponsorOk } from "../lib/sponsor";
 
 // The course list: this cycle (or year), courses dated after it, and earlier ones.
 export default function CoursesScreen({ userId, email, license, onAddCourse, onScan, onEditCourse, onScenarios }: {
@@ -58,6 +59,18 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
     );
   };
 
+  const SponsorBanner = ({ rows: section }: { rows: CpeRow[] }) => {
+    const n = section.filter(r => !sponsorOk(r) && !dupeIds.has(r.id)).length;
+    if (n === 0) return null;
+    return (
+      <View style={s.confirmBox}>
+        <Text style={s.confirmText}>
+          {n === 1 ? "1 course is" : `${n} courses are`} missing the NASBA sponsor ID. Boards ask for it in audits — tap each one marked below to add it.
+        </Text>
+      </View>
+    );
+  };
+
   const renderRow = (r: CpeRow, i: number, outside = false) => {
     const isDupe = dupeIds.has(r.id);
     return (
@@ -70,6 +83,8 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
             {tagOf(r)} · {r.field_of_study}{rules?.deliveryMap ? ` · ${normalizeDelivery(r.delivery_method) ?? "Format not set"}` : ""}
           </Text>
           {r.needs_review && !isDupe && <Text style={s.confirm}>⚠︎ Confirm field of study — tap to review</Text>}
+          {!sponsorOk(r) && !isDupe && <Text style={s.confirm}>⚠︎ Add the NASBA sponsor ID — tap to edit</Text>}
+          {r.not_on_registry && !isDupe && <Text style={[s.tag, { color: C.danger, fontWeight: "700" }]}>Sponsor not on the NASBA Registry</Text>}
           {isDupe && <Text style={[s.tag, { color: C.warn, fontWeight: "700" }]}>Duplicate — not counted</Text>}
           {!isDupe && outside && <Text style={[s.tag, { color: C.muted, fontWeight: "600" }]}>{cycle.calendarYear ? `Not counted toward ${year}'s hours` : "Not counted in current cycle"}</Text>}
         </View>
@@ -85,6 +100,7 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
     const { error } = await supabase.from("cpe_records").insert(sampleRecords.map(r => ({
       user_id: userId, title: r.title, provider: r.provider, completed_on: r.date, hours: r.hours,
       field_of_study: r.fieldOfStudy, delivery_method: r.delivery ?? null, needs_review: !!r.needsReview, source: "import",
+      sponsor_id: r.provider.match(/\((\d{5,6})\)/)?.[1] ?? null, // e.g. "Becker (107294)"; others stay flagged
     })));
     if (error) return setError(friendlyError(error.message));
     load();
@@ -97,7 +113,7 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
         <Text style={s.sectionHrs}>{sumHrs(section)} hrs</Text>
       </View>
       {note ? <Text style={[ui.muted, { marginBottom: 8 }]}>{note}</Text> : <View style={{ height: 8 }} />}
-      <Card><ConfirmBanner rows={section} /><DupeBanner rows={section} />{section.map((r, i) => renderRow(r, i, outside))}</Card>
+      <Card><ConfirmBanner rows={section} /><SponsorBanner rows={section} /><DupeBanner rows={section} />{section.map((r, i) => renderRow(r, i, outside))}</Card>
     </>
   );
 

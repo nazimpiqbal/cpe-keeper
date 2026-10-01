@@ -22,7 +22,9 @@ export type CpeRow = {
   delivery_method: string | null;
   needs_review: boolean;
   created_at: string;
-  sponsor_id?: string | null;
+  sponsor_id?: string | null;        // NASBA National Registry sponsor ID
+  state_sponsor_id?: string | null;  // TX / NY state sponsor number
+  not_on_registry?: boolean | null;  // the user says the sponsor isn't on the NASBA Registry
   certificate_path?: string | null;
 };
 

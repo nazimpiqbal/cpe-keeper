@@ -6,6 +6,7 @@ import type { Extracted } from "./ScanScreen";
 import * as WebBrowser from "expo-web-browser";
 import { showUpgrade, usePremium } from "../lib/premium";
 import { sameCourse } from "../lib/duplicates";
+import { cleanSponsorId, STATE_SPONSOR, validSponsorId } from "../lib/sponsor";
 
 // NASBA fields of study, as printed on CPE certificates.
 export const FIELDS = [
@@ -17,8 +18,9 @@ export const FIELDS = [
 ];
 import { DELIVERY, normalizeDelivery } from "../lib/delivery";
 
-export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip, cycle, existing }: {
+export default function AddCourseScreen({ userId, onDone, initial, certificatePath, progress, onSkip, cycle, existing, state }: {
   userId: string;
+  state?: string;                              // license state: TX and NY also ask for the state sponsor number
   onDone: (saved: boolean) => void;
   initial?: Extracted;                         // pre-filled from a scanned certificate
   certificatePath?: string | null;             // stored file this course came from
@@ -31,6 +33,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   const src = existing ? {
     title: existing.title, provider: existing.provider, completed_on: existing.completed_on, hours: Number(existing.hours),
     field_of_study: existing.field_of_study, delivery_method: existing.delivery_method, field_confident: !existing.needs_review,
+    sponsor_id: existing.sponsor_id ?? null, state_sponsor_id: existing.state_sponsor_id ?? null,
   } : initial;
   const [title, setTitle] = useState(src?.title ?? "");
   const [provider, setProvider] = useState(src?.provider ?? "");
@@ -40,6 +43,10 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
   const [fieldTouched, setFieldTouched] = useState(false);
   const [delivery, setDelivery] = useState<string | null>(normalizeDelivery(src?.delivery_method));
   const fieldGuessed = !!src && !src.field_confident && !fieldTouched;
+  const [sponsorId, setSponsorId] = useState(cleanSponsorId(src?.sponsor_id));
+  const [stateSponsorId, setStateSponsorId] = useState(cleanSponsorId(src?.state_sponsor_id));
+  const [notOnRegistry, setNotOnRegistry] = useState(!!existing?.not_on_registry);
+  const stateSponsor = state ? STATE_SPONSOR[state] : undefined;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // An already-saved course that looks like this one. User must choose before saving.
@@ -53,6 +60,8 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     const h = Number(hours);
     if (!(h > 0 && h <= 100)) return setError("Enter the CPE credits, e.g. 2 or 1.5.");
     if (!field) return setError("Pick the field of study printed on the certificate.");
+    if (!notOnRegistry && !validSponsorId(sponsorId))
+      return setError("Enter the NASBA sponsor ID printed on the certificate, or tick \"Sponsor isn't on the NASBA Registry\".");
 
     setBusy(true);
     if (!allowDuplicate) {
@@ -65,12 +74,13 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
     const fields = {
       title: title.trim(), provider: provider.trim() || null, completed_on: iso,
       hours: h, field_of_study: field, delivery_method: delivery, needs_review: fieldGuessed,
+      sponsor_id: notOnRegistry ? (cleanSponsorId(sponsorId) || null) : cleanSponsorId(sponsorId),
+      state_sponsor_id: cleanSponsorId(stateSponsorId) || null, not_on_registry: notOnRegistry,
     };
     const { error } = existing
       ? await supabase.from("cpe_records").update(fields).eq("id", existing.id)
       : await supabase.from("cpe_records").insert({
           ...fields, user_id: userId,
-          sponsor_id: initial?.sponsor_id ?? null,
           certificate_path: certificatePath ?? null,
           source: certificatePath ? "certificate" : "manual",
         });
@@ -121,7 +131,32 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
         <View style={{ height: 8 }} />
         <Card>
           <Field label="Course title" value={title} onChangeText={setTitle} placeholder="e.g. Revenue Recognition Update" />
-          <Field label="Provider (optional)" value={provider} onChangeText={setProvider} placeholder="e.g. Becker" />
+          <Field label="Sponsor / provider (optional)" value={provider} onChangeText={setProvider} placeholder="e.g. Becker" />
+          {!notOnRegistry && (
+            <Field label="NASBA sponsor ID" value={sponsorId} onChangeText={setSponsorId} placeholder="e.g. 103010" keyboardType="numbers-and-punctuation" />
+          )}
+          {!notOnRegistry && !validSponsorId(sponsorId) && (
+            <Text style={[ui.hint, { marginTop: -6, marginBottom: 8 }]}>
+              Required. NASBA Registry sponsors print it on every certificate ("NASBA Sponsor #" or "National Registry ID"). Boards ask for it in audits.
+            </Text>
+          )}
+          <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 6 }}>
+            <Chip label={notOnRegistry ? "✓ Sponsor isn't on the NASBA Registry" : "Sponsor isn't on the NASBA Registry"} selected={notOnRegistry} onPress={() => setNotOnRegistry(!notOnRegistry)} />
+          </View>
+          {notOnRegistry && (
+            <View style={{ backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 12, borderWidth: 1, borderColor: "#FECACA" }}>
+              <Text style={{ color: C.danger, fontWeight: "600" }}>
+                This course will be flagged in your audit report. Keep the certificate and a course description; the board may ask why it qualifies.
+                {state === "TX" ? " In Texas, credits from a sponsor that isn't board-registered need the board's justification form (22 TAC §523.111)." : ""}
+              </Text>
+            </View>
+          )}
+          {stateSponsor && (
+            <>
+              <Field label={stateSponsor.label} value={stateSponsorId} onChangeText={setStateSponsorId} placeholder="If printed on the certificate" />
+              <Text style={[ui.hint, { marginTop: -6, marginBottom: 8 }]}>{stateSponsor.hint}</Text>
+            </>
+          )}
           <View style={{ flexDirection: "row", gap: 12 }}>
             <View style={{ flex: 1 }}>
               <DateField label="Completed on" value={date} onChangeText={setDate} />

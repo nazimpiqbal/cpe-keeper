@@ -29,14 +29,15 @@ const TOOL = {
           properties: {
             title: { type: "string" },
             provider: { type: ["string", "null"], description: "Sponsor / provider organization name." },
-            sponsor_id: { type: ["string", "null"], description: "NASBA National Registry sponsor number, if printed." },
+            sponsor_id: { type: ["string", "null"], description: "NASBA National Registry sponsor ID, if printed (often labelled 'NASBA Sponsor #', 'National Registry of CPE Sponsors ID' or 'Sponsor ID'; usually 5–6 digits). Digits only, no label." },
+            state_sponsor_id: { type: ["string", "null"], description: "A state board sponsor number, if printed separately from the NASBA ID — e.g. 'Texas Sponsor #' / 'TSBPA Sponsor No.' or 'NYS Sponsor #' / 'New York State Sponsor'. Number only." },
             completed_on: { type: ["string", "null"], description: "Completion date as YYYY-MM-DD." },
             hours: { type: ["number", "null"], description: "CPE credits earned." },
             field_of_study: { type: ["string", "null"], enum: [...FIELDS, null] },
             field_confident: { type: "boolean", description: "True only if the field of study is printed on the document (or its wording maps unambiguously)." },
             delivery_method: { type: ["string", "null"], enum: [...DELIVERY, null] },
           },
-          required: ["title", "provider", "sponsor_id", "completed_on", "hours", "field_of_study", "field_confident", "delivery_method"],
+          required: ["title", "provider", "sponsor_id", "state_sponsor_id", "completed_on", "hours", "field_of_study", "field_confident", "delivery_method"],
         },
       },
     },
@@ -50,6 +51,7 @@ Rules:
 - hours = CPE credits as printed (e.g. 2.5).
 - field_of_study must be one of the allowed NASBA fields. Map close wording (e.g. "Accounting and Auditing" → pick the best single field; "Tax" → "Taxes"; "Ethics" → "Regulatory Ethics" unless it says behavioral). If no field is printed, make your best guess from the course title and set field_confident=false.
 - delivery_method: map "Live"/"Group Live" → "Group Live", "Group Internet Based"/"Webinar"/"Virtual live" → "Group Internet Based", "QAS Self Study"/"Self-study" → "QAS Self Study".
+- sponsor_id = the NASBA National Registry sponsor ID; state_sponsor_id = a separate state board sponsor number (Texas, New York). Never guess either; use null if not printed.
 - Dates must be YYYY-MM-DD. Use null for anything not shown.`;
 
 const SHEET_PROMPT = `This is a CPE transcript/log exported from a spreadsheet (each sheet shown as CSV).
@@ -60,6 +62,7 @@ Rules:
 - If the sheet only gives a broad category (e.g. "Technical Subject Areas", "Non-Technical Subject Areas", "Accounting and Attestation (A&A)", "Ethics", "Fraud"), choose the best NASBA field_of_study from the course title and that category, and set field_confident=false. Set field_confident=true only if a specific NASBA field is given.
 - "Ethics" category → "Regulatory Ethics"; "Board-Approved Regulatory Review Course" → "Regulatory Ethics"; "Accounting and Attestation" → "Accounting" or "Auditing" by title.
 - delivery_method: "Live Presentation" → "Group Live", "Group Internet-based programs" → "Group Internet Based", "Interactive Self-Study" → "QAS Self Study", "Nano Learning Program" → "Nano Learning", "Blended Learning Program" → "Blended".
+- sponsor_id from a "Sponsor ID", "NASBA ID" or "Registry #" column; state_sponsor_id from a "Texas sponsor #" / "NYS sponsor #" column. Never guess; null if blank.
 - Dates must be YYYY-MM-DD (US spreadsheets use MM/DD/YYYY). Use null for anything not shown.`;
 
 // Spreadsheets are turned into plain CSV text per sheet; the model reads them as text.

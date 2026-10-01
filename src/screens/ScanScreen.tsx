@@ -10,7 +10,7 @@ import { matchCertificate } from "../lib/duplicates";
 import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 
 export type Extracted = {
-  title: string; provider: string | null; sponsor_id: string | null; completed_on: string | null;
+  title: string; provider: string | null; sponsor_id: string | null; state_sponsor_id?: string | null; completed_on: string | null;
   hours: number | null; field_of_study: string | null; field_confident: boolean; delivery_method: string | null;
 };
 

@@ -82,22 +82,22 @@ export default function App() {
       onAttached={() => backToDashboard(true)} />
   );
   else if (view === "review") screen = (
-    <AddCourseScreen key={queue.index} userId={session.user.id}
+    <AddCourseScreen key={queue.index} userId={session.user.id} state={license.state}
       initial={queue.courses[queue.index]} certificatePath={queue.path} cycle={cycle}
       progress={{ index: queue.index, total: queue.courses.length }}
       onSkip={queue.courses.length > 1 ? () => advance(false) : undefined}
       onDone={saved => saved ? advance(true) : backToDashboard(queue.saved > 0)} />
   );
   else if (view === "bulk") screen = (
-    <BulkReviewScreen userId={session.user.id} courses={queue.courses} certificatePath={queue.path} cycle={cycle}
+    <BulkReviewScreen userId={session.user.id} state={license.state} courses={queue.courses} certificatePath={queue.path} cycle={cycle}
       onDone={imported => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(imported); }} />
   );
   else if (view === "editCourse" && editing) screen = (
-    <AddCourseScreen key={editing.id} userId={session.user.id} existing={editing} cycle={cycle}
+    <AddCourseScreen key={editing.id} userId={session.user.id} state={license.state} existing={editing} cycle={cycle}
       onDone={changed => { setEditing(null); backToDashboard(changed); }} />
   );
   else if (view === "addCourse") screen = (
-    <AddCourseScreen userId={session.user.id} certificatePath={queue.path} cycle={cycle}
+    <AddCourseScreen userId={session.user.id} state={license.state} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
   else if (view === "scenarios" && __DEV__) screen = (

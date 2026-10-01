@@ -36,6 +36,7 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
         const ins = await supabase.from("cpe_records").insert(sc.courses.map(c => ({
           user_id: userId, title: c.title, provider: c.provider, completed_on: c.date, hours: c.hours,
           field_of_study: c.field, delivery_method: c.delivery ?? null, needs_review: false, source: "manual",
+          sponsor_id: "TEST-0001", // scenarios check the rules, not sponsor IDs
         })));
         if (ins.error) throw ins.error;
       }

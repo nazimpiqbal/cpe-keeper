@@ -6,16 +6,20 @@ import { normalizeDelivery } from "../lib/delivery";
 import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
 import AddCourseScreen, { FIELDS } from "./AddCourseScreen";
 import type { Extracted } from "./ScanScreen";
+import { cleanSponsorId, validSponsorId } from "../lib/sponsor";
 
 type BulkItem = { course: Extracted; saved: boolean };
 
 const validDate = (d: string | null) => !!d && /^\d{4}-\d{2}-\d{2}$/.test(d);
-// A row can be imported directly only if it has everything the rules need.
+// A row can be imported directly only if it has everything the rules and an audit need — including the NASBA
+// sponsor ID. Without one, the user completes it in the full form (enter the ID, or say the sponsor isn't on the Registry).
 const complete = (c: Extracted) =>
-  !!c.title?.trim() && validDate(c.completed_on) && (c.hours ?? 0) > 0 && !!c.field_of_study && FIELDS.includes(c.field_of_study);
+  !!c.title?.trim() && validDate(c.completed_on) && (c.hours ?? 0) > 0 && !!c.field_of_study && FIELDS.includes(c.field_of_study)
+  && validSponsorId(c.sponsor_id);
 
-export default function BulkReviewScreen({ userId, courses, certificatePath, cycle, onDone }: {
+export default function BulkReviewScreen({ userId, courses, certificatePath, cycle, onDone, state }: {
   userId: string;
+  state?: string;
   courses: Extracted[];
   certificatePath: string | null;
   cycle?: { start: string; end: string; calendarYear?: boolean; label?: string };
@@ -48,7 +52,8 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
     const repeatInFile = items.slice(0, i).some(o => sameCourse({ title: o.course.title ?? "", date: o.course.completed_on ?? "", hours: o.course.hours }, key));
     const incomplete = !complete(c);
     const outside = !!cycle && validDate(c.completed_on) && (c.completed_on! < cycle.start || c.completed_on! > cycle.end);
-    return { alreadyLogged, loggedAs, willAttach, repeatInFile, incomplete, outside, guessed: !c.field_confident };
+    const noSponsor = !validSponsorId(c.sponsor_id);
+    return { alreadyLogged, loggedAs, willAttach, repeatInFile, incomplete, noSponsor, outside, guessed: !c.field_confident };
   }), [items, existing, cycle]);
 
   // Default selection (once).
@@ -94,7 +99,8 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
     const rows = fresh.map(c => ({
       user_id: userId, title: c.title.trim(), provider: c.provider?.trim() || null,
       completed_on: c.completed_on, hours: c.hours, field_of_study: c.field_of_study,
-      delivery_method: normalizeDelivery(c.delivery_method), sponsor_id: c.sponsor_id,
+      delivery_method: normalizeDelivery(c.delivery_method), sponsor_id: cleanSponsorId(c.sponsor_id),
+      state_sponsor_id: cleanSponsorId(c.state_sponsor_id) || null,
       certificate_path: certificatePath, source: "import", needs_review: !c.field_confident,
     }));
     // Existing courses (no certificate yet) the user chose to attach this file to.
@@ -139,7 +145,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
               else if (f.willAttach) notes.push({ text: "Already logged — tick to attach this certificate to it", color: C.warn });
               else if (f.alreadyLogged) notes.push({ text: "Already logged, with a certificate — skipped", color: C.warn });
               if (f.repeatInFile) notes.push({ text: "Appears twice in this file — skipped", color: C.warn });
-              if (f.incomplete) notes.push({ text: "Missing details — tap to complete", color: C.danger });
+              if (f.incomplete) notes.push({ text: f.noSponsor && complete({ ...c, sponsor_id: "000" }) ? "No NASBA sponsor ID — tap to add it" : "Missing details — tap to complete", color: C.danger });
               if (f.outside) notes.push({ text: cycle?.calendarYear ? `Not in ${cycle.label ?? cycle.start.slice(0, 4)} — won't count toward this year's hours` : "Outside current cycle — won't count", color: C.muted });
               if (f.guessed && !f.incomplete) notes.push({ text: "⚠︎ Field of study is a best guess", color: C.warn });
             }
@@ -178,7 +184,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
 
       <Modal visible={editing !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setEditing(null)}>
         {editing !== null && (
-          <AddCourseScreen key={editing} userId={userId} initial={items[editing].course}
+          <AddCourseScreen key={editing} userId={userId} initial={items[editing].course} state={state}
             certificatePath={certificatePath} cycle={cycle} onDone={finishEdit} />
         )}
       </Modal>

@@ -30,7 +30,7 @@ const html = transcriptHtml(t, [
   { n: 1, isPdf: false, fileName: "photo.jpg", dataUri: "data:image/jpeg;base64,AAAA", courses: [rows[1], rows[3]] },
   { n: 2, isPdf: true, fileName: "Controllership.pdf", courses: [rows[0]] },
 ]);
-for (const s of ["Nazim Iqbal", "CPA 12345", "California CPA", "Jan 31, 2028", "Total CE", "Technical subject matter", "Sponsor ID 137501", "Group Live", "Tax &amp; &lt;Ethics&gt;", ">10.5<", "1 duplicate entry was left out", "Certificate #1", "attached PDF"])
+for (const s of ["Nazim Iqbal", "CPA 12345", "California CPA", "Jan 31, 2028", "Total CE", "Technical subject matter", "NASBA ID 137501", "No sponsor ID", "Group Live", "Tax &amp; &lt;Ethics&gt;", ">10.5<", "1 duplicate entry was left out", "Certificate #1", "attached PDF"])
   assert.ok(html.includes(s), `html has ${s}`);
 assert.ok(html.indexOf("LA OC Training") < html.indexOf("Introduction to Controllership"), "oldest first");
 assert.equal((html.match(/<img /g) ?? []).length, 1, "one photo page; the PDF certificate is merged later");
@@ -40,10 +40,10 @@ assert.ok(html.includes(">#1<") && html.includes(">#2<") && html.includes(">—<
 const wb = XLSX.read(transcriptWorkbookBase64(t), { type: "base64" });
 assert.deepEqual(wb.SheetNames, ["Summary", "Courses"]);
 const courses = XLSX.utils.sheet_to_json<any>(wb.Sheets.Courses, { header: 1 });
-assert.deepEqual(courses[0], ["Date completed", "Course title", "Sponsor", "Sponsor ID", "Field of study", "Subject area", "Delivery format", "CPE hours", "Certificate on file"]);
-assert.deepEqual(courses[1], ["06/16/2026", "LA OC Training", "CFGI", "137501", "Accounting", "Technical", "Group Live", 5, "Yes"]);
-assert.equal(courses[3][8], "No");
-assert.equal(courses[courses.length - 1][7], 10.5);
+assert.deepEqual(courses[0], ["Date completed", "Course title", "Sponsor", "NASBA sponsor ID", "State sponsor number", "Field of study", "Subject area", "Delivery format", "CPE hours", "Certificate on file"]);
+assert.deepEqual(courses[1], ["06/16/2026", "LA OC Training", "CFGI", "137501", "", "Accounting", "Technical", "Group Live", 5, "Yes"]);
+assert.equal(courses[3][9], "No");
+assert.equal(courses[courses.length - 1][8], 10.5);
 const summary = XLSX.utils.sheet_to_json<any>(wb.Sheets.Summary, { header: 1 });
 assert.ok(summary.some((r: any[]) => r[0] === "Total CE" && r[2] === 80 && r[3] === 10.5));
 assert.equal(fileBaseName(t), "CPE-Transcript-Nazim-Iqbal-CA-2026-09-29");
