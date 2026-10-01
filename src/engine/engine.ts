@@ -737,7 +737,10 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
           const both = round(records.filter(r => d(r.date) >= w.s && d(r.date) <= w.e)
             .filter(r => { const c = categoriesOf(r, rules); return c.some(x => q.categories!.includes(x)) && c.some(x => tc.includes(x)); })
             .reduce((a, r) => a + r.hours, 0));
-          if (over > 0 && both > 0) overIn[t] = Math.min(over, both);
+          // The excess is taken from hours outside that line first (the best allocation for the licensee):
+          // e.g. 30 Taxes + 20 Auditing self-study, 10 over the cap → the 10 come from Taxes, A&A keeps 20.
+          const forced = round(Math.min(both, Math.max(0, over - (earned - both))));
+          if (forced > 0) overIn[t] = forced;
         }
         lines.push({
           id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",

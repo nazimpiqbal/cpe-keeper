@@ -1178,4 +1178,85 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 76, rows: ["2026: Any subject 16", "Any time: Technical subjects 32", "Any time: New Jersey Law & Ethics 4", "Any time: Any subject 24"] },
   },
+  // ── Pennsylvania ── reporting period 1/1/2026 – 12/31/2027: 80 hours, 20 each year, 4 ethics, 24 accounting & attest
+  // for attest activity, no more than 40 self-study (nano counts as self-study).
+  {
+    id: "PA-1", state: "PA", title: "Clean slate",
+    checks: "80 hours, 20 in 2026 and 20 in 2027, 4 ethics. No accounting & attest line without attest activity.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "self_study_max", earned: 0, required: 40 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "aa", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Professional ethics 4", "Any time: Any subject 36"] },
+  },
+  {
+    id: "PA-2", state: "PA", title: "Halfway, Behavioral Ethics counts",
+    checks: "36 Taxes + 4 Behavioral Ethics, all live, in 2026: 40 of 80, ethics met (\"Ethics subjects\"). 2027 can't be done early — it still needs its own 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 36, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-04-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 80, remaining: 40 },
+      { id: "annual_total", y: 1, earned: 40, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["2027: Any subject 20", "Any time: Any subject 20"] },
+  },
+  {
+    id: "PA-3", state: "PA", title: "Too much self-study",
+    checks: "60 hours of self-study — only 40 count, so 20 come off the total. Everything left must not be self-study.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [{ title: "Tax Library", provider: P, date: "2026-03-01", hours: 60, field: "Taxes", delivery: "QAS Self Study" }],
+    expect: [
+      { id: "total", earned: 40, required: 80, remaining: 40 },
+      { id: "self_study_max", earned: 60, required: 40, over: 20 },
+    ],
+    stillNeeded: { total: 40, rows: ["2027: Any course except self-study 20", "Any time: Professional ethics 4", "Any time: Any course except self-study 16"] },
+  },
+  {
+    id: "PA-4", state: "PA", title: "Attest: self-study over the cap",
+    checks: "Attest activity: 24 accounting & attest. 30 Auditing + 30 Accounting, all self-study: 20 over the cap, and since every self-study hour is A&A, the 20 come off A&A too — 40 of 24, still met.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Audit Library", provider: P, date: "2026-03-01", hours: 30, field: "Auditing", delivery: "QAS Self Study" },
+      { title: "GAAP Library", provider: P, date: "2026-04-01", hours: 30, field: "Accounting", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 80, remaining: 40 },
+      { id: "aa", earned: 40, required: 24, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["2027: Any course except self-study 20", "Any time: Professional ethics 4", "Any time: Any course except self-study 16"] },
+  },
+  {
+    id: "PA-5", state: "PA", title: "Mixed self-study: excess comes from the other subject",
+    checks: "30 Taxes + 20 Auditing self-study (10 over) + 6 Accounting live, attest activity. The 10 over come out of the Taxes hours, so A&A keeps 26.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Tax Library", provider: P, date: "2026-02-01", hours: 30, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "Audit Library", provider: P, date: "2026-05-01", hours: 20, field: "Auditing", delivery: "QAS Self Study" },
+      { title: "GAAP Update", provider: P, date: "2026-08-01", hours: 6, field: "Accounting", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 46, required: 80, remaining: 34 },
+      { id: "self_study_max", earned: 50, required: 40, over: 10 },
+      { id: "aa", earned: 26, required: 24, met: true },
+    ],
+  },
+  {
+    id: "PA-6", state: "PA", title: "Passed the exam this period",
+    checks: "Exam passed 6/1/2026 (entered as the issue date): exempt from CPE for the 2027 renewal (\"Licensees who passed the exam in 2026 or 2027 are exempt\").",
+    license: { expiration: "2027-12-31", issued: "2026-06-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];
