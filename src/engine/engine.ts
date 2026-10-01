@@ -652,6 +652,20 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         parts.push({ label: `${yl(yr)} courses`, logged, counted: round(counted), why });
       }
       earned = round(earned);
+      // CT ethics: "four hours of ethics every three CPE cycles". A new licensee's clock starts with their first
+      // required CPE year (the year after the one they were licensed in), so it isn't due until that window ends.
+      if (q.categories && rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued) {
+        const firstReq = fyIndex(profile.licenseIssued, sm) + 1;
+        if (firstReq > y - n + 1) {
+          const dueYear = firstReq + n - 1;
+          lines.push({
+            id: q.id, label: q.label, period: `${yl(firstReq)} to ${yl(dueYear)}`, required: 0, earned, remaining: 0, met: true,
+            note: `Not due yet: your first ${q.hours} hours are due by the end of the ${yl(dueYear)} CPE year (${n} CPE years from your first required year).`,
+            deadline: iso(yearEnd(dueYear)),
+          });
+          continue;
+        }
+      }
       // Years that have ended can't take more hours, and an open year can only add up to its cap. If that
       // isn't enough, say so plainly instead of showing hours "to go" that can't count (ID: 2025 short, 50 max in 2026).
       let room = 0;

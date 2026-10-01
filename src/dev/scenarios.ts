@@ -858,4 +858,104 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 64, rows: ["2027: Any course except Nano Learning 20", "Any time: Technical 4", "Any time: Any course except Nano Learning 40"] },
   },
+  // ── Connecticut ── CPE year July 1, 2026 – June 30, 2027 (report due Dec 31, 2027): 40 hours, up to 20 carried from
+  // 2025–26, 4 ethics every three CPE years (2024–25 to 2026–27), 8 audit/attest/compilation for attest work.
+  {
+    id: "CT-1", state: "CT", title: "Clean slate",
+    checks: "40 hours for 2026–27 and 4 ethics hours across 2024–25 to 2026–27. Nothing carried from 2025–26.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 40, remaining: 40 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "attest", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Ethics 4", "Any time: Any subject 36"] },
+  },
+  {
+    id: "CT-2", state: "CT", title: "Year done",
+    checks: "36 Taxes + 4 Regulatory Ethics in 2026–27: 40 of 40 and ethics met.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 36, field: "Taxes" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-09-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [{ id: "total", earned: 40, required: 40, met: true }, { id: "ethics", earned: 4, required: 4, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "CT-3", state: "CT", title: "Carryover capped at 20",
+    checks: "60 hours in 2025–26: 20 over 40, all 20 carry into 2026–27. With 10 this year: 30 of 40.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-09-01", hours: 60, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 10, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 30, required: 40, remaining: 10 }],
+    stillNeeded: { total: 10, rows: ["Any time: Ethics 4", "Any time: Any subject 6"] },
+  },
+  {
+    id: "CT-4", state: "CT", title: "Carryover doesn't chain",
+    checks: "2024–25: 60 (20 carried into 2025–26). 2025–26: 30 of its own + 20 carried = 50, but only its own hours over 40 carry — none. 10 this year: 10 of 40.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2024-09-01", hours: 60, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 30, field: "Taxes" },
+      { title: "Tax Planning", provider: P, date: "2026-08-01", hours: 10, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 10, required: 40, remaining: 30 }],
+    stillNeeded: { total: 30, rows: ["Any time: Ethics 4", "Any time: Any subject 26"] },
+  },
+  {
+    id: "CT-5", state: "CT", title: "Attest: accounting and carryover don't count",
+    checks: "Attest work: 8 of the 40 must have a field of study of Audit, Attest or Compilation, from this year's hours (CT DCP Q&A). 50 Auditing in 2025–26 carries 10 toward the 40 but not toward the 8; 30 Accounting this year doesn't count toward the 8.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Audit Update", provider: P, date: "2025-09-01", hours: 50, field: "Auditing" },
+      { title: "GAAP Update", provider: P, date: "2026-08-01", hours: 30, field: "Accounting" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 40, met: true },
+      { id: "attest", earned: 0, required: 8, remaining: 8 },
+    ],
+    stillNeeded: { total: 12, rows: ["Any time: Audit, attest or compilation 8", "Any time: Ethics 4"] },
+  },
+  {
+    id: "CT-6", state: "CT", title: "Attest met with Auditing",
+    checks: "8 Auditing + 32 Taxes this year: 40 of 40 and the 8 audit/attest hours met. Ethics still due.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Audit Sampling", provider: P, date: "2026-08-01", hours: 8, field: "Auditing" },
+      { title: "Tax Update", provider: P, date: "2026-09-01", hours: 32, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 40, required: 40, met: true }, { id: "attest", earned: 8, required: 8, met: true }],
+    stillNeeded: { total: 4, rows: ["Any time: Ethics 4"] },
+  },
+  {
+    id: "CT-7", state: "CT", title: "Ethics window",
+    checks: "Ethics in March 2024 is in the 2023–24 CPE year — outside 2024–25 to 2026–27, so ethics is 0 of 4. Ethics in August 2024 (2024–25) would count.",
+    license: { expiration: "2027-01-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Ethics for CPAs", provider: P, date: "2024-03-01", hours: 4, field: "Behavioral Ethics" },
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [{ id: "total", earned: 40, required: 40, met: true }, { id: "ethics", earned: 0, required: 4, remaining: 4 }],
+    stillNeeded: { total: 4, rows: ["Any time: Ethics 4"] },
+  },
+  {
+    id: "CT-8", state: "CT", title: "Licensed this CPE year",
+    checks: "Licensed 8/15/2026, in the 2026–27 CPE year: no CPE report for the year the license was first issued (CT DCP Q&A).",
+    license: { expiration: "2027-01-31", issued: "2026-08-15" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "CT-9", state: "CT", title: "Licensed last CPE year",
+    checks: "Licensed 4/1/2026 (2025–26): 2026–27 is the first year with 40 hours due. The three-year ethics clock starts then, so ethics isn't due until the end of 2028–29.",
+    license: { expiration: "2027-01-31", issued: "2026-04-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 40, remaining: 40 }, { id: "ethics", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 40, rows: ["Any time: Any subject 40"] },
+  },
 ];

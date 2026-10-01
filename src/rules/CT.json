@@ -6,7 +6,7 @@
     "https://www.ctcpas.org/maintaining-your-cpa/cpe",
     "https://www.nasbaregistry.org/cpe-requirements/connecticut"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "calendar_year",
     "yearStartMonth": 7,
@@ -26,15 +26,16 @@
     },
     {
       "id": "attest",
-      "label": "Attest / compilation subjects",
+      "label": "Audit, attest or compilation",
       "hours": 8,
       "scope": "cycle",
       "categories": [
-        "accounting_auditing"
+        "audit"
       ],
       "when": "attest",
       "group": "subject",
-      "note": "If you perform or supervise attest or compilation services, or sign financial statement reports: 8 of the 40 hours in those subjects."
+      "note": "If you perform or supervise attest or compilation services, or sign financial statement reports: 8 of the 40 hours must have a field of study of Audit, Attest or Compilation — this year's hours only, not carryover (CT DCP Q&A). We count courses whose field of study is Auditing.",
+      "showNote": true
     },
     {
       "id": "gov",
@@ -97,27 +98,23 @@
     }
   ],
   "categoryLabels": {
-    "accounting_auditing": "Accounting & auditing",
     "ethics": "Ethics",
-    "general": "General CPE"
+    "general": "General CPE",
+    "audit": "Audit/attest"
   },
   "tagCategories": [
-    "accounting_auditing",
+    "audit",
     "ethics",
     "general"
   ],
   "fieldOfStudyMap": {
-    "accounting_auditing": [
-      "Accounting",
-      "Accounting (Governmental)",
-      "Auditing",
-      "Auditing (Governmental)"
-    ],
     "government": [
       "Accounting (Governmental)",
       "Auditing (Governmental)"
     ],
     "general": [
+      "Accounting",
+      "Accounting (Governmental)",
       "Taxes",
       "Management Advisory Services",
       "Economics",
@@ -136,6 +133,10 @@
     "ethics": [
       "Regulatory Ethics",
       "Behavioral Ethics"
+    ],
+    "audit": [
+      "Auditing",
+      "Auditing (Governmental)"
     ]
   },
   "limitsNotTracked": [
@@ -147,8 +148,8 @@
   "recordRetention": "Keep documentation for at least 3 years from each program's completion.",
   "toVerify": [
     "Ethics window: modelled as 4 hours in the current and two previous CPE years (the Board says the three-year clock resets when ethics is done early).",
-    "Attest/compilation hours matched on Accounting and Auditing fields ('financial statement preparation and reporting' per CTCPA).",
     "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours ('a course which covers ethical behavior').",
-    "Connecticut license expiration timing — the app doesn't use it for CPE (the CPE year is fixed July–June)."
+    "Connecticut license expiration timing — the app doesn't use it for CPE (the CPE year is fixed July–June).",
+    "Compilation courses: the Board requires a field of study of Audit, Attest or Compilation. NASBA certificates have no 'Compilation' field, so compilation courses printed as 'Accounting' aren't counted — the user can change the field to Auditing if the certificate supports it."
   ]
 }
