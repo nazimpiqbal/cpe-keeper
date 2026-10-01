@@ -59,8 +59,8 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
     // Two ways to meet it (NY): e.g. 40 in any subjects OR 24 in one subject — shown side by side.
     const a = line.alt;
     const options = [
-      { title: `${line.required} hrs`, sub: "in any subjects", earned: line.earned, required: line.required, remaining: line.mainRemaining ?? 0, area: undefined as string | undefined },
-      { title: `${a.required} hrs`, sub: "in one subject", earned: a.earned, required: a.required, remaining: a.remaining, area: a.plus ? `${a.area} + ${a.plus.hours} ${a.plus.label}` : a.area },
+      { title: `${line.required} hrs`, sub: "in recognized subject areas", earned: line.earned, required: line.required, remaining: line.mainRemaining ?? 0, area: undefined as string | undefined },
+      { title: `${a.required} hrs`, sub: "in one subject area", earned: a.earned, required: a.required, remaining: a.remaining, area: a.plus ? `${a.area} + ${a.plus.hours} ${a.plus.label}` : a.area },
     ];
     const metWith = line.mainRemaining === 0 ? 0 : a.remaining === 0 ? 1 : -1;
     return (
@@ -193,7 +193,7 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
               {g.rows.map(r => (
                 <View key={r.label} style={{ marginTop: 4 }}>
                   <View style={s.sumRow}>
-                    <Text style={[s.sumLabel, r.label === "Any subject" && { color: C.muted }]}>{r.label}</Text>
+                    <Text style={[s.sumLabel, (r.label === "Any subject" || r.label === rules?.anyLabel) && { color: C.muted }]}>{r.label}</Text>
                     <Text style={s.sumHrs}>{hrs(r.hours)}</Text>
                   </View>
                   {r.hint ? <Text style={[ui.hint, { marginTop: 0 }]}>{r.hint}</Text> : null}
@@ -381,7 +381,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
           <View style={s.alert}>
             <Text style={s.alertText}>
               Next deadline: {urgent.alt && urgent.alt.remaining < (urgent.mainRemaining ?? Infinity)
-                ? `${urgent.alt.remaining} more hrs of ${urgent.alt.area} (or ${urgent.mainRemaining} in any subject)`
+                ? `${urgent.alt.remaining} more hrs of ${urgent.alt.area} (or ${urgent.mainRemaining} in recognized subject areas)`
                 : deadlineText(urgent)} by {fmtDate(urgent.deadline)}
             </Text>
           </View>

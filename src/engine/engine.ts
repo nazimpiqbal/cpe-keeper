@@ -62,6 +62,7 @@ export type Req = {
 
 export type Rules = {
   state: string;
+  anyLabel?: string; // "What you still need": the name for hours in any subject (NY: "Any recognized subject area")
   // calendar_year with yearStartMonth = a fixed yearly CPE period, e.g. CT: July 1 – June 30 (yearStartMonth 7).
   cycle: {
     type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number;
@@ -737,7 +738,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
           ? Math.min(sum(w.s, w.e, q.orConcentrated.plusCategories), q.orConcentrated.plusMax ?? Infinity) : 0;
         const altEarned = round(best.h + plus);
         const altRem = round(Math.max(0, q.orConcentrated.hours - altEarned));
-        line.alt = { label: `${q.orConcentrated.hours} in one subject`, area: best.h > 0 ? label(best.c) : "one subject", earned: altEarned, required: q.orConcentrated.hours, remaining: altRem,
+        line.alt = { label: `${q.orConcentrated.hours} in one subject area`, area: best.h > 0 ? label(best.c) : "one subject area", earned: altEarned, required: q.orConcentrated.hours, remaining: altRem,
           ...(plus ? { plus: { hours: plus, label: q.orConcentrated.plusLabel ?? "other" } } : {}) };
         line.mainRemaining = line.remaining;
         line.met = line.met || altRem === 0;

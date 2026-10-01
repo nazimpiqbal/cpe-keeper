@@ -39,7 +39,7 @@ assert.deepEqual(rows(s), { "anytime: Professional ethics": 4 });
 L = evaluate([c("2026-02-01", 14, "Taxes")], { licenseExpiration: "2027-06-30", practice: [], licenseIssued: "2015-05-01" }, R("NY"), asOf);
 s = stillNeeded(L, R("NY"));
 assert.deepEqual(rows(s), { "anytime: Professional ethics": 4, "anytime: Taxation": 6 });
-assert.equal(s.groups[0].rows[1].hint, "or 22 in any subjects instead");
+assert.equal(s.groups[0].rows[1].hint, "or 22 in recognized subject areas instead");
 
 // GA: Georgia-specific ethics is 1 of the 4 ethics.
 s = stillNeeded(evaluate([c("2026-02-01", 10, "Taxes")], { licenseExpiration: "2027-12-31", practice: [], licenseIssued: "2012-06-15" }, R("GA"), asOf), R("GA"));

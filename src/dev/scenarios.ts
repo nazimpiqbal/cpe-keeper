@@ -470,11 +470,11 @@ export const SCENARIOS: Scenario[] = [
     license: { expiration: "2027-06-30", issued: "2015-05-01" },
     courses: [],
     expect: [
-      { id: "total", earned: 0, required: 40, remaining: 24, alt: { area: "one subject", earned: 0, remaining: 24 } },
+      { id: "total", earned: 0, required: 40, remaining: 24, alt: { area: "one subject area", earned: 0, remaining: 24 } },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
       { id: "attest", earned: 0, required: 0, absent: true },
     ],
-    stillNeeded: { total: 24, rows: ["Any time: Professional ethics 4", "Any time: Any one subject 20"] },
+    stillNeeded: { total: 24, rows: ["Any time: Professional ethics 4", "Any time: Any one subject area 20"] },
   },
   {
     id: "NY-2", state: "NY", title: "24 in taxation plus ethics",

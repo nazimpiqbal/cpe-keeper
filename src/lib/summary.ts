@@ -42,7 +42,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   const fullCaps = lines.filter(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
   const capFull = fullCaps.length > 0;
   // A full cap can name what further hours must be (TX: "Technical", once non-technical is used up).
-  const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || "Any subject";
+  const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || rules.anyLabel || "Any subject";
   const flex = capFull ? lines.find(l => !l.sub && l.kind !== "max" && hasCats(l) &&
     lines.some(y => y.sub && key(reqOf(y)) === key(reqOf(l)))) : undefined;
   const yearShown = new Map<Line, number>(); // hours shown for a year's subject line (may absorb "any subject")
@@ -97,9 +97,9 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     const altLeft = a ? r2(Math.max(0, a.remaining - plusListed)) : 0;
     if (a && a.remaining > 0 && altLeft < anyLeft) {
       // NY: finishing 24 in one subject is the shorter path.
-      add(anytime, a.area === "one subject" ? "Any one subject" : a.area, altLeft, anyLeft ? `or ${anyLeft} in any subjects instead` : undefined);
+      add(anytime, a.area === "one subject area" ? "Any one subject area" : a.area, altLeft, anyLeft ? `or ${anyLeft} in recognized subject areas instead` : undefined);
     } else {
-      add(anytime, anyLabel, anyLeft, a && a.remaining > 0 ? `or ${a.remaining} more ${a.area} instead (${a.required} in one subject)` : undefined);
+      add(anytime, anyLabel, anyLeft, a && a.remaining > 0 ? `or ${a.remaining} more ${a.area} instead (${a.required} in one subject area)` : undefined);
     }
   }
 

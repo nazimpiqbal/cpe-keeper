@@ -7,7 +7,8 @@
     "https://www.op.nysed.gov/professions/certified-public-accountants/descriptions-cpe-subject-areas-mandatory",
     "https://www.nasbaregistry.org/cpe-requirements/new-york"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-09-30",
+  "anyLabel": "Any recognized subject area",
   "cycle": {
     "type": "calendar_year",
     "note": "CPE is tracked January 1 – December 31 each year. No credits carry forward to the next year."
@@ -35,7 +36,8 @@
         "plusLabel": "ethics",
         "plusMax": 4
       },
-      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). Ethics taken this year counts toward either (NYSED Q&A). No carryforward.",
+      "note": "Recognized subject areas (Education Law §7409(4)): accounting, attest, auditing, taxation, advisory services, specialized knowledge and applications related to specialized industries, and professional ethics. Ethics taken this year counts toward either option. No carryforward.",
+      "showNote": true,
       "group": "overall"
     },
     {
