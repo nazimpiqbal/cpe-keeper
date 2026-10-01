@@ -3,6 +3,7 @@
   "board": "California Board of Accountancy",
   "sourceUrls": [
     "https://www.dca.ca.gov/cba/licensees/cequickref.shtml",
+    "https://www.law.cornell.edu/regulations/california/16-CCR-87",
     "https://www.dca.ca.gov/cba/licensees/overview-of-renewal-process.pdf",
     "https://solid.dca.ca.gov/cba/licensees/acctaudit.shtml",
     "https://www.dca.ca.gov/cba/licensees/renewal.pdf"
@@ -162,7 +163,7 @@
         "government_audit",
         "preparation_engagement"
       ],
-      "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours — fraud courses don't count toward those. One requirement, not one per activity.",
+      "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours (16 CCR 87(f)): the first 4 fraud hours count only here. Fraud hours beyond 4 can also count toward A&A or government when the course's field fits. One requirement, not one per activity.",
       "group": "subject",
       "partOf": [
         "technical_total"
@@ -290,7 +291,7 @@
         ],
         "minTotal": 80,
         "group": "subject",
-        "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours — fraud courses don't count toward those. One requirement, not one per activity."
+        "note": "4 hours of fraud CE on top of the A&A, government or preparation-engagement hours (16 CCR 87(f)): the first 4 fraud hours count only here. Fraud hours beyond 4 can also count toward A&A or government when the course's field fits. One requirement, not one per activity."
       }
     ],
     "regulatoryReviewAlwaysIfIssuedFrom": "2024-07-01"
@@ -352,7 +353,8 @@
   "toVerify": [
     "Exact CA mapping of NASBA fields of study to technical vs non-technical (esp. Business Management and Organization, Computer Software and Applications).",
     "How CA treats fractional NASBA credits (e.g. 1.8) given the CBA template's half-hour increment rule.",
-    "Behavioral Ethics: CBA lists it as non-technical and requires 'technical ethics', so we don't count it toward the 4 ethics hours. A Behavioral Ethics course whose content is a code of conduct review might still qualify."
+    "Behavioral Ethics: CBA lists it as non-technical and requires 'technical ethics', so we don't count it toward the 4 ethics hours. A Behavioral Ethics course whose content is a code of conduct review might still qualify.",
+    "Fraud hours beyond the required 4 counting toward A&A/government: 87(f) excludes the required fraud CE from (c)-(e); we read that as letting extra fraud hours count (Nazim's call, 2026-09-30). Earliest fraud courses fill the 4 first."
   ],
   "titleKeywordMap": {
     "fraud": [
@@ -408,5 +410,10 @@
     "regulatory_review": [
       "ethics"
     ]
+  },
+  "overflowCategories": {
+    "fraud": {
+      "requirement": "fraud"
+    }
   }
 }

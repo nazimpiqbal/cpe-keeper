@@ -9,6 +9,7 @@ export type Record = {
   fieldOfStudy: string; // NASBA field, e.g. "Accounting", "Personal Development"
   delivery?: string;
   needsReview?: boolean; // e.g. field of study inferred, not printed on certificate
+  notCategories?: string[]; // engine-internal: a split-off part of a course that no longer counts as these
 };
 
 export type Profile = {
@@ -82,6 +83,10 @@ export type Rules = {
   deliveryMap?: { [category: string]: string[] };
   // A category that cancels others, e.g. FL: a Board-approved ethics course is ethics, not behavioral.
   categoryExcludes?: { [category: string]: string[] };
+  // Only the hours a requirement needs are held back by categoryExcludes; hours beyond that count as the course's
+  // other categories again (CA: the 4 required fraud hours can't count toward A&A/government, extra fraud hours can).
+  // Courses are taken in date order. If the requirement doesn't apply, nothing is held back.
+  overflowCategories?: { [category: string]: { requirement: string } };
   // First-renewal rules (e.g. CA): hours scale with full six-month periods from issue date to first expiration.
   newLicensee?: {
     // CA-style: hours scale with full six-month periods; per20 = hours for every 20 required, minTotal = only once total reaches it.
@@ -179,7 +184,7 @@ export function categoriesOf(rec: Record, rules: Rules): string[] {
   const byDelivery = Object.entries(rules.deliveryMap ?? {})
     .filter(([, methods]) => !!rec.delivery && methods.includes(rec.delivery))
     .map(([cat]) => cat);
-  const cats = [...new Set([...byField, ...byTitle, ...byDelivery])];
+  const cats = [...new Set([...byField, ...byTitle, ...byDelivery])].filter(c => !rec.notCategories?.includes(c));
   const dropped = new Set(cats.flatMap(c => rules.categoryExcludes?.[c] ?? []));
   return cats.filter(c => !dropped.has(c));
 }
@@ -479,7 +484,38 @@ function evaluatePhaseIn(records: Record[], profile: Profile, rules: Rules, n: n
   return lines;
 }
 
+// Does this requirement apply to the licensee's practice areas?
+const appliesTo = (q: Req, profile: Profile) =>
+  (!q.when || profile.practice.includes(q.when)) && (!q.whenAny || q.whenAny.some(p => profile.practice.includes(p))) &&
+  !(q.unless && [q.unless].flat().some(p => profile.practice.includes(p)));
+
+// overflowCategories: split courses so only the first N hours (N = the requirement's hours) keep the category
+// exclusively; the rest of those hours lose that category and count toward whatever else the course fits.
+function splitOverflow(records: Record[], profile: Profile, rules: Rules, start: Date, end: Date): Record[] {
+  let out = records;
+  for (const [cat, { requirement }] of Object.entries(rules.overflowCategories ?? {})) {
+    const q = rules.requirements.find(r => r.id === requirement);
+    let left = q && appliesTo(q, profile) ? q.hours : 0;
+    const inWindow = (r: Record) => d(r.date) >= start && d(r.date) <= end;
+    const tagged = out.filter(r => inWindow(r) && categoriesOf(r, rules).includes(cat))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
+    if (!tagged.length) continue;
+    const parts = new Map<Record, Record[]>();
+    for (const r of tagged) {
+      const keep = round(Math.min(r.hours, left));
+      left = round(left - keep);
+      const rest = round(r.hours - keep);
+      if (!rest) continue;
+      const released = { ...r, hours: rest, notCategories: [...(r.notCategories ?? []), cat] };
+      parts.set(r, keep ? [{ ...r, hours: keep }, released] : [released]);
+    }
+    out = out.flatMap(r => parts.get(r) ?? [r]);
+  }
+  return out;
+}
+
 function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start: Date, end: Date, cycleName: string, asOf: string = today()): Line[] {
+  records = splitOverflow(records, profile, rules, start, end);
   const subCount = rules.cycle.subPeriods ?? 0;
   const subLen = subCount ? (rules.cycle.lengthMonths ?? 0) / subCount : 0;
   const subs = rules.cycle.calendarSubPeriods

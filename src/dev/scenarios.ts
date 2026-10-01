@@ -288,4 +288,36 @@ export const SCENARIOS: Scenario[] = [
       { id: "regulatory_review", earned: 2, required: 2, met: true },
     ],
   },
+  {
+    id: "CA-17", state: "CA", title: "More than 4 fraud hours, government audits",
+    checks: "The first 4 fraud hours (earliest courses first) count only toward Fraud; the 3 extra hours from the governmental fraud course also count toward the 24 government hours.",
+    license: { expiration: "2028-01-31", issued: "2016-03-01", practice: ["government_audit"] },
+    courses: [
+      { title: "Fraud Risk Assessment", provider: P, date: "2026-03-03", hours: 3, field: "Auditing" },
+      { title: "Fraud in Governmental Audits", provider: P, date: "2026-04-07", hours: 4, field: "Auditing (Governmental)" },
+      { title: "GASB Update", provider: P, date: "2026-05-05", hours: 8, field: "Accounting (Governmental)" },
+    ],
+    expect: [
+      { id: "fraud", earned: 4, required: 4, met: true },
+      { id: "gov", earned: 11, required: 24, remaining: 13 },
+      { id: "technical_total", earned: 15, required: 40, remaining: 25 },
+      { id: "total", earned: 15, required: 80, remaining: 65 },
+      { id: "annual_total", y: 1, earned: 15, required: 20, remaining: 5 },
+    ],
+    stillNeeded: { total: 65, rows: ["Year 1: Any subject 5", "Year 2: Technical 12", "Year 2: Any subject 8", "Any time: Ethics 4", "Any time: Governmental accounting & auditing 13", "Any time: Any subject 23"] },
+  },
+  {
+    id: "CA-18", state: "CA", title: "More than 4 fraud hours, A&A",
+    checks: "One 6-hour fraud audit course: 4 hours go to Fraud, the other 2 also count toward the 24 A&A hours.",
+    license: { expiration: "2028-01-31", issued: "2016-03-01", practice: ["attest"] },
+    courses: [
+      { title: "Fraud in Financial Statement Audits", provider: P, date: "2026-03-03", hours: 6, field: "Auditing" },
+      { title: "Audit Sampling", provider: P, date: "2026-04-07", hours: 10, field: "Auditing" },
+    ],
+    expect: [
+      { id: "fraud", earned: 4, required: 4, met: true },
+      { id: "aa", earned: 12, required: 24, remaining: 12 },
+      { id: "technical_total", earned: 16, required: 40, remaining: 24 },
+    ],
+  },
 ];
