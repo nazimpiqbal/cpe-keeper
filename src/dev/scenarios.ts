@@ -392,7 +392,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total_prior1", y: 8, earned: 35, required: 20, met: true },
       { id: "ethics", earned: 4, required: 4, met: true },
     ],
-    stillNeeded: { total: 36, rows: ["Any time: Not nano-learning 36"] },
+    stillNeeded: { total: 36, rows: ["Any time: Any course except Nano Learning 36"] },
   },
   {
     id: "TX-5", state: "TX", title: "Ethics too old or not Board-approved",

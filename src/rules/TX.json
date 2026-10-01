@@ -80,7 +80,7 @@
       "group": "subject",
       "showNote": true,
       "note": "Maximum, not a target. No more than half of the required credits can come from nano-learning (§ 523.118(b)). We use each course's delivery format — set it to Nano Learning for nano courses.",
-      "otherLabel": "Not nano-learning"
+      "otherLabel": "Any course except Nano Learning"
     },
     {
       "id": "ethics",
