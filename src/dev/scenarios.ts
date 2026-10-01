@@ -1071,4 +1071,111 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 50, rows: ["Any time: Accounting, auditing, tax, business law or consulting 15", "Any time: Accounting, auditing or tax 10", "Any time: Ethics 4", "Any time: Any subject 21"] },
   },
+  // ── New Jersey ── triennial period 1/1/2024 – 12/31/2026: 120 credits, 20 each year, 60 technical,
+  // 24 accounting/auditing in public practice, the 4-credit NJ Law & Ethics course.
+  {
+    id: "NJ-1", state: "NJ", title: "Clean slate",
+    checks: "2024 and 2025 have ended with 0 — red 'short'. 120 total, 60 technical (the NJ Law & Ethics course counts inside it), 2026 needs 20.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "technical", earned: 0, required: 60, remaining: 60 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "aa", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 120, rows: ["2026: Any subject 20", "Any time: Technical subjects 56", "Any time: New Jersey Law & Ethics 4", "Any time: Any subject 40"] },
+  },
+  {
+    id: "NJ-2", state: "NJ", title: "Everything met",
+    checks: "40 each year, all technical, with the NJ Law & Ethics course in 2026.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2024-03-01", hours: 40, field: "Taxes" },
+      { title: "Audit Update", provider: P, date: "2025-03-01", hours: 40, field: "Auditing" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 36, field: "Accounting" },
+      { title: "New Jersey Law and Ethics", provider: P, date: "2026-05-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 120, required: 120, met: true },
+      { id: "technical", earned: 120, required: 60, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "NJ-3", state: "NJ", title: "Mostly non-technical",
+    checks: "80 non-technical + 10 Taxes = 90 of 120, but only 10 technical. 50 more technical are needed (more than the 30 left on the total), 4 of them the NJ Law & Ethics course.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2024-03-01", hours: 40, field: "Personal Development" },
+      { title: "Business Writing", provider: P, date: "2025-03-01", hours: 40, field: "Communications and Marketing" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 10, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 90, required: 120, remaining: 30 },
+      { id: "technical", earned: 10, required: 60, remaining: 50 },
+    ],
+    stillNeeded: { total: 50, rows: ["Any time: Technical subjects 46", "Any time: New Jersey Law & Ethics 4"] },
+  },
+  {
+    id: "NJ-4", state: "NJ", title: "Public practice A&A",
+    checks: "In public practice: 24 in accounting or auditing (review and compilation count). 60 Taxes + 10 Auditing: A&A 10 of 24.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01", practice: ["public_practice"] },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2024-03-01", hours: 30, field: "Taxes" },
+      { title: "Tax Planning", provider: P, date: "2025-03-01", hours: 30, field: "Taxes" },
+      { title: "Audit Update", provider: P, date: "2026-03-01", hours: 10, field: "Auditing" },
+    ],
+    expect: [
+      { id: "total", earned: 70, required: 120, remaining: 50 },
+      { id: "aa", earned: 10, required: 24, remaining: 14 },
+    ],
+    stillNeeded: { total: 50, rows: ["2026: Any subject 10", "Any time: Accounting & auditing 14", "Any time: New Jersey Law & Ethics 4", "Any time: Any subject 22"] },
+  },
+  {
+    id: "NJ-5", state: "NJ", title: "A short year",
+    checks: "2024 ended with 10 — red '10 short'. 2025 met. 40 of 120 so far.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2024-03-01", hours: 10, field: "Taxes" },
+      { title: "Tax Planning", provider: P, date: "2025-03-01", hours: 30, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 120, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 10, required: 20, remaining: 10, past: true },
+      { id: "technical", earned: 40, required: 60, remaining: 20 },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Any subject 20", "Any time: Technical subjects 16", "Any time: New Jersey Law & Ethics 4", "Any time: Any subject 40"] },
+  },
+  {
+    id: "NJ-6", state: "NJ", title: "First renewal",
+    checks: "Licensed 4/1/2025: the 120/20/technical requirements don't apply to the first renewal (N.J.A.C. 13:29-6.2), but the NJ Law & Ethics course does (13:29-6.3A).",
+    license: { expiration: "2026-12-31", issued: "2025-04-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 0, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: New Jersey Law & Ethics 4"] },
+  },
+  {
+    id: "NJ-7", state: "NJ", title: "Software courses and other ethics",
+    checks: "Computer Software and Applications isn't on New Jersey's technical list (Information Technology is), so it's non-technical. An AICPA ethics course is technical but isn't the NJ Law & Ethics course.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Excel Mastery", provider: P, date: "2024-03-01", hours: 20, field: "Computer Software and Applications" },
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 20, field: "Taxes" },
+      { title: "AICPA Ethics", provider: P, date: "2026-03-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 44, required: 120, remaining: 76 },
+      { id: "technical", earned: 24, required: 60, remaining: 36 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 76, rows: ["2026: Any subject 16", "Any time: Technical subjects 32", "Any time: New Jersey Law & Ethics 4", "Any time: Any subject 24"] },
+  },
 ];

@@ -6,7 +6,7 @@
     "https://www.njcpa.org/learn/maintain-your-license/renewal",
     "https://www.nasbaregistry.org/cpe-requirements/new-jersey"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 36,
@@ -22,7 +22,9 @@
       "label": "Total CPE",
       "hours": 120,
       "scope": "cycle",
-      "group": "overall"
+      "group": "overall",
+      "showNote": true,
+      "note": "120 credits over the triennial period, at least 20 each calendar year. Courses on developing your practice or marketing services don't count in New Jersey (N.J.A.C. 13:29-6.4) — leave them out."
     },
     {
       "id": "annual_total",
@@ -40,7 +42,8 @@
         "technical"
       ],
       "group": "subject",
-      "note": "At least 60 of the 120 in accounting, auditing, business law, computer science, economics, finance, MAS, math/statistics, SEC practice, taxation or professional ethics."
+      "note": "At least 60 of the 120 in accounting, auditing (including review, compilation and attest), business law, information technology, economics, finance, management advisory services, mathematics/statistics, SEC practice, taxation or professional ethics (N.J.A.C. 13:29-6.3). The New Jersey Law & Ethics course counts here too.",
+      "showNote": true
     },
     {
       "id": "aa",
@@ -67,7 +70,10 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "The Board-approved 4-hour New Jersey Law & Ethics course, taken in person or by live webinar from an approved provider. We count courses with \"New Jersey\" (or \"NJ\") and \"ethics\" in the title."
+      "note": "The Board-approved 4-hour New Jersey Law & Ethics course, taken in person or by live webinar from an approved provider. We count courses with \"New Jersey\" (or \"NJ\") and \"ethics\" in the title.",
+      "partOf": [
+        "technical"
+      ]
     }
   ],
   "newLicensee": {
@@ -119,7 +125,6 @@
       "Auditing",
       "Auditing (Governmental)",
       "Business Law",
-      "Computer Software and Applications",
       "Information Technology",
       "Economics",
       "Finance",
@@ -135,7 +140,8 @@
       "Personnel/Human Resources",
       "Business Management and Organization",
       "Production",
-      "Specialized Knowledge"
+      "Specialized Knowledge",
+      "Computer Software and Applications"
     ],
     "accounting_auditing": [
       "Accounting",
@@ -157,8 +163,9 @@
     "Reviewer credit: max 60 hours."
   ],
   "toVerify": [
-    "Technical list is from N.J.A.C. 13:29-6.3 as quoted by NASBA ('Professional Ethics' — both ethics fields treated as technical). Specialized Knowledge isn't listed, so it's treated as non-technical (conservative).",
     "New licensees: the ethics course is kept for the first renewal ('All applicants shall complete four credits…'), everything else waived.",
-    "The in-person/webinar requirement for the NJ ethics course isn't checked against the course's delivery format."
+    "The in-person/webinar requirement for the NJ ethics course isn't checked against the course's delivery format.",
+    "Technical list per N.J.A.C. 13:29-6.3(a): 'Information Technology' is listed, so NASBA 'Computer Software and Applications' (e.g. Excel courses) is treated as non-technical (conservative). Specialized Knowledge isn't listed, so it's non-technical too.",
+    "Courses on practice development or marketing of services get no NJ credit (N.J.A.C. 13:29-6.4); NASBA 'Communications and Marketing' can't be split, so it's counted as non-technical with a reminder."
   ]
 }
