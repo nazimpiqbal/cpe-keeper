@@ -38,7 +38,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
         <Text style={s.reqPeriod}>Up to {line.required} {line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.</Text>
         <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : "#9CA3AF" }]} /></View>
-        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{hrs(line.over ?? 0)} over the maximum — they won't count toward the total</Text>}
+        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{hrs(line.over ?? 0)} over the maximum — they won't count toward the total{line.overIn ? ` or ${Object.keys(line.overIn).map(id => id.startsWith("technical") ? "Technical" : id).join(", ")}` : ""}</Text>}
       </View>
     );
   }

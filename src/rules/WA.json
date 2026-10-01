@@ -64,6 +64,23 @@
       "otherLabel": "Technical"
     },
     {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 12,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than 12 hours of nano-learning count per reporting period (WAC 4-30-134). We use each course's delivery format — set it to Nano Learning for nano courses.",
+      "otherLabel": "Any course except Nano Learning",
+      "alsoReduces": [
+        "technical_total"
+      ]
+    },
+    {
       "id": "ethics",
       "label": "Washington Board-approved ethics",
       "hours": 4,
@@ -151,12 +168,16 @@
     ]
   },
   "limitsNotTracked": [
-    "Nano-learning: max 12 hours per period.",
     "Board service, first-time instruction/development and authorship: max 60 combined, and they don't count toward the 20-hour yearly minimum.",
     "Non-interactive self-study earns half credit."
   ],
   "toVerify": [
     "NASBA 'Production' (operations/procurement) treated as technical under 'business management and organization' / 'budgeting and cost analysis' — not named in WAC 4-30-132.",
     "Carry-back hours (Jan 1 – June 30 of the renewal year, with an extension) are explained on the dashboard but not added to the numbers."
-  ]
+  ],
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  }
 }

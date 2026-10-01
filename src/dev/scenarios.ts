@@ -841,4 +841,21 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 100, rows: ["2027: Any subject 20", "Any time: Technical 36", "Any time: Washington Board-approved ethics 4", "Any time: Any subject 40"] },
   },
+  {
+    id: "WA-8", state: "WA", title: "Nano-learning over 12",
+    checks: "20 hours of nano-learning (Taxes) — only 12 count (WAC 4-30-134), so 8 come off the total and off Technical. With 40 Taxes in 2025 and the Washington ethics course: 56 of 120, Technical 56 of 60. Further hours must not be nano.",
+    license: { expiration: "2028-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 40, field: "Taxes" },
+      { title: "Tax Bites", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Nano Learning" },
+      { title: "Washington Ethics and Regulation", provider: P, date: "2026-05-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 56, required: 120, remaining: 64 },
+      { id: "technical_total", earned: 56, required: 60, remaining: 4 },
+      { id: "nano_max", earned: 20, required: 12, over: 8 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 64, rows: ["2027: Any course except Nano Learning 20", "Any time: Technical 4", "Any time: Any course except Nano Learning 40"] },
+  },
 ];

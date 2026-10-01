@@ -50,6 +50,8 @@ export type Req = {
   // The first listed id present is used.
   partOf?: string[];
   summaryFormat?: boolean;
+  // max lines: excess hours also come off these lines (WA/TX: nano over the cap doesn't count toward Technical either).
+  alsoReduces?: string[];
   otherLabel?: string;     // max lines: what further hours must be once this cap is full ("Technical") // a delivery-format minimum (AZ live) — overlaps subjects, so it's a note, not a bucket
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
@@ -146,6 +148,7 @@ export type Line = {
   logged?: number;  // set when more hours were logged than can count yet (see capByAnnualMinimums)
   kind?: "min" | "max";
   over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
+  overIn?: { [lineId: string]: number }; // of those, hours that also sat in these lines (alsoReduces)
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
   alt?: { label: string; area: string; earned: number; required: number; remaining: number; plus?: { hours: number; label: string } };
@@ -712,9 +715,19 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       const earned = sum(w.s, w.e, q.categories);
       if (q.kind === "max") {
         // A ceiling: never "to go"; anything above it is excluded from the total.
+        const over = round(Math.max(0, earned - q.hours));
+        const overIn: { [id: string]: number } = {};
+        for (const t of q.alsoReduces ?? []) {
+          const tc = rules.requirements.find(x => x.id === t)?.categories ?? [];
+          const both = round(records.filter(r => d(r.date) >= w.s && d(r.date) <= w.e)
+            .filter(r => { const c = categoriesOf(r, rules); return c.some(x => q.categories!.includes(x)) && c.some(x => tc.includes(x)); })
+            .reduce((a, r) => a + r.hours, 0));
+          if (over > 0 && both > 0) overIn[t] = Math.min(over, both);
+        }
         lines.push({
           id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",
-          over: round(Math.max(0, earned - q.hours)), remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub,
+          over, remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub,
+          ...(Object.keys(overIn).length ? { overIn } : {}),
         });
         continue;
       }
@@ -826,6 +839,13 @@ function applyMaximums(lines: Line[], rules: Rules) {
   for (const m of lines.filter(l => l.kind === "max" && l.sub && (l.over ?? 0) > 0)) {
     const y = annualReq && lines.find(l => l.id === annualReq.id && l.sub?.index === m.sub!.index);
     if (y) { y.earned = round(y.earned - m.over!); y.remaining = round(Math.max(0, y.required - y.earned)); y.met = y.remaining === 0; }
+  }
+  // Excess that sat in a subject line (nano Taxes over the nano cap) doesn't count toward that subject either.
+  for (const m of lines.filter(l => l.kind === "max" && l.overIn)) {
+    for (const [id, h] of Object.entries(m.overIn!)) {
+      const t = lines.find(l => l.id === id && !l.sub && l.kind !== "max");
+      if (t) { t.earned = round(t.earned - h); t.remaining = round(Math.max(0, t.required - t.earned)); t.met = t.remaining === 0; }
+    }
   }
   const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when);
   const total = totalReq && lines.find(l => l.id === totalReq.id);
