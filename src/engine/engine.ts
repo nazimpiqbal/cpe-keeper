@@ -155,6 +155,7 @@ export type Line = {
   covered?: { by: string; note?: string }; // not needed on its own: another requirement you have covers it (CA A&A ← government)
   past?: boolean;          // an earlier reporting year whose deadline has passed — shown for the record, never "to go"
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
+  within?: string;         // "What you still need": this line's hours also count toward that line (NY attest next year ⊂ this year)
 };
 
 const d = (s: string) => new Date(s + "T00:00:00Z");
@@ -654,15 +655,25 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       continue;
     }
     if (q.scope === "calendar_years_or_current") {
-      // Met by the N prior calendar years together, or by the current year alone — whichever has more.
+      // NY attest: to do the work in a year you need N hours in the N prior calendar years, or in that year on its own.
+      // The prior years are closed, so if they fell short, this year on its own is the only path left. Next year's
+      // window (the N years ending this year) is still open too, so it gets its own line.
       const y = fyIndex(asOf, sm), n = q.years ?? 0;
-      const prior = sum(yearStart(y - n), yearEnd(y - 1), q.categories);
-      const current = sum(yearStart(y), yearEnd(y), q.categories);
-      const earned = Math.max(prior, current);
+      const prior = round(sum(yearStart(y - n), yearEnd(y - 1), q.categories));
+      const current = round(sum(yearStart(y), yearEnd(y), q.categories));
+      const next = round(sum(yearStart(y - n + 1), yearEnd(y), q.categories));
+      const viaPrior = prior >= q.hours;
+      const earned = viaPrior ? prior : current;
       lines.push({
-        id: q.id, label: q.label, period: `${yl(y - n)}–${yl(y - 1)}, or ${yl(y)} on its own`,
+        id: q.id, label: `${q.label} for ${yl(y)}`,
+        period: viaPrior ? `${yl(y - n)}–${yl(y - 1)}` : `${yl(y)} on its own (${yl(y - n)}–${yl(y - 1)} had ${prior} of ${q.hours})`,
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(yearEnd(y)),
+      });
+      lines.push({
+        id: `${q.id}_next`, label: `${q.label} for ${yl(y + 1)}`, period: `${yl(y - n + 1)}–${yl(y)}`,
+        required: q.hours, earned: next, remaining: round(Math.max(0, q.hours - next)), met: next >= q.hours,
+        note: q.note, deadline: iso(yearEnd(y)), within: q.id, group: q.group,
       });
       continue;
     }

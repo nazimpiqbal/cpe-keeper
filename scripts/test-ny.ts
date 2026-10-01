@@ -50,12 +50,20 @@ assert.equal(e.remaining, 2);
 assert.equal(e.deadline, "2026-12-31");
 assert.ok(e.period.startsWith("2024–2026"));
 
-// Attest competency only when selected: best of 2023–2025 together, or 2026 alone.
+// Attest competency only when selected: 2023–2025 together, or 2026 alone. 2023–2025 is closed, so when it fell
+// short the line tracks 2026 on its own; a second line tracks 2024–2026 for attest work in 2027.
 assert.ok(!evaluate([], base, rules, asOf).some(l => l.id === "attest"));
 const at = { ...base, practice: ["attest"] };
 let a = get(evaluate([c("2023-03-01", 15, "Auditing"), c("2025-03-01", 15, "Accounting"), c("2026-03-01", 20, "Auditing")], at, rules, asOf), "attest");
-assert.equal(a.earned, 30);
-assert.equal(a.met, false);
+assert.equal(a.earned, 20); // 2023–2025 had 30 — short, so 2026 on its own
+assert.equal(a.remaining, 20);
+assert.ok(a.period.includes("had 30 of 40"));
+let an = evaluate([c("2023-03-01", 15, "Auditing"), c("2025-03-01", 15, "Accounting"), c("2026-03-01", 20, "Auditing")], at, rules, asOf).find(l => l.id === "attest_next")!;
+assert.equal(an.earned, 35);
+assert.equal(an.label, "Attest competency for 2027");
+a = get(evaluate([c("2023-03-01", 25, "Auditing"), c("2025-03-01", 15, "Accounting")], at, rules, asOf), "attest");
+assert.equal(a.met, true); // 2023–2025 = 40
+assert.equal(a.period, "2023–2025");
 a = get(evaluate([c("2026-03-01", 40, "Auditing")], at, rules, asOf), "attest");
 assert.equal(a.met, true);
 

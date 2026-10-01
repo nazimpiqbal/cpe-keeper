@@ -52,7 +52,7 @@
     },
     {
       "id": "attest",
-      "label": "Attest competency (accounting, auditing & attest)",
+      "label": "Attest competency",
       "hours": 40,
       "scope": "calendar_years_or_current",
       "years": 3,
@@ -62,7 +62,7 @@
         "attest"
       ],
       "when": "attest",
-      "note": "If you supervise attest or compilation work or sign reports: 40 hours in accounting, auditing or attest in the prior three calendar years, or in the year you do the work. Separate from the 24-hour option.",
+      "note": "If you supervise attest or compilation work or sign reports: 40 hours in accounting, auditing or attest in the three calendar years before the year you do the work, or in that year on its own (NYSED Q&A 5). The same hours also count toward your 24 or 40 for the year.",
       "group": "subject"
     }
   ],

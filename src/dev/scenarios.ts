@@ -4,7 +4,8 @@
 
 export type ScenarioCourse = { title: string; provider: string; date: string; hours: number; field: string; delivery?: string };
 // A dashboard line and what it should read. `y` = the year box (sub-period index), omitted for whole-cycle lines.
-export type Expect = { id: string; y?: number; earned: number; required: number; remaining?: number; met?: boolean; past?: boolean; over?: number; absent?: boolean; coveredBy?: string };
+export type Expect = { id: string; y?: number; earned: number; required: number; remaining?: number; met?: boolean; past?: boolean; over?: number; absent?: boolean; coveredBy?: string;
+  alt?: { area: string; earned: number; remaining: number } }; // NY: the 24-in-one-subject option shown beside the 40
 export type Scenario = {
   id: string; state: string; title: string; checks: string;
   license: { expiration: string; issued?: string; practice?: string[]; firstRenewal?: boolean; regulatoryReviewDue?: string };
@@ -461,5 +462,139 @@ export const SCENARIOS: Scenario[] = [
     courses: [],
     expect: [{ id: "total", earned: 0, required: 0, met: true }, { id: "ethics", earned: 0, required: 0, absent: true }],
     stillNeeded: { total: 0, rows: [] },
+  },
+  // ── New York ── calendar-year CPE (2026), registration through 6/30/2027, licensed 2015. Ethics window 2024–2026.
+  {
+    id: "NY-1", state: "NY", title: "Clean slate",
+    checks: "Annual CPE shows the 40 and the 24-in-one-subject options side by side, both at 0; ethics 0 / 4 for 2024–2026. The 4 ethics count toward either option (NYSED Q&A 2), so the summary says ethics 4 + 20 in any one subject.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 40, remaining: 24, alt: { area: "one subject", earned: 0, remaining: 24 } },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "attest", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 24, rows: ["Any time: Professional ethics 4", "Any time: Any one subject 20"] },
+  },
+  {
+    id: "NY-2", state: "NY", title: "24 in taxation plus ethics",
+    checks: "20 hours of Taxes + 4 Regulatory Ethics in 2026 meets the 24-hour option (Taxation + 4 ethics) and the ethics requirement. Nothing left to do.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [
+      { title: "Individual Tax Update", provider: P, date: "2026-03-10", hours: 12, field: "Taxes" },
+      { title: "Partnership Taxation", provider: P, date: "2026-06-15", hours: 8, field: "Taxes" },
+      { title: "NY Ethics for CPAs", provider: P, date: "2026-04-10", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 24, required: 40, remaining: 0, met: true, alt: { area: "Taxation", earned: 24, remaining: 0 } },
+      { id: "ethics", earned: 4, required: 4, remaining: 0, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "NY-3", state: "NY", title: "40 hours, mixed subjects",
+    checks: "12 Accounting + 12 Auditing + 12 Finance (advisory) + 4 ethics = 40 in a mix of areas, so the 40-hour option is met even though no single area reaches 24.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [
+      { title: "Revenue Recognition", provider: P, date: "2026-02-01", hours: 12, field: "Accounting" },
+      { title: "Audit Sampling", provider: P, date: "2026-03-01", hours: 12, field: "Auditing" },
+      { title: "Corporate Finance", provider: P, date: "2026-04-01", hours: 12, field: "Finance" },
+      { title: "NY Ethics for CPAs", provider: P, date: "2026-05-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 40, remaining: 0, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "NY-4", state: "NY", title: "Behavioral Ethics isn't ethics in NY",
+    checks: "Behavioral Ethics counts as Advisory Services in New York, not ethics (NYSED subject descriptions). So ethics stays 0 / 4; with 20 Taxes the 24 option needs 4 more — exactly the 4 ethics hours still owed.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [
+      { title: "Ethical Decision Making", provider: P, date: "2026-02-01", hours: 4, field: "Behavioral Ethics" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 20, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 24, required: 40, remaining: 4, alt: { area: "Taxation", earned: 20, remaining: 4 } },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Professional ethics 4"] },
+  },
+  {
+    id: "NY-5", state: "NY", title: "Ethics taken last year",
+    checks: "Ethics from 2025 meets the 4-hour ethics requirement (2024–2026) but counts toward 2025's hours, not 2026's. With 20 Taxes in 2026: 4 more Taxes, or 20 more in any subjects.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [
+      { title: "NY Ethics for CPAs", provider: P, date: "2025-06-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 20, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 20, required: 40, remaining: 4, alt: { area: "Taxation", earned: 20, remaining: 4 } },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Taxation 4"] },
+  },
+  {
+    id: "NY-6", state: "NY", title: "Attest, prior years fell short",
+    checks: "Attest work: 16 Auditing (2024) + 14 Accounting (2025) = 30 for 2023–2025 — short of 40, and those years are over, so attest work in 2026 needs 40 in 2026 on its own (6 so far). 2024–2026 has 36, so 4 more this year covers attest work in 2027. Ethics from 2023 is outside 2024–2026.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01", practice: ["attest"] },
+    courses: [
+      { title: "NY Ethics for CPAs", provider: P, date: "2023-05-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "Audit Update 2024", provider: P, date: "2024-05-01", hours: 16, field: "Auditing" },
+      { title: "GAAP Update 2025", provider: P, date: "2025-05-01", hours: 14, field: "Accounting" },
+      { title: "Audit Update 2026", provider: P, date: "2026-05-01", hours: 6, field: "Auditing" },
+    ],
+    expect: [
+      { id: "total", earned: 6, required: 40, remaining: 18, alt: { area: "Auditing", earned: 6, remaining: 18 } },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "attest", earned: 6, required: 40, remaining: 34 },
+      { id: "attest_next", earned: 36, required: 40, remaining: 4 },
+    ],
+    stillNeeded: { total: 38, rows: ["Any time: Professional ethics 4", "Any time: Attest competency for 2026 30", "Any time: Attest competency for 2027 4"] },
+  },
+  {
+    id: "NY-7", state: "NY", title: "Attest, prior years enough",
+    checks: "24 Auditing (2024) + 16 Accounting (2025) = 40 for 2023–2025, so attest work in 2026 is covered. For 2027 (2024–2026) there are 40 already. Annual: 20 Auditing in 2026 + 4 ethics = the 24 option met.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Audit Update 2024", provider: P, date: "2024-05-01", hours: 24, field: "Auditing" },
+      { title: "GAAP Update 2025", provider: P, date: "2025-05-01", hours: 16, field: "Accounting" },
+      { title: "Audit Update 2026", provider: P, date: "2026-05-01", hours: 20, field: "Auditing" },
+      { title: "NY Ethics for CPAs", provider: P, date: "2026-06-01", hours: 4, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 24, required: 40, remaining: 0, met: true, alt: { area: "Auditing", earned: 24, remaining: 0 } },
+      { id: "ethics", earned: 4, required: 4, met: true },
+      { id: "attest", earned: 40, required: 40, met: true },
+      { id: "attest_next", earned: 60, required: 40, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "NY-8", state: "NY", title: "New licensee, licensed mid-year",
+    checks: "Licensed 3/15/2026: CPE starts on the first January 1 in the first registration period (2027), so nothing is due for 2026. Ethics (2026–2028 for a 2029 renewal) is still shown.",
+    license: { expiration: "2029-03-31", issued: "2026-03-15" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 0, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Professional ethics 4"] },
+  },
+  {
+    id: "NY-9", state: "NY", title: "No carryover; next year's courses",
+    checks: "40 hours in Nov 2025 don't count toward 2026 (no carryforward), and a course dated Jan 2027 counts toward 2027, not 2026. 2026 has only 10 Taxes.",
+    license: { expiration: "2027-06-30", issued: "2015-05-01" },
+    courses: [
+      { title: "Year-end Tax Marathon", provider: P, date: "2025-11-01", hours: 40, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2026-01-05", hours: 10, field: "Taxes" },
+      { title: "2027 Tax Update", provider: P, date: "2027-01-10", hours: 8, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 10, required: 40, remaining: 14, alt: { area: "Taxation", earned: 10, remaining: 14 } },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 14, rows: ["Any time: Professional ethics 4", "Any time: Taxation 10"] },
   },
 ];

@@ -36,6 +36,11 @@ for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
     if (e.met != null && got.met !== e.met) problems.push(`${name}: expected met=${e.met}`);
     // "past" matters for a shortfall; an earlier year that was met is past too, harmlessly.
     if (l.kind !== "max" && (e.past != null ? got.past !== e.past : got.past && !got.met)) problems.push(`${name}: expected past=${!!e.past}`);
+    if (e.alt) {
+      if (!l.alt) problems.push(`${name}: expected the ${e.alt.area} option beside it`);
+      else if (l.alt.area !== e.alt.area || l.alt.earned !== e.alt.earned || l.alt.remaining !== e.alt.remaining)
+        problems.push(`${name} option: expected ${e.alt.area} ${e.alt.earned} (${e.alt.remaining} to go), got ${l.alt.area} ${l.alt.earned} (${l.alt.remaining} to go)`);
+    }
     if (e.over != null && got.over !== e.over) problems.push(`${name}: expected ${e.over} over, got ${got.over}`);
   }
   if (sc.stillNeeded) {
