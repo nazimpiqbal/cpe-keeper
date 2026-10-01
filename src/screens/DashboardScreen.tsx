@@ -25,7 +25,7 @@ function deadlineText(l: Line) {
   return `${hrs(l.remaining)}${what}${when}`;
 }
 
-function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warning?: string }) {
+function Bar({ line, showNote, warning, shortNote }: { line: Line; showNote?: boolean; warning?: string; shortNote?: string }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
   if (line.kind === "max") {
     // A ceiling, not a goal: grey bar, no "to go", no checkmark.
@@ -106,7 +106,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
         </Text>
       )}
       <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: line.met ? C.ok : line.past ? C.danger : C.accent }]} /></View>
-      {line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — was due by {fmtDate(line.deadline)}</Text>)
+      {line.past ? (!line.met && <Text style={s.warnLine}>{hrs(line.remaining)} short — was due by {fmtDate(line.deadline)}{shortNote ? ` · ${shortNote}` : ""}</Text>)
         : !line.met && line.remaining > 0 && <Text style={s.need}>{hrs(line.remaining)} to go</Text>}
       {(line.required === 0 || showNote) && line.note ? <Text style={[s.reqPeriod, showNote && { marginTop: 4 }]}>{line.note}</Text> : null}
       {warning ? <Text style={s.warnLine}>{warning}</Text> : null}
@@ -140,7 +140,8 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
         // Year boxes go after the first whole-cycle line they belong to; if none matches, at the end.
         const anchor = whole.findIndex(l => !l.covered && l.kind !== "max" && yearKeys.has(catKey(l)));
         const at = anchor === -1 ? whole.length : anchor + 1;
-        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} />;
+        const shortNoteOf = (l: Line) => (rules?.requirements.find(r => r.id === l.id) ?? rules?.requirements.find(r => l.id.startsWith(r.id + "_")))?.shortNote;
+        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} />;
         return (
           <View key={g.id}>
             <Text style={ui.h2}>{g.label}</Text>
@@ -157,7 +158,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
                       <Text style={[s.yearBadge, status === "Current" ? s.badgeNow : s.badgeOther]}>{status.toUpperCase()}</Text>
                     </View>
                     <Text style={s.yearDates}>{fmtDate(sub.start)} – {fmtDate(sub.end)}</Text>
-                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} />)}
+                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} />)}
                   </View>
                 );
               })}

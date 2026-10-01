@@ -31,7 +31,8 @@
       "hours": 20,
       "scope": "each_sub_period",
       "group": "overall",
-      "note": "At least 20 credits by December 31 each year — $10 fine per missing credit."
+      "note": "At least 20 credits by December 31 each year — $10 fine per missing credit.",
+      "shortNote": "$10 fine per missing credit"
     },
     {
       "id": "aa",

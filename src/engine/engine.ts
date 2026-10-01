@@ -54,6 +54,7 @@ export type Req = {
   alsoReduces?: string[];
   otherLabel?: string;     // max lines: what further hours must be once this cap is full ("Technical") // a delivery-format minimum (AZ live) — overlaps subjects, so it's a note, not a bucket
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
+  shortNote?: string; // added to a past year's "N hrs short" line (OH: "$10 fine per missing credit")
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
   unless?: string | string[]; // skipped if the licensee does this / any of these (CA prep is covered by A&A or government)
