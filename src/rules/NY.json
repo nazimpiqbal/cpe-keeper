@@ -28,9 +28,14 @@
           "taxation",
           "advisory",
           "specialized"
-        ]
+        ],
+        "plusCategories": [
+          "ethics"
+        ],
+        "plusLabel": "ethics",
+        "plusMax": 4
       },
-      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). No carryforward.",
+      "note": "40 hours in any mix of recognized subject areas, or 24 hours in one area (accounting, attest, auditing, taxation, advisory services or specialized knowledge). Ethics taken this year counts toward either (NYSED Q&A). No carryforward.",
       "group": "overall"
     },
     {

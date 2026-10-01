@@ -85,9 +85,15 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     const listed = [...groups.values()].reduce((a, g) => a + g.rows.reduce((b, r) => b + r.hours, 0), 0);
     const a = cycleTotal.alt;
     const anyLeft = r2(Math.max(0, (a ? cycleTotal.mainRemaining ?? 0 : cycleTotal.remaining) - listed));
-    if (a && a.remaining > 0 && a.remaining < anyLeft) {
-      // NY: finishing 24 in one subject is the shorter path (other listed lines, like ethics, don't count toward it).
-      add(anytime, a.area, a.remaining, anyLeft ? `or ${anyLeft} in any subject instead` : undefined);
+    // NY: listed lines in the concentration's plus categories (ethics) count toward the 24 too, so they shrink it.
+    const plusCats = reqOf(cycleTotal)?.orConcentrated?.plusCategories ?? [];
+    const plusListed = open.filter(l => !l.sub && (reqOf(l)?.categories ?? []).some(c => plusCats.includes(c)))
+      .reduce((x, l) => x + l.remaining, 0);
+    // (capped like the engine: NY lets "these 4 credits" of ethics count toward the 24)
+    const altLeft = a ? r2(Math.max(0, a.remaining - plusListed)) : 0;
+    if (a && a.remaining > 0 && altLeft < anyLeft) {
+      // NY: finishing 24 in one subject is the shorter path.
+      add(anytime, a.area === "one subject" ? "Any one subject" : a.area, altLeft, anyLeft ? `or ${anyLeft} in any subjects instead` : undefined);
     } else {
       add(anytime, anyLabel, anyLeft, a && a.remaining > 0 ? `or ${a.remaining} more ${a.area} instead (${a.required} in one subject)` : undefined);
     }

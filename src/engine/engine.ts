@@ -39,7 +39,8 @@ export type Req = {
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
-  orConcentrated?: { hours: number; categories: string[] };
+  // plusCategories: hours that count toward the concentrated total on top of the one area (NY: ethics in that year).
+  orConcentrated?: { hours: number; categories: string[]; plusCategories?: string[]; plusLabel?: string; plusMax?: number };
   carryForwardMax?: number; // CT: up to N excess hours from the previous CPE year count (carryovers don't chain)
   // GA: up to `max` excess credits from the previous reporting period count toward this total — only credits in `categories`.
   carryFromPreviousPeriod?: { max: number; categories?: string[] };
@@ -146,7 +147,7 @@ export type Line = {
   over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
-  alt?: { label: string; area: string; earned: number; required: number; remaining: number };
+  alt?: { label: string; area: string; earned: number; required: number; remaining: number; plus?: { hours: number; label: string } };
   mainRemaining?: number; // hours to go on the main (e.g. 40-hour) path, when alt is set
   parts?: { label: string; logged: number; counted: number; why?: string }[]; // per-year breakdown for rolling totals (ID)
   carried?: number; // hours carried in from the previous year (MI per-year lines)
@@ -721,8 +722,12 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         const best = q.orConcentrated.categories
           .map(c => ({ c, h: sum(w.s, w.e, [c]) }))
           .sort((a, b) => b.h - a.h)[0];
-        const altRem = round(Math.max(0, q.orConcentrated.hours - best.h));
-        line.alt = { label: `${q.orConcentrated.hours} in one subject`, area: label(best.c), earned: best.h, required: q.orConcentrated.hours, remaining: altRem };
+        const plus = q.orConcentrated.plusCategories
+          ? Math.min(sum(w.s, w.e, q.orConcentrated.plusCategories), q.orConcentrated.plusMax ?? Infinity) : 0;
+        const altEarned = round(best.h + plus);
+        const altRem = round(Math.max(0, q.orConcentrated.hours - altEarned));
+        line.alt = { label: `${q.orConcentrated.hours} in one subject`, area: best.h > 0 ? label(best.c) : "one subject", earned: altEarned, required: q.orConcentrated.hours, remaining: altRem,
+          ...(plus ? { plus: { hours: plus, label: q.orConcentrated.plusLabel ?? "other" } } : {}) };
         line.mainRemaining = line.remaining;
         line.met = line.met || altRem === 0;
         line.remaining = line.met ? 0 : Math.min(line.remaining, altRem);

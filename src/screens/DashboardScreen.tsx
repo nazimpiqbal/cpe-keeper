@@ -60,7 +60,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
     const a = line.alt;
     const options = [
       { title: `${line.required} hrs`, sub: "in any subjects", earned: line.earned, required: line.required, remaining: line.mainRemaining ?? 0, area: undefined as string | undefined },
-      { title: `${a.required} hrs`, sub: "in one subject", earned: a.earned, required: a.required, remaining: a.remaining, area: a.area },
+      { title: `${a.required} hrs`, sub: "in one subject", earned: a.earned, required: a.required, remaining: a.remaining, area: a.plus ? `${a.area} + ${a.plus.hours} ${a.plus.label}` : a.area },
     ];
     const metWith = line.mainRemaining === 0 ? 0 : a.remaining === 0 ? 1 : -1;
     return (
@@ -80,7 +80,7 @@ function Bar({ line, showNote, warning }: { line: Line; showNote?: boolean; warn
                 <Text style={s.optTitle}>{done ? "✓ " : ""}{o.title}</Text>
                 <Text style={s.optSub}>{o.sub}</Text>
                 <Text style={s.optNum}>{o.earned} / {o.required}</Text>
-                {o.area ? <Text style={s.optArea} numberOfLines={1}>{done ? "" : "Closest: "}{o.area}</Text> : <Text style={s.optArea}> </Text>}
+                {o.area && !o.area.startsWith("one subject") ? <Text style={s.optArea} numberOfLines={1}>{done ? "" : "Closest: "}{o.area}</Text> : <Text style={s.optArea}> </Text>}
                 <View style={s.track}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: done ? C.ok : C.accent }]} /></View>
                 <Text style={[s.optNeed, done && { color: C.ok }, metWith !== -1 && !done && { color: C.muted }]}>{done ? "Met" : metWith !== -1 ? "Not needed" : `${hrs(o.remaining)} to go`}</Text>
               </View>,

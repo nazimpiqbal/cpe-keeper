@@ -31,12 +31,17 @@ assert.equal(t.met, false);
 t = get(evaluate([...recs, c("2026-04-01", 4, "Taxes")], base, rules, asOf), "total");
 assert.equal(t.met, true);
 
-// 40 spread across areas meets it; ethics hours count toward the 40 but not toward the 24 option.
+// 40 spread across areas meets it; ethics counts toward the 40, and up to 4 ethics hours count toward the 24 (NYSED Q&A 2, 9).
 t = get(evaluate([c("2026-01-10", 12, "Accounting"), c("2026-01-11", 12, "Auditing"), c("2026-01-12", 12, "Finance"), c("2026-01-13", 4, "Regulatory Ethics")], base, rules, asOf), "total");
 assert.equal(t.earned, 40);
 assert.equal(t.met, true);
 t = get(evaluate([c("2026-01-13", 24, "Regulatory Ethics")], base, rules, asOf), "total");
-assert.equal(t.met, false, "ethics is not a concentration area");
+assert.equal(t.met, false, "ethics alone isn't a concentration: only 4 ethics hours count toward the 24");
+t = get(evaluate([c("2026-01-10", 20, "Taxes"), c("2026-01-13", 4, "Regulatory Ethics")], base, rules, asOf), "total");
+assert.equal(t.met, true, "20 tax + 4 ethics meets the 24 option");
+assert.deepEqual([t.alt!.area, t.alt!.earned, t.alt!.plus!.hours], ["Taxation", 24, 4]);
+t = get(evaluate([c("2026-01-10", 18, "Taxes"), c("2026-01-13", 6, "Regulatory Ethics")], base, rules, asOf), "total");
+assert.equal(t.alt!.earned, 22, "only 4 of the 6 ethics hours count toward the 24");
 
 // Ethics: 4 hrs in the three calendar years before the 2027 renewal = 2024–2026.
 let e = get(evaluate([c("2023-05-01", 4, "Regulatory Ethics"), c("2024-05-01", 2, "Regulatory Ethics"), c("2026-05-01", 1, "Behavioral Ethics")], base, rules, asOf), "ethics");

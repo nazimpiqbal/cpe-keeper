@@ -31,11 +31,15 @@ assert.equal(rows(s)["anytime: Fraud"], 4);
 s = stillNeeded(evaluate(ca, p, R("CA"), "2027-03-01"), R("CA"));
 assert.ok(!s.groups.some(g => g.title === "Year 1"));
 
-// NY: 24 in one subject is the shorter path; ethics listed separately.
+// NY: 20 tax + the 4 ethics still needed this year makes the 24 option, so ethics is all that's left.
 L = evaluate([c("2026-02-01", 20, "Taxes"), c("2026-03-01", 6, "Personal Development")], { licenseExpiration: "2027-06-30", practice: [], licenseIssued: "2015-05-01" }, R("NY"), asOf);
 s = stillNeeded(L, R("NY"));
-assert.deepEqual(rows(s), { "anytime: Professional ethics": 4, "anytime: Taxation": 4 });
-assert.equal(s.groups[0].rows[1].hint, "or 10 in any subject instead");
+assert.deepEqual(rows(s), { "anytime: Professional ethics": 4 });
+// 14 tax: the 24 option needs 6 more tax beyond the ethics (14 + 6 + 4 = 24), shorter than 40.
+L = evaluate([c("2026-02-01", 14, "Taxes")], { licenseExpiration: "2027-06-30", practice: [], licenseIssued: "2015-05-01" }, R("NY"), asOf);
+s = stillNeeded(L, R("NY"));
+assert.deepEqual(rows(s), { "anytime: Professional ethics": 4, "anytime: Taxation": 6 });
+assert.equal(s.groups[0].rows[1].hint, "or 22 in any subjects instead");
 
 // GA: Georgia-specific ethics is 1 of the 4 ethics.
 s = stillNeeded(evaluate([c("2026-02-01", 10, "Taxes")], { licenseExpiration: "2027-12-31", practice: [], licenseIssued: "2012-06-15" }, R("GA"), asOf), R("GA"));
