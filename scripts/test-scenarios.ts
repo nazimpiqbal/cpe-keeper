@@ -41,6 +41,8 @@ for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
       else if (l.alt.area !== e.alt.area || l.alt.earned !== e.alt.earned || l.alt.remaining !== e.alt.remaining)
         problems.push(`${name} option: expected ${e.alt.area} ${e.alt.earned} (${e.alt.remaining} to go), got ${l.alt.area} ${l.alt.earned} (${l.alt.remaining} to go)`);
     }
+    if (e.warn && !(l.warn ?? "").includes(e.warn)) problems.push(`${name}: expected a warning containing "${e.warn}", got ${l.warn ? `"${l.warn}"` : "none"}`);
+    if (!e.warn && l.warn) problems.push(`${name}: unexpected warning "${l.warn}"`);
     if (e.over != null && got.over !== e.over) problems.push(`${name}: expected ${e.over} over, got ${got.over}`);
   }
   if (sc.stillNeeded) {

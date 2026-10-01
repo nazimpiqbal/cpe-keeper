@@ -140,7 +140,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
         // Year boxes go after the first whole-cycle line they belong to; if none matches, at the end.
         const anchor = whole.findIndex(l => !l.covered && l.kind !== "max" && yearKeys.has(catKey(l)));
         const at = anchor === -1 ? whole.length : anchor + 1;
-        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />;
+        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} />;
         return (
           <View key={g.id}>
             <Text style={ui.h2}>{g.label}</Text>
@@ -157,7 +157,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
                       <Text style={[s.yearBadge, status === "Current" ? s.badgeNow : s.badgeOther]}>{status.toUpperCase()}</Text>
                     </View>
                     <Text style={s.yearDates}>{fmtDate(sub.start)} – {fmtDate(sub.end)}</Text>
-                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id)} />)}
+                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} />)}
                   </View>
                 );
               })}

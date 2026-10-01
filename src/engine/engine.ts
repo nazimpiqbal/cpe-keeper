@@ -156,6 +156,8 @@ export type Line = {
   covered?: { by: string; note?: string }; // not needed on its own: another requirement you have covers it (CA A&A ← government)
   past?: boolean;          // an earlier reporting year whose deadline has passed — shown for the record, never "to go"
   sub?: { index: number; label: string; start: string; end: string }; // set for per-year lines (CA Year 1 / Year 2)
+  warn?: string;           // shown in dark red under the line (ID: the total can no longer be reached)
+  canStillCount?: number;  // most hours that can still count toward this line (ID: open years up to their cap)
   within?: string;         // "What you still need": this line's hours also count toward that line (NY attest next year ⊂ this year)
 };
 
@@ -647,12 +649,36 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         parts.push({ label: `${yl(yr)} courses`, logged, counted: round(counted), why });
       }
       earned = round(earned);
+      // Years that have ended can't take more hours, and an open year can only add up to its cap. If that
+      // isn't enough, say so plainly instead of showing hours "to go" that can't count (ID: 2025 short, 50 max in 2026).
+      let room = 0;
+      const closed: number[] = [];
+      for (let yr = y - n + 1; yr <= y; yr++) {
+        const p = parts[yr - (y - n + 1)];
+        if (iso(yearEnd(yr)) < asOf) { closed.push(yr); continue; }
+        room += q.perYearMax != null ? Math.max(0, q.perYearMax - p.counted) : Infinity;
+      }
+      const best = round(earned + room);
+      const warn = earned < q.hours && best < q.hours
+        ? `${closed.map(yl).join(" and ")} ${closed.length === 1 ? "has" : "have"} ended${q.perYearMax != null ? `, and at most ${q.perYearMax} hours a year count` : ""} — the most you can reach is ${best} of ${q.hours}. Ask the Board about an exception or extension when you report.`
+        : undefined;
       lines.push({
         id: q.id, label: q.label, period: (sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`) +
           (rules.reportDueMonthDay ? ` · for the report due ${monthDayText(rules.reportDueMonthDay)}, ${y + 1}` : ""),
         required: q.hours, earned, remaining: round(Math.max(0, q.hours - earned)), met: earned >= q.hours,
         note: q.note, deadline: iso(yearEnd(y)), parts: q.categories ? undefined : parts,
+        ...(Number.isFinite(room) && earned < q.hours ? { canStillCount: round(room) } : {}), ...(warn ? { warn } : {}),
       });
+      // Licensed in an earlier year of the window without the licensure-year course: show it as missed.
+      if (!q.categories && ly && issuedYear != null && issuedYear >= y - n + 1 && issuedYear <= y && iso(yearEnd(issuedYear)) < asOf) {
+        const done = round(sum(yearStart(issuedYear), yearEnd(issuedYear), ly.requirement.categories));
+        if (done < ly.requirement.hours) lines.push({
+          id: ly.requirement.id, label: ly.requirement.label, period: `${yl(issuedYear)} (year licensed)`,
+          required: ly.requirement.hours, earned: done, remaining: round(ly.requirement.hours - done), met: false, past: true,
+          note: `Without it, ${yl(issuedYear)} isn't credited as ${ly.creditIfMet} hours.`, deadline: iso(yearEnd(issuedYear)),
+          group: ly.requirement.group,
+        });
+      }
       continue;
     }
     if (q.scope === "calendar_years_or_current") {

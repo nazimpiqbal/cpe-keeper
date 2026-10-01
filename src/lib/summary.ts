@@ -16,8 +16,10 @@ const clean = (label: string) => label
   .replace(/ subject matter$/i, "");
 
 export function stillNeeded(lines: Line[], rules: Rules): Summary {
+  // (ID: the licensure-year course lives under newLicensee, not the main requirements.)
+  const reqs = [...rules.requirements, ...(rules.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])];
   const reqOf = (l: Line): Req | undefined =>
-    rules.requirements.find(q => q.id === l.id) ?? rules.requirements.find(q => l.id.startsWith(q.id + "_"));
+    reqs.find(q => q.id === l.id) ?? reqs.find(q => l.id.startsWith(q.id + "_"));
   const key = (q?: Req) => JSON.stringify([...(q?.categories ?? [])].sort());
   const open = lines.filter(l => l.kind !== "max" && !l.past && l.required > 0 && l.remaining > 0);
   const hasCats = (l: Line) => !!reqOf(l)?.categories?.length;
@@ -104,6 +106,23 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   }
 
   const notes = open.filter(isFormat).map(l => `At least ${l.remaining} more of these must be ${clean(l.label).toLowerCase()}.`);
+
+  // ID: past years are closed and each open year counts at most 50, so only so many more hours can count.
+  // Trim "any subject" (the whole-cycle row first) to that, and say how far short it still leaves you.
+  const cap = cycleTotal?.canStillCount;
+  if (cap != null && cycleTotal && !cycleTotal.met) {
+    let excess = r2([...groups.values()].reduce((a, g) => a + g.rows.reduce((b, r) => b + r.hours, 0), 0) - cap);
+    const order = [anytime, ...[...groups.values()].filter(g => g !== anytime)];
+    for (const g of order) {
+      for (const r of g.rows.filter(r => r.label === anyLabel)) {
+        if (excess <= 0) break;
+        const cut = Math.min(excess, r.hours); r.hours = r2(r.hours - cut); excess = r2(excess - cut);
+      }
+      g.rows = g.rows.filter(r => r.hours > 0);
+    }
+    const short = r2(cycleTotal.required - cycleTotal.earned - cap);
+    if (short > 0) notes.push(`Only ${cap} more hours can count toward the ${cycleTotal.required} — you'd still be ${short} short.`);
+  }
   const out = [...groups.values()].filter(g => g.rows.length);
   // Deadline order: earlier years first, then the anytime group.
   out.sort((a, b) => a.deadline.localeCompare(b.deadline) || (a.key === "cycle" ? 1 : -1));

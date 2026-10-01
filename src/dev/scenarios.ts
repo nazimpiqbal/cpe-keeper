@@ -5,7 +5,8 @@
 export type ScenarioCourse = { title: string; provider: string; date: string; hours: number; field: string; delivery?: string };
 // A dashboard line and what it should read. `y` = the year box (sub-period index), omitted for whole-cycle lines.
 export type Expect = { id: string; y?: number; earned: number; required: number; remaining?: number; met?: boolean; past?: boolean; over?: number; absent?: boolean; coveredBy?: string;
-  alt?: { area: string; earned: number; remaining: number } }; // NY: the 24-in-one-subject option shown beside the 40
+  alt?: { area: string; earned: number; remaining: number }; // NY: the 24-in-one-subject option shown beside the 40
+  warn?: string }; // text the red warning under the line must contain (ID: total can no longer be reached)
 export type Scenario = {
   id: string; state: string; title: string; checks: string;
   license: { expiration: string; issued?: string; practice?: string[]; firstRenewal?: boolean; regulatoryReviewDue?: string };
@@ -596,5 +597,143 @@ export const SCENARIOS: Scenario[] = [
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
     stillNeeded: { total: 14, rows: ["Any time: Professional ethics 4", "Any time: Taxation 10"] },
+  },
+  // ── Idaho ── report due Jan 31, 2027: the two calendar years 2025–2026, 80 hours, 30–50 counted each year, 4 ethics.
+  {
+    id: "ID-1", state: "ID", title: "Clean slate",
+    checks: "2025 has ended with 0, so it shows red 'short'; 2026 needs 30. Only 50 can count for 2026, so 80 can't be reached — the total says so in red, and the summary stops at the 50 that can still count.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80, warn: "the most you can reach is 50 of 80" },
+      { id: "annual_min", y: 5, earned: 0, required: 30, remaining: 30 },
+      { id: "annual_min_2025", y: 4, earned: 0, required: 30, remaining: 30, past: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["2026: Any subject 30", "Any time: Ethics 4", "Any time: Any subject 16"] },
+  },
+  {
+    id: "ID-2", state: "ID", title: "Typical two years",
+    checks: "2025: 45 (with 4 ethics). 2026: 25. Total 70 of 80; 2026 needs 5 more for its 30 and 10 more for the 80.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 41, field: "Taxes" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-06-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "GAAP Update", provider: P, date: "2026-04-01", hours: 25, field: "Accounting" },
+    ],
+    expect: [
+      { id: "total", earned: 70, required: 80, remaining: 10 },
+      { id: "annual_min", y: 5, earned: 25, required: 30, remaining: 5 },
+      { id: "annual_min_2025", y: 4, earned: 45, required: 30, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 10, rows: ["2026: Any subject 5", "Any time: Any subject 5"] },
+  },
+  {
+    id: "ID-3", state: "ID", title: "Over 50 in one year; Behavioral Ethics",
+    checks: "60 hours in 2025 — only 50 count. 2026: 20 Auditing + 4 Behavioral Ethics (any ethics field of study counts in Idaho). Total 74; 6 more in 2026 finishes both the 30 and the 80.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-03-01", hours: 60, field: "Taxes" },
+      { title: "Audit Update", provider: P, date: "2026-04-01", hours: 20, field: "Auditing" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-05-01", hours: 4, field: "Behavioral Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 74, required: 80, remaining: 6 },
+      { id: "annual_min", y: 5, earned: 24, required: 30, remaining: 6 },
+      { id: "annual_min_2025", y: 4, earned: 60, required: 30, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 6, rows: ["2026: Any subject 6"] },
+  },
+  {
+    id: "ID-4", state: "ID", title: "All met, ethics split across years",
+    checks: "2 Behavioral Ethics in 2025 + 2 Regulatory Ethics in 2026 = 4 ethics over the two years. 42 + 42 = 84 of 80.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 40, field: "Taxes" },
+      { title: "Ethics Part 1", provider: P, date: "2025-04-01", hours: 2, field: "Behavioral Ethics" },
+      { title: "Audit Update", provider: P, date: "2026-04-01", hours: 40, field: "Auditing" },
+      { title: "Ethics Part 2", provider: P, date: "2026-05-01", hours: 2, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 84, required: 80, met: true },
+      { id: "annual_min", y: 5, earned: 42, required: 30, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "ID-5", state: "ID", title: "Licensed this year, no Idaho course yet",
+    checks: "Licensed 4/15/2026: only the 2-hour Idaho state-specific ethics course is due this year (IDAPA 24.30.01.111). The summary shows just that course.",
+    license: { expiration: "2027-01-31", issued: "2026-04-15" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 0, met: true },
+      { id: "id_ethics", earned: 0, required: 2, remaining: 2 },
+      { id: "annual_min", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 2, rows: ["Any time: Idaho ethics course 2"] },
+  },
+  {
+    id: "ID-6", state: "ID", title: "Licensed last year with the Idaho course",
+    checks: "Licensed 4/15/2025 and took the Idaho ethics course that year, so 2025 is credited as 50 (2 ethics + 48). 2026: 28 Taxes + 2 ethics = 30. Total 80; ethics 4.",
+    license: { expiration: "2027-01-31", issued: "2025-04-15" },
+    courses: [
+      { title: "Idaho Ethics for CPAs", provider: P, date: "2025-05-01", hours: 2, field: "Regulatory Ethics" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 28, field: "Taxes" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-06-01", hours: 2, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "annual_min", y: 5, earned: 30, required: 30, met: true },
+      { id: "annual_min_2025", y: 4, earned: 0, required: 0, absent: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "ID-7", state: "ID", title: "Licensed last year without the Idaho course",
+    checks: "Licensed 4/15/2025 but no Idaho ethics course in 2025: that shows red, and 2025 isn't credited as 50. With 30 in 2026, only 20 more can count — at most 50 of 80, shown in red.",
+    license: { expiration: "2027-01-31", issued: "2025-04-15" },
+    courses: [{ title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes" }],
+    expect: [
+      { id: "total", earned: 30, required: 80, remaining: 50, warn: "the most you can reach is 50 of 80" },
+      { id: "id_ethics", earned: 0, required: 2, remaining: 2, past: true },
+      { id: "annual_min", y: 5, earned: 30, required: 30, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 20, rows: ["Any time: Ethics 4", "Any time: Any subject 16"] },
+  },
+  {
+    id: "ID-8", state: "ID", title: "Courses outside the two years",
+    checks: "2024 (rolled off) and a course dated 1/3/2027 (next window) don't count. 2025: 40; 2026: 30. Total 70; 10 more in 2026.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [
+      { title: "Old Tax Course", provider: P, date: "2024-03-01", hours: 50, field: "Taxes" },
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 36, field: "Taxes" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-04-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "Audit Update", provider: P, date: "2026-03-01", hours: 30, field: "Auditing" },
+      { title: "New Year Webinar", provider: P, date: "2027-01-03", hours: 10, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 70, required: 80, remaining: 10 },
+      { id: "annual_min", y: 5, earned: 30, required: 30, met: true },
+      { id: "annual_min_2025", y: 4, earned: 40, required: 30, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 10, rows: ["Any time: Any subject 10"] },
+  },
+  {
+    id: "ID-9", state: "ID", title: "Last year fell short",
+    checks: "2025 ended with 20 — red '10 short'. Even 50 in 2026 reaches only 70 of 80, so the total says so in red; the summary lists the 50 that can still count.",
+    license: { expiration: "2027-01-31", issued: "2012-05-01" },
+    courses: [{ title: "Tax Update", provider: P, date: "2025-03-01", hours: 20, field: "Taxes" }],
+    expect: [
+      { id: "total", earned: 20, required: 80, remaining: 60, warn: "the most you can reach is 70 of 80" },
+      { id: "annual_min_2025", y: 4, earned: 20, required: 30, remaining: 10, past: true },
+      { id: "annual_min", y: 5, earned: 0, required: 30, remaining: 30 },
+    ],
+    stillNeeded: { total: 50, rows: ["2026: Any subject 30", "Any time: Ethics 4", "Any time: Any subject 16"] },
   },
 ];
