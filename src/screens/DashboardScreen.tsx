@@ -364,6 +364,16 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
             </Text>
           </View>
         )}
+        {!plan && (() => {
+          // Phase-in states (TX): explain why fewer hours are due in the first license years.
+          const phase = lines.find(l => l.note?.startsWith("New licensee: "))?.note?.slice("New licensee: ".length);
+          return phase ? (
+            <View style={s.firstBox}>
+              <Text style={s.firstTitle}>New licensee · phase-in</Text>
+              <Text style={s.firstText}>{phase}</Text>
+            </View>
+          ) : null;
+        })()}
         {urgent && (
           <View style={s.alert}>
             <Text style={s.alertText}>

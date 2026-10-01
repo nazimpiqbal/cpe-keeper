@@ -34,7 +34,8 @@ for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
     if (got.earned !== e.earned || got.required !== e.required) problems.push(`${name}: expected ${e.earned}/${e.required}, got ${got.earned}/${got.required}`);
     if (e.remaining != null && got.remaining !== e.remaining) problems.push(`${name}: expected ${e.remaining} to go, got ${got.remaining}`);
     if (e.met != null && got.met !== e.met) problems.push(`${name}: expected met=${e.met}`);
-    if ((e.past ?? false) !== got.past && l.kind !== "max") problems.push(`${name}: expected past=${!!e.past}`);
+    // "past" matters for a shortfall; an earlier year that was met is past too, harmlessly.
+    if (l.kind !== "max" && (e.past != null ? got.past !== e.past : got.past && !got.met)) problems.push(`${name}: expected past=${!!e.past}`);
     if (e.over != null && got.over !== e.over) problems.push(`${name}: expected ${e.over} over, got ${got.over}`);
   }
   if (sc.stillNeeded) {

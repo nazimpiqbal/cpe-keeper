@@ -38,7 +38,10 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
 
   // When a cap is already full (CA: 40 non-technical), every further hour must be in the capped-out subject's
   // counterpart — the cycle subject that also has yearly minimums (CA technical). "Any subject" becomes that subject.
-  const capFull = lines.some(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
+  const fullCaps = lines.filter(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
+  const capFull = fullCaps.length > 0;
+  // A full cap can name what further hours must be (TX: "Technical", once non-technical is used up).
+  const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || "Any subject";
   const flex = capFull ? lines.find(l => !l.sub && l.kind !== "max" && hasCats(l) &&
     lines.some(y => y.sub && key(reqOf(y)) === key(reqOf(l)))) : undefined;
   const yearShown = new Map<Line, number>(); // hours shown for a year's subject line (may absorb "any subject")
@@ -63,7 +66,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
       // No yearly subject line this year, but only the flex subject can count now.
       add(g, clean(flex.label), any); any = 0;
     }
-    add(g, "Any subject", any);
+    add(g, anyLabel, any);
   }
 
   // 2. Whole-cycle subject lines, less what per-year and nested lines already cover.
@@ -86,7 +89,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
       // NY: finishing 24 in one subject is the shorter path (other listed lines, like ethics, don't count toward it).
       add(anytime, a.area, a.remaining, anyLeft ? `or ${anyLeft} in any subject instead` : undefined);
     } else {
-      add(anytime, "Any subject", anyLeft, a && a.remaining > 0 ? `or ${a.remaining} more ${a.area} instead (${a.required} in one subject)` : undefined);
+      add(anytime, anyLabel, anyLeft, a && a.remaining > 0 ? `or ${a.remaining} more ${a.area} instead (${a.required} in one subject)` : undefined);
     }
   }
 

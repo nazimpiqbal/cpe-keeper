@@ -2,14 +2,14 @@
   "state": "TX",
   "board": "Texas State Board of Public Accountancy (TSBPA)",
   "sourceUrls": [
-    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-112",
     "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-118",
+    "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-112",
     "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-130",
     "https://www.law.cornell.edu/regulations/texas/22-Tex-Admin-Code-SS-523-102",
     "https://www.tsbpa.texas.gov/cpas/renewal/",
     "https://www.nasbaregistry.org/cpe-requirements/texas"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-09-30",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 36,
@@ -49,7 +49,24 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than half of the required hours can be non-technical."
+      "note": "Maximum, not a target. No more than half of the required credits can be non-technical (§ 523.118(a)): communications, computer software and applications, behavioral ethics, business management and organization.",
+      "otherLabel": "Technical"
+    },
+    {
+      "id": "nano_max",
+      "role": "max_share",
+      "share": 0.5,
+      "label": "Nano-learning",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than half of the required credits can come from nano-learning (§ 523.118(b)). We use each course's delivery format — set it to Nano Learning for nano courses.",
+      "otherLabel": "Not nano-learning"
     },
     {
       "id": "ethics",
@@ -158,8 +175,14 @@
   "toVerify": [
     "Business Law, Statistics and Specialized Knowledge treated as technical, and Personal Development, Personnel/HR and Production as non-technical — the rule lists examples, not every NASBA field.",
     "Non-technical cap during the phase-in years: we apply 50% of that year's required total (e.g. 30 of 60).",
-    "Ethics timing: modelled as a TSBPA-approved course in the 24 months before renewal, from the second full license year after initial licensure on."
+    "Not tracked: certification programs (CFP, CIA, CFE, securities licenses) capped at 50% of required credits (§ 523.118(c)).",
+    "Non-residents may follow their principal-place-of-business state's CPE rules instead (§ 523.112(e)); the app always applies Texas rules."
   ],
   "renewalMonths": 12,
-  "expiresEndOfMonth": true
+  "expiresEndOfMonth": true,
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  }
 }

@@ -48,7 +48,8 @@ export type Req = {
   // "What you still need" summary: hours for this line sit inside another line's (CA fraud ⊂ A&A ⊂ technical).
   // The first listed id present is used.
   partOf?: string[];
-  summaryFormat?: boolean; // a delivery-format minimum (AZ live) — overlaps subjects, so it's a note, not a bucket
+  summaryFormat?: boolean;
+  otherLabel?: string;     // max lines: what further hours must be once this cap is full ("Technical") // a delivery-format minimum (AZ live) — overlaps subjects, so it's a note, not a bucket
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
   kind?: "min" | "max"; // "max" = a ceiling on what can count (e.g. non-technical), not a target
   whenAny?: string[];    // applies if the licensee does ANY of these (e.g. fraud: A&A, government, prep)
