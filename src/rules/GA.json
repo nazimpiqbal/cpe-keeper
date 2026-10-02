@@ -7,7 +7,7 @@
     "https://www.gscpa.org/content/ContinuingEducation/New-CPE-Rules-2024.aspx",
     "https://www.nasbaregistry.org/cpe-requirements/georgia"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-01",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -59,7 +59,10 @@
       "categories": [
         "ethics"
       ],
-      "group": "special"
+      "group": "special",
+      "partOf": [
+        "technical"
+      ]
     },
     {
       "id": "ga_ethics",

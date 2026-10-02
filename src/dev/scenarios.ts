@@ -1413,4 +1413,106 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 13.5, rows: ["2026–27: Accounting & auditing 3", "2026–27: Ethics 1", "2026–27: Any subject 9.5"] },
   },
+  // ── Georgia ── reporting period 1/1/2026 – 12/31/2027: 80 credits, 20 each year, at least 50% technical, 4 ethics
+  // including 1 Georgia-specific; up to 15 non-technical credits carried from the previous period count toward the 80.
+  {
+    id: "GA-1", state: "GA", title: "Clean slate",
+    checks: "80 credits, 20 a year, 40 technical (Regulatory Ethics is technical in Georgia, so the ethics credits can sit inside it), 4 ethics including 1 Georgia-specific.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "technical", earned: 0, required: 40, remaining: 40 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "ga_ethics", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Technical fields 36", "Any time: Ethics 3", "Any time: Georgia-specific ethics 1"] },
+  },
+  {
+    id: "GA-2", state: "GA", title: "Technical and ethics done",
+    checks: "36 Taxes + 3 Regulatory Ethics + a 1-credit Georgia ethics course in 2026: 40 technical, ethics and Georgia ethics met. 2027 still needs its own 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 36, field: "Taxes" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 3, field: "Regulatory Ethics" },
+      { title: "Georgia Ethics: Board Rules", provider: P, date: "2026-05-01", hours: 1, field: "Regulatory Ethics" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 80, remaining: 40 },
+      { id: "technical", earned: 40, required: 40, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+      { id: "ga_ethics", earned: 1, required: 1, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["2027: Any subject 20", "Any time: Any subject 20"] },
+  },
+  {
+    id: "GA-3", state: "GA", title: "Mostly non-technical",
+    checks: "50 personal development + 10 Taxes: 60 of 80 but only 10 technical. 30 more technical are needed — more than the 20 left — and taking them in 2027 also covers 2027's 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2026-03-01", hours: 50, field: "Personal Development" },
+      { title: "Tax Update", provider: P, date: "2026-04-01", hours: 10, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "technical", earned: 10, required: 40, remaining: 30 },
+    ],
+    stillNeeded: { total: 30, rows: ["Any time: Technical fields 26", "Any time: Ethics 3", "Any time: Georgia-specific ethics 1"] },
+  },
+  {
+    id: "GA-4", state: "GA", title: "Carryover from last period",
+    checks: "2024–2025: 40 Taxes + 55 personal development = 95, 15 over 80 and all non-technical, so 15 carry into the 80 (not into technical or the yearly 20). With 20 Taxes in 2026: 35 of 80.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2024-03-01", hours: 40, field: "Taxes" },
+      { title: "Leadership Summit", provider: P, date: "2025-03-01", hours: 55, field: "Personal Development" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 20, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 35, required: 80, remaining: 45 },
+      { id: "annual_total", y: 1, earned: 20, required: 20, met: true },
+      { id: "technical", earned: 20, required: 40, remaining: 20 },
+    ],
+    stillNeeded: { total: 45, rows: ["2027: Any subject 20", "Any time: Technical fields 16", "Any time: Ethics 3", "Any time: Georgia-specific ethics 1", "Any time: Any subject 5"] },
+  },
+  {
+    id: "GA-5", state: "GA", title: "Licensed in year 1",
+    checks: "Licensed 4/1/2026: 40 credits (20 technical) with at least 20 in 2027, including the 4 ethics credits; 2026 isn't required on its own.",
+    license: { expiration: "2027-12-31", issued: "2026-04-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 40, remaining: 40 },
+      { id: "annual_total", y: 1, earned: 0, required: 0, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "technical", earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 40, rows: ["2027: Any subject 20", "Any time: Technical fields 16", "Any time: Ethics 3", "Any time: Georgia-specific ethics 1"] },
+  },
+  {
+    id: "GA-6", state: "GA", title: "Licensed in year 2",
+    checks: "Licensed 2/1/2027: no CPE is due for the first renewal.",
+    license: { expiration: "2027-12-31", issued: "2027-02-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "GA-7", state: "GA", title: "Behavioral Ethics; Georgia course missing",
+    checks: "4 Behavioral Ethics count toward the 4 ethics credits but are non-technical in Georgia. Without a Georgia-specific course, 1 Georgia ethics credit is still due.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Ethical Decision Making", provider: P, date: "2026-03-01", hours: 4, field: "Behavioral Ethics" },
+      { title: "Tax Update", provider: P, date: "2026-04-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 44, required: 80, remaining: 36 },
+      { id: "technical", earned: 40, required: 40, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+      { id: "ga_ethics", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 36, rows: ["2027: Any subject 20", "Any time: Georgia-specific ethics 1", "Any time: Any subject 15"] },
+  },
 ];
