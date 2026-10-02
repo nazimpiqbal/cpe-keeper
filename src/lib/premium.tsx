@@ -26,10 +26,12 @@ export const usePremium = () => useContext(Ctx);
 export const MULTI_LICENSE_PREMIUM = true;
 
 // Placeholder until App Store purchases are wired up (RevenueCat).
-export function showUpgrade(reason: "certificates" | "licenses" = "certificates") {
+export function showUpgrade(reason: "certificates" | "licenses" | "reminders" = "certificates") {
   Alert.alert(
     "CPE Keeper Premium",
-    reason === "licenses"
+    reason === "reminders"
+      ? "Get reminders 90, 60, 30, 7 and 1 day before each CPE deadline, plus a monthly check-in, so a renewal never sneaks up on you.\n\nPremium purchases are coming soon."
+      : reason === "licenses"
       ? "Track more than one state license. Each course counts toward every state you hold, with a dashboard and audit report for each.\n\nPremium purchases are coming soon."
       : "Open, download and share any of your certificates — ready to send if the board audits you.\n\nYour certificates are already safely stored. Upgrading unlocks access to them.\n\nPremium purchases are coming soon.",
     [{ text: "OK" }],

@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import { MULTI_LICENSE_PREMIUM, showUpgrade, usePremium } from "../lib/premium";
+import { planReminders } from "../lib/reminderPlan";
+import { scheduleReminders, setReminderPref, useReminderPref } from "../lib/reminders";
 import { useCourses } from "../lib/courses";
 import { stillNeeded } from "../lib/summary";
 
@@ -229,6 +231,20 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
     firstRenewal: !!license.first_renewal,
   };
   const plan = rules ? newLicenseePlan(profile, rules) : null;
+
+  // Deadline reminders (Premium): re-planned from the latest hours each time the dashboard loads, for every license.
+  const reminderPref = useReminderPref();
+  useEffect(() => {
+    if (loading || !premium || reminderPref !== "on") return;
+    const all = (licenses.length ? licenses : [license]).filter(l => RULES[l.state]).map(l => ({
+      stateName: STATE_NAMES[l.state] ?? l.state,
+      lines: evaluate(records, {
+        licenseExpiration: l.expiration_date, practice: l.practice, licenseIssued: l.license_issued ?? undefined,
+        regulatoryReviewDue: l.regulatory_review_due ?? undefined, firstRenewal: !!l.first_renewal,
+      }, RULES[l.state]),
+    }));
+    scheduleReminders(planReminders(all)).catch(() => {});
+  }, [loading, premium, reminderPref, records, licenses, license]);
   const cycle: { start: string; end: string; calendarYear?: boolean; label?: string } = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
   const year = cycle.label ?? cycle.start.slice(0, 4); // "2026", or "2026–27" for a July–June CPE year
   const tagCats = rules?.tagCategories ?? [];
@@ -341,6 +357,17 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
       </View>
       <ErrorText msg={error} />
 
+      {premium && reminderPref === null && (
+        <View style={s.remindBox}>
+          <Text style={s.remindTitle}>🔔 Get deadline reminders</Text>
+          <Text style={s.remindText}>We'll remind you 90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in, even if you don't open the app.</Text>
+          <View style={{ flexDirection: "row", gap: 16, marginTop: 8 }}>
+            <Pressable onPress={() => setReminderPref("on")}><Text style={s.remindOn}>Turn on</Text></Pressable>
+            <Pressable onPress={() => setReminderPref("off")}><Text style={s.remindOff}>Not now</Text></Pressable>
+          </View>
+        </View>
+      )}
+
       {licenses.length > 1 && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }} contentContainerStyle={{ paddingRight: 8 }}>
           {[...licenses].sort((a, b) => (STATE_NAMES[a.state] ?? a.state).localeCompare(STATE_NAMES[b.state] ?? b.state)).map(l => (
@@ -425,6 +452,11 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
 const s = themed(() => ({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
+  remindBox: { backgroundColor: C.infoBg, borderRadius: 12, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: C.infoBorder },
+  remindTitle: { color: C.infoText, fontWeight: "800", fontSize: 15, marginBottom: 4 },
+  remindText: { color: C.infoText },
+  remindOn: { color: C.accent, fontWeight: "800", fontSize: 15 },
+  remindOff: { color: C.muted, fontWeight: "600", fontSize: 15 },
   coveredBox: { backgroundColor: C.subtle, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line },
   coveredText: { color: C.ink, fontSize: 13, marginTop: 4 },
   coveredQuote: { color: C.muted, fontSize: 12, marginTop: 4, fontStyle: "italic" },
