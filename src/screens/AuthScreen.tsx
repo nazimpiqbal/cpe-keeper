@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text } from "react-native";
 import { supabase, friendlyError } from "../lib/supabase";
-import { Button, Card, ErrorText, Field, ui } from "../lib/ui";
+import { Button, C, Card, ErrorText, Field, ui } from "../lib/ui";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -34,7 +34,7 @@ export default function AuthScreen() {
           <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="you@example.com" />
           <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoComplete={mode === "signin" ? "password" : "new-password"} placeholder="At least 8 characters" />
           <ErrorText msg={error} />
-          {notice ? <Text style={[ui.muted, { marginBottom: 8, color: "#1F9D55" }]}>{notice}</Text> : null}
+          {notice ? <Text style={[ui.muted, { marginBottom: 8, color: C.okText }]}>{notice}</Text> : null}
           <Button title={mode === "signin" ? "Sign in" : "Create account"} onPress={submit} busy={busy} />
           <Button kind="link" title={mode === "signin" ? "New here? Create an account" : "Have an account? Sign in"}
             onPress={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); setNotice(null); }} />

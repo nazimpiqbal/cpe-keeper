@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { supabase, friendlyError, CpeRow } from "../lib/supabase";
-import { ask, Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { ask, Button, C, Card, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import { pickCertificate, saveCertificateFile } from "../lib/uploads";
 import { useCropper } from "../lib/crop";
 import { showUpgrade, usePremium } from "../lib/premium";
@@ -269,7 +269,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   row: { flexDirection: "row", alignItems: "center", paddingVertical: 12, gap: 12 },
   border: { borderTopWidth: 1, borderTopColor: C.line },
   icon: { fontSize: 22 },
@@ -277,10 +277,10 @@ const s = StyleSheet.create({
   sub: { fontSize: 12, color: C.muted, marginTop: 3 },
   open: { color: C.accent, fontWeight: "700" },
   attach: { backgroundColor: C.accent, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8 },
-  attachText: { color: "#fff", fontWeight: "700" },
-  lockBox: { backgroundColor: "#EEF2FF", borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: "#C7D2FE" },
-  lockTitle: { color: "#3730A3", fontWeight: "800", fontSize: 16, marginBottom: 4 },
-  lockText: { color: "#3730A3" },
-  warnBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
+  attachText: { color: C.onAccent, fontWeight: "700" },
+  lockBox: { backgroundColor: C.infoBg, borderRadius: 12, padding: 14, marginBottom: 16, borderWidth: 1, borderColor: C.infoBorder },
+  lockTitle: { color: C.infoText, fontWeight: "800", fontSize: 16, marginBottom: 4 },
+  lockText: { color: C.infoText },
+  warnBox: { backgroundColor: C.dangerBg, borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: C.dangerBorder },
   warnText: { color: C.danger, fontWeight: "700" },
-});
+}));

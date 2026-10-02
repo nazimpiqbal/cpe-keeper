@@ -3,7 +3,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 import { StatusBar } from "expo-status-bar";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, friendlyError, License, CpeRow } from "./src/lib/supabase";
-import { Button, C, ui } from "./src/lib/ui";
+import { Button, C, ui, themed } from "./src/lib/ui";
 import AuthScreen from "./src/screens/AuthScreen";
 import SetupScreen from "./src/screens/SetupScreen";
 import DashboardScreen, { RULES } from "./src/screens/DashboardScreen";
@@ -17,11 +17,13 @@ import ExportScreen from "./src/screens/ExportScreen";
 import ScenarioScreen from "./src/screens/ScenarioScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
+import { useAppTheme } from "./src/lib/theme";
 
 type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
+  const theme = useAppTheme();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [license, setLicense] = useState<License | null | undefined>(undefined);
   const [licenseError, setLicenseError] = useState<string | null>(null);
@@ -132,7 +134,7 @@ export default function App() {
       <CropProvider>
         {session ? <PremiumProvider key={session.user.id} userId={session.user.id}>{screen}</PremiumProvider> : screen}
       </CropProvider>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.dark ? "light" : "dark"} />
     </>
   );
 }
@@ -157,12 +159,12 @@ function Tabs({ active, onChange, children }: { active: Tab; onChange: (t: Tab) 
   );
 }
 
-const t = StyleSheet.create({
-  bar: { flexDirection: "row", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: "#fff", paddingBottom: 26, paddingTop: 8 },
+const t = themed(() => ({
+  bar: { flexDirection: "row", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.card, paddingBottom: 26, paddingTop: 8 },
   tab: { flex: 1, alignItems: "center" },
   icon: { fontSize: 20 },
   label: { fontSize: 11, color: C.muted, marginTop: 2 },
-});
+}));
 
 const Loading = () => (
   <View style={[ui.screen, { justifyContent: "center", alignItems: "center" }]}>

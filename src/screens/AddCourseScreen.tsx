@@ -144,7 +144,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
             <Chip label={notOnRegistry ? "✓ Sponsor isn't on the NASBA Registry" : "Sponsor isn't on the NASBA Registry"} selected={notOnRegistry} onPress={() => setNotOnRegistry(!notOnRegistry)} />
           </View>
           {notOnRegistry && (
-            <View style={{ backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 12, borderWidth: 1, borderColor: "#FECACA" }}>
+            <View style={{ backgroundColor: C.dangerBg, borderRadius: 10, padding: 10, marginBottom: 12, borderWidth: 1, borderColor: C.dangerBorder }}>
               <Text style={{ color: C.danger, fontWeight: "600" }}>
                 This course will be flagged in your audit report. Keep the certificate and a course description; the board may ask why it qualifies.
                 {state === "TX" ? " In Texas, credits from a sponsor that isn't board-registered need the board's justification form (22 TAC §523.111)." : ""}
@@ -178,8 +178,8 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
               ? `This is after your current renewal (${toUs(cycle.end)}). It'll count toward your next cycle.`
               : null;
             return msg ? (
-              <View style={{ backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10, marginTop: -4, marginBottom: 14 }}>
-                <Text style={{ color: "#3730A3" }}>{msg}</Text>
+              <View style={{ backgroundColor: C.infoBg, borderRadius: 10, padding: 10, marginTop: -4, marginBottom: 14 }}>
+                <Text style={{ color: C.infoText }}>{msg}</Text>
               </View>
             ) : null;
           })()}
@@ -198,9 +198,9 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
           </View>
           <ErrorText msg={error} />
           {dupe ? (
-            <View style={{ backgroundColor: "#FEF3C7", borderRadius: 10, padding: 12, marginBottom: 4 }}>
-              <Text style={{ color: "#92400E", fontWeight: "700", marginBottom: 4 }}>Already logged?</Text>
-              <Text style={{ color: "#92400E" }}>
+            <View style={{ backgroundColor: C.warnBg, borderRadius: 10, padding: 12, marginBottom: 4 }}>
+              <Text style={{ color: C.warnText, fontWeight: "700", marginBottom: 4 }}>Already logged?</Text>
+              <Text style={{ color: C.warnText }}>
                 You have "{dupe.title}" ({dupe.hours} credits) on {toUs(dupe.completed_on)}. Saving again would count these hours twice.
               </Text>
               {certificatePath && !existing && (

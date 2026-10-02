@@ -3,7 +3,8 @@ import { categoriesOf, cycleBounds, Profile } from "../engine/engine";
 import { RULES } from "../rules";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
-import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
+import { setThemePref, useThemePref } from "../lib/theme";
 import { normalizeDelivery } from "../lib/delivery";
 import { useCourses } from "../lib/courses";
 import { sponsorOk } from "../lib/sponsor";
@@ -14,6 +15,7 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
   onEditCourse: (row: CpeRow) => void; onScenarios?: () => void;
 }) {
   const { rows, loading, error, setError, load, dupeIds, confirmDelete } = useCourses();
+  const themePref = useThemePref();
 
   const rules = RULES[license.state];
   const profile: Profile = {
@@ -150,6 +152,12 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
       </>)}
 
       <View style={{ height: 16 }} />
+      <Text style={ui.h2}>Appearance</Text>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 12 }}>
+        {([["system", "Match system"], ["light", "Light"], ["dark", "Dark"]] as const).map(([v, label]) => (
+          <Chip key={v} label={label} selected={themePref === v} onPress={() => setThemePref(v)} />
+        ))}
+      </View>
       {__DEV__ && onScenarios && <Button kind="secondary" title="🧪 Test scenarios (dev only)" onPress={onScenarios} />}
       <Text style={[ui.muted, { textAlign: "center" }]}>Signed in as {email}</Text>
       <Button kind="link" title="Sign out" onPress={() => supabase.auth.signOut()} />
@@ -157,12 +165,12 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   sectionHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", marginTop: 8 },
   sectionHrs: { color: C.muted, fontWeight: "600", fontVariant: ["tabular-nums"] },
-  dupeBox: { backgroundColor: "#FEF3C7", borderRadius: 10, padding: 10, marginBottom: 8 },
-  dupeText: { color: "#92400E", fontWeight: "600" },
-  confirmBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
+  dupeBox: { backgroundColor: C.warnBg, borderRadius: 10, padding: 10, marginBottom: 8 },
+  dupeText: { color: C.warnText, fontWeight: "600" },
+  confirmBox: { backgroundColor: C.dangerBg, borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: C.dangerBorder },
   confirmText: { color: C.danger, fontWeight: "700" },
   confirm: { fontSize: 12, marginTop: 3, color: C.danger, fontWeight: "800" },
   row: { flexDirection: "row", paddingVertical: 10 },
@@ -170,4 +178,4 @@ const s = StyleSheet.create({
   rowTitle: { fontWeight: "600", color: C.ink },
   tag: { fontSize: 12, color: C.accent, marginTop: 3 },
   hours: { fontSize: 18, fontWeight: "700", color: C.ink, fontVariant: ["tabular-nums"] },
-});
+}));

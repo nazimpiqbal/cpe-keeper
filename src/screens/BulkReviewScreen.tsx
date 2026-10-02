@@ -3,7 +3,7 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View
 import { supabase, friendlyError } from "../lib/supabase";
 import { sameCourse } from "../lib/duplicates";
 import { normalizeDelivery } from "../lib/delivery";
-import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { Button, C, Card, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import AddCourseScreen, { FIELDS } from "./AddCourseScreen";
 import type { Extracted } from "./ScanScreen";
 import { cleanSponsorId, validSponsorId } from "../lib/sponsor";
@@ -192,13 +192,13 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   row: { flexDirection: "row", alignItems: "flex-start", paddingVertical: 12, gap: 12 },
   border: { borderTopWidth: 1, borderTopColor: C.line },
   box: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: C.line, alignItems: "center", justifyContent: "center", marginTop: 2 },
   boxOn: { backgroundColor: C.accent, borderColor: C.accent },
-  tick: { color: "#fff", fontWeight: "800", fontSize: 14 },
+  tick: { color: C.onAccent, fontWeight: "800", fontSize: 14 },
   title: { fontWeight: "600", color: C.ink },
   note: { fontSize: 12, fontWeight: "600", marginTop: 3 },
   hours: { fontSize: 17, fontWeight: "700", color: C.ink, fontVariant: ["tabular-nums"] },
-});
+}));

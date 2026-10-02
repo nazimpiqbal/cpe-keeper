@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { cycleBounds, evaluate, Profile } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, License } from "../lib/supabase";
-import { Button, C, Card, Chip, ErrorText, Field, fmtDate, ui } from "../lib/ui";
+import { Button, C, Card, Chip, ErrorText, Field, fmtDate, ui, themed } from "../lib/ui";
 import { useCourses } from "../lib/courses";
 import { showUpgrade, usePremium } from "../lib/premium";
 import { numberCertificates, shareTranscript } from "../lib/exportFiles";
@@ -124,8 +124,8 @@ export default function ExportScreen({ license, onClose }: { license: License; o
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 6 },
   toggleRow: { flexDirection: "row", alignItems: "center" },
   toggleTitle: { fontWeight: "700", color: C.ink, marginBottom: 2 },
-});
+}));

@@ -3,7 +3,7 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "r
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
-import { Button, C, Card, ErrorText, fmtDate, ui } from "../lib/ui";
+import { Button, C, Card, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import { useCourses } from "../lib/courses";
 import { stillNeeded } from "../lib/summary";
 
@@ -37,7 +37,7 @@ function Bar({ line, showNote, warning, shortNote }: { line: Line; showNote?: bo
         </View>
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
         <Text style={s.reqPeriod}>Up to {line.required} {line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.</Text>
-        <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : "#9CA3AF" }]} /></View>
+        <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : C.neutralBar }]} /></View>
         {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{hrs(line.over ?? 0)} over the maximum — they won't count toward the total{line.overLabels?.length ? ` or ${line.overLabels.join(" or ")}` : ""}</Text>}
       </View>
     );
@@ -405,13 +405,13 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
-  coveredBox: { backgroundColor: "#F9FAFB", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line },
+  coveredBox: { backgroundColor: C.subtle, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line },
   coveredText: { color: C.ink, fontSize: 13, marginTop: 4 },
   coveredQuote: { color: C.muted, fontSize: 12, marginTop: 4, fontStyle: "italic" },
   topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-  auditBtn: { borderWidth: 1, borderColor: C.accent, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: "#fff" },
+  auditBtn: { borderWidth: 1, borderColor: C.accent, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: C.card },
   auditText: { color: C.accent, fontWeight: "700", fontSize: 13 },
   sumHead: { flexDirection: "row", alignItems: "baseline", marginBottom: 4 },
   sumBig: { fontSize: 28, fontWeight: "800", color: C.ink, fontVariant: ["tabular-nums"] },
@@ -422,8 +422,8 @@ const s = StyleSheet.create({
   sumRow: { flexDirection: "row", justifyContent: "space-between" },
   sumLabel: { color: C.ink, fontWeight: "600", flex: 1, paddingRight: 8 },
   sumHrs: { color: C.ink, fontWeight: "700", fontVariant: ["tabular-nums"] },
-  opt: { flex: 1, borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 10, backgroundColor: "#fff" },
-  optMet: { borderColor: C.ok, backgroundColor: "#F0FDF4" },
+  opt: { flex: 1, borderWidth: 1, borderColor: C.line, borderRadius: 10, padding: 10, backgroundColor: C.card },
+  optMet: { borderColor: C.ok, backgroundColor: C.okBg },
   optTitle: { fontSize: 17, fontWeight: "800", color: C.ink },
   optSub: { fontSize: 12, color: C.muted, marginTop: 1 },
   optNum: { fontSize: 15, fontWeight: "700", color: C.ink, marginTop: 8, fontVariant: ["tabular-nums"] },
@@ -431,24 +431,24 @@ const s = StyleSheet.create({
   optNeed: { fontSize: 12, color: C.warn, fontWeight: "600", marginTop: 4 },
   orWrap: { justifyContent: "center", paddingHorizontal: 6 },
   orText: { fontSize: 11, fontWeight: "800", color: C.muted },
-  warnLine: { color: "#991B1B", fontSize: 12, fontWeight: "600", marginTop: 6 },
-  dateProblem: { marginTop: 10, backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: "#FECACA" },
+  warnLine: { color: C.dangerText, fontSize: 12, fontWeight: "600", marginTop: 6 },
+  dateProblem: { marginTop: 10, backgroundColor: C.dangerBg, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.dangerBorder },
   dateProblemText: { color: C.danger, fontWeight: "700", fontSize: 13 },
   yearBlock: { borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, paddingBottom: 0, marginTop: 4, marginBottom: 12 },
-  yearNow: { borderColor: C.accent, backgroundColor: "#F8FAFF" },
+  yearNow: { borderColor: C.accent, backgroundColor: C.current },
   yearHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   yearTitle: { fontSize: 15, fontWeight: "800", color: C.ink },
   yearDates: { color: C.muted, fontSize: 12, marginTop: 2, marginBottom: 6 },
   yearBadge: { fontSize: 10, fontWeight: "800", letterSpacing: 0.8, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, overflow: "hidden" },
-  badgeNow: { backgroundColor: C.accent, color: "#fff" },
-  badgeOther: { backgroundColor: "#F3F4F6", color: C.muted },
-  firstBox: { marginTop: 10, backgroundColor: "#EEF2FF", borderRadius: 10, padding: 10 },
+  badgeNow: { backgroundColor: C.accent, color: C.onAccent },
+  badgeOther: { backgroundColor: C.subtle2, color: C.muted },
+  firstBox: { marginTop: 10, backgroundColor: C.infoBg, borderRadius: 10, padding: 10 },
   firstTitle: { color: C.accent, fontWeight: "700", marginBottom: 2 },
   firstText: { color: C.ink, fontSize: 13 },
   kicker: { fontSize: 12, fontWeight: "700", color: C.muted, letterSpacing: 1 },
   title: { fontSize: 22, fontWeight: "700", color: C.ink, marginTop: 4 },
-  alert: { backgroundColor: "#FEF3C7", borderRadius: 10, padding: 10, marginTop: 12 },
-  alertText: { color: "#92400E", fontWeight: "600" },
+  alert: { backgroundColor: C.warnBg, borderRadius: 10, padding: 10, marginTop: 12 },
+  alertText: { color: C.warnText, fontWeight: "600" },
   req: { marginBottom: 14 },
   reqTop: { flexDirection: "row", justifyContent: "space-between" },
   reqLabel: { fontWeight: "600", color: C.ink, flex: 1 },
@@ -461,11 +461,11 @@ const s = StyleSheet.create({
   rowBorder: { borderTopWidth: 1, borderTopColor: C.line },
   rowTitle: { fontWeight: "600", color: C.ink },
   confirm: { fontSize: 12, marginTop: 3, color: C.danger, fontWeight: "800" },
-  confirmBox: { backgroundColor: "#FEF2F2", borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: "#FECACA" },
+  confirmBox: { backgroundColor: C.dangerBg, borderRadius: 10, padding: 10, marginBottom: 8, borderWidth: 1, borderColor: C.dangerBorder },
   confirmText: { color: C.danger, fontWeight: "700" },
-  maxBox: { backgroundColor: "#F9FAFB", borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line, borderStyle: "dashed" },
+  maxBox: { backgroundColor: C.subtle, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line, borderStyle: "dashed" },
   maxTag: { fontSize: 10, fontWeight: "800", color: C.muted, letterSpacing: 0.8, marginTop: 2 },
-  maxTrack: { backgroundColor: "#EEF0F3" },
+  maxTrack: { backgroundColor: C.track2 },
   tag: { fontSize: 12, color: C.accent, marginTop: 3 },
   hours: { fontSize: 18, fontWeight: "700", color: C.ink, marginLeft: 12, fontVariant: ["tabular-nums"] },
-});
+}));

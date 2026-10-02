@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
-import { C, Card, ErrorText, ui } from "../lib/ui";
+import { C, Card, ErrorText, ui, themed } from "../lib/ui";
 import { SCENARIOS, Scenario } from "../dev/scenarios";
 import { STATE_NAMES } from "../rules";
 
@@ -71,8 +71,8 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   row: { paddingVertical: 10 },
   border: { borderTopWidth: 1, borderTopColor: C.line },
   title: { fontWeight: "700", color: C.ink },
-});
+}));
