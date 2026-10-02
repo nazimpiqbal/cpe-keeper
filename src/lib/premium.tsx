@@ -22,11 +22,16 @@ export function PremiumProvider({ userId, children }: { userId: string; children
 
 export const usePremium = () => useContext(Ctx);
 
+// More than one state license is a Premium feature (flip to false to make it free).
+export const MULTI_LICENSE_PREMIUM = true;
+
 // Placeholder until App Store purchases are wired up (RevenueCat).
-export function showUpgrade() {
+export function showUpgrade(reason: "certificates" | "licenses" = "certificates") {
   Alert.alert(
     "CPE Keeper Premium",
-    "Open, download and share any of your certificates — ready to send if the board audits you.\n\nYour certificates are already safely stored. Upgrading unlocks access to them.\n\nPremium purchases are coming soon.",
+    reason === "licenses"
+      ? "Track more than one state license. Each course counts toward every state you hold, with a dashboard and audit report for each.\n\nPremium purchases are coming soon."
+      : "Open, download and share any of your certificates — ready to send if the board audits you.\n\nYour certificates are already safely stored. Upgrading unlocks access to them.\n\nPremium purchases are coming soon.",
     [{ text: "OK" }],
   );
 }

@@ -18,14 +18,21 @@ import ScenarioScreen from "./src/screens/ScenarioScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
 import { useAppTheme } from "./src/lib/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
+const ACTIVE_KEY = "cpe-keeper:activeLicense";
+
+type View_ = "dashboard" | "addCourse" | "editLicense" | "addLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
   const theme = useAppTheme();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
-  const [license, setLicense] = useState<License | null | undefined>(undefined);
+  // All of the user's state licenses, and the one the app is showing. undefined = loading, null = none yet.
+  const [licenses, setLicenses] = useState<License[] | null | undefined>(undefined);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const license: License | null | undefined = licenses === undefined ? undefined : licenses === null ? null
+    : (licenses.find(l => l.id === activeId) ?? licenses[0] ?? null);
   const [licenseError, setLicenseError] = useState<string | null>(null);
   const [view, setView] = useState<View_>("dashboard");
   const [tab, setTab] = useState<Tab>("dashboard"); // the tab to return to after adding or editing a course
@@ -48,15 +55,23 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const loadLicense = useCallback(async () => {
-    setLicense(undefined); setLicenseError(null);
-    const { data, error } = await supabase.from("licenses").select("*").order("created_at").limit(1);
-    if (error) { setLicenseError(friendlyError(error.message)); setLicense(null); return; }
-    setLicense((data?.[0] as License) ?? null);
+  const loadLicense = useCallback(async (preferId?: string | null) => {
+    setLicenses(undefined); setLicenseError(null);
+    const { data, error } = await supabase.from("licenses").select("*").order("created_at");
+    if (error) { setLicenseError(friendlyError(error.message)); setLicenses(null); return; }
+    const list = (data ?? []) as License[];
+    const saved = preferId ?? await AsyncStorage.getItem(ACTIVE_KEY).catch(() => null);
+    const pick = list.find(l => l.id === saved) ?? list[0];
+    setActiveId(pick?.id ?? null);
+    if (pick) AsyncStorage.setItem(ACTIVE_KEY, pick.id).catch(() => {});
+    setLicenses(list.length ? list : null);
   }, []);
+  const switchLicense = (id: string) => {
+    setActiveId(id); AsyncStorage.setItem(ACTIVE_KEY, id).catch(() => {}); setDashKey(k => k + 1);
+  };
 
   useEffect(() => {
-    if (session) loadLicense(); else { setLicense(undefined); setTab("dashboard"); setView("dashboard"); }
+    if (session) loadLicense(); else { setLicenses(undefined); setTab("dashboard"); setView("dashboard"); }
   }, [session?.user.id]);
 
   const cycle = license && RULES[license.state] ? cycleBounds(license.expiration_date, RULES[license.state], { licenseIssued: license.license_issued ?? undefined, firstRenewal: !!license.first_renewal }) : undefined;
@@ -67,15 +82,21 @@ export default function App() {
   else if (licenseError) screen = (
     <View style={[ui.screen, { justifyContent: "center", padding: 24 }]}>
       <Text style={ui.error}>{licenseError}</Text>
-      <Button title="Try again" onPress={loadLicense} />
+      <Button title="Try again" onPress={() => loadLicense()} />
     </View>
   );
   else if (license === undefined) screen = <Loading />;
-  else if (license === null || view === "editLicense") screen = (
-    <SetupScreen userId={session.user.id} existing={license}
-      onSaved={() => { setView(tab); loadLicense(); }}
-      onCancel={license ? () => setView(tab) : undefined} />
-  );
+  else if (license === null || view === "editLicense" || view === "addLicense") {
+    const adding = view === "addLicense" && !!license;
+    const others = (licenses ?? []).filter(l => adding || l.id !== license?.id).map(l => l.state);
+    screen = (
+      <SetupScreen key={adding ? "add" : license?.id ?? "new"} userId={session.user.id} existing={adding ? null : license}
+        adding={adding} otherStates={others}
+        onSaved={id => { setView(tab); setDashKey(k => k + 1); loadLicense(id); }}
+        onRemove={!adding && (licenses?.length ?? 0) > 1 ? () => { setView(tab); setDashKey(k => k + 1); loadLicense(null); } : undefined}
+        onCancel={license ? () => setView(tab) : undefined} />
+    );
+  }
   else if (view === "scan") screen = (
     <ScanScreen userId={session.user.id}
       onExtracted={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }}
@@ -125,7 +146,8 @@ export default function App() {
     <Tabs active="dashboard" onChange={goTab}>
       <DashboardScreen key={dashKey} license={license}
         onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
-        onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} onExport={() => setView("export")} />
+        onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} onExport={() => setView("export")}
+        licenses={licenses ?? []} onSwitchLicense={switchLicense} onAddLicense={() => setView("addLicense")} />
     </Tabs>
   );
 

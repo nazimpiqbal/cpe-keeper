@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
 import { Button, C, Card, Chip, DateField, ErrorText, themed, toIso, toUs, ui } from "../lib/ui";
 import { RULES, LAUNCH_STATES, STATE_NAMES } from "../rules";
@@ -8,10 +8,14 @@ import { checkExpiration } from "../engine/engine";
 // States with verified rule files. Others appear as "coming soon".
 const SUPPORTED = Object.keys(RULES);
 
-export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
-  userId: string; existing?: License | null; onSaved: () => void; onCancel?: () => void;
+export default function SetupScreen({ userId, existing, onSaved, onCancel, otherStates = [], adding, onRemove }: {
+  userId: string; existing?: License | null; onSaved: (id: string | null) => void; onCancel?: () => void;
+  otherStates?: string[];   // states of the user's other licenses (one license per state)
+  adding?: boolean;         // adding another state license
+  onRemove?: () => void;    // shown when the user has more than one license
 }) {
-  const [state, setState] = useState(existing?.state ?? "CA");
+  const firstFree = [...SUPPORTED].sort().find(x => !otherStates.includes(x)) ?? "CA";
+  const [state, setState] = useState(existing?.state ?? (otherStates.includes("CA") ? firstFree : "CA"));
   const [expiration, setExpiration] = useState(existing ? toUs(existing.expiration_date) : "");
   const [issued, setIssued] = useState(existing?.license_issued ? toUs(existing.license_issued) : "");
   const [rrDue, setRrDue] = useState(existing?.regulatory_review_due ? toUs(existing.regulatory_review_due) : "");
@@ -46,6 +50,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
 
   async function save() {
     setError(null);
+    if (otherStates.includes(state)) return setError(`You already have a ${STATE_NAMES[state] ?? state} license — switch to it from the dashboard.`);
     const exp = toIso(expiration);
     if (!exp) return setError("Enter your license expiration date as MM/DD/YYYY.");
     const expProblem = rules ? checkExpiration(exp, rules, STATE_NAMES[state] ?? state) : null;
@@ -59,23 +64,36 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
 
     setBusy(true);
     const row = { user_id: userId, state, expiration_date: exp, license_issued: iss, regulatory_review_due: state === "CA" ? rr : null, practice, first_renewal: hasFirstRenewalRules && firstRenewal };
-    const { error } = existing
-      ? await supabase.from("licenses").update(row).eq("id", existing.id)
-      : await supabase.from("licenses").insert(row);
+    const res = existing
+      ? await supabase.from("licenses").update(row).eq("id", existing.id).select("id").single()
+      : await supabase.from("licenses").insert(row).select("id").single();
     setBusy(false);
-    if (error) return setError(friendlyError(error.message));
-    onSaved();
+    if (res.error) return setError(friendlyError(res.error.message));
+    onSaved(res.data?.id ?? existing?.id ?? null);
+  }
+
+  function confirmRemove() {
+    if (!existing || !onRemove) return;
+    Alert.alert(`Remove your ${STATE_NAMES[existing.state] ?? existing.state} license?`,
+      "Your courses and certificates stay — they still count toward your other licenses.",
+      [{ text: "Cancel", style: "cancel" }, { text: "Remove", style: "destructive", onPress: async () => {
+        setBusy(true);
+        const { error } = await supabase.from("licenses").delete().eq("id", existing.id);
+        setBusy(false);
+        if (error) return setError(friendlyError(error.message));
+        onRemove();
+      } }]);
   }
 
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 64 }]} keyboardShouldPersistTaps="handled">
-        <Text style={ui.h1}>{existing ? "Edit license" : "Your CPA license"}</Text>
+        <Text style={ui.h1}>{existing ? "Edit license" : adding ? "Add a state license" : "Your CPA license"}</Text>
         <Text style={[ui.muted, { marginBottom: 16 }]}>We use this to work out your renewal period and requirements.</Text>
 
         <Card>
           <Text style={ui.label}>State</Text>
-          <StatePicker value={state} onChange={pickState} />
+          <StatePicker value={state} onChange={pickState} taken={otherStates} />
 
           <DateField label={rules?.licenseDateLabel ?? "License expiration date"} value={expiration} onChangeText={setExpiration}
             hint={rules?.licenseDateHint ?? (calendarYear ? "Your three-year registration end date. Your yearly CPE runs January–December regardless." : undefined)} />
@@ -112,6 +130,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
           <ErrorText msg={error} />
           <Button title="Save" onPress={save} busy={busy} />
           {onCancel && <Button kind="link" title="Cancel" onPress={onCancel} />}
+          {existing && onRemove && <Button kind="danger" title="Remove this license" onPress={confirmRemove} />}
         </Card>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -119,7 +138,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
 }
 
 // State dropdown: tap the field to open the list of supported states (A–Z), with other states marked as coming soon.
-function StatePicker({ value, onChange }: { value: string; onChange: (s: string) => void }) {
+function StatePicker({ value, onChange, taken = [] }: { value: string; onChange: (s: string) => void; taken?: string[] }) {
   const [open, setOpen] = useState(false);
   const states = LAUNCH_STATES.filter(s => SUPPORTED.includes(s))
     .sort((a, b) => (STATE_NAMES[a] ?? a).localeCompare(STATE_NAMES[b] ?? b));
@@ -138,8 +157,10 @@ function StatePicker({ value, onChange }: { value: string; onChange: (s: string)
           <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 48 }}>
             <View style={ui.card}>
               {states.map((s, i) => (
-                <Pressable key={s} onPress={() => { onChange(s); setOpen(false); }} style={[sp.row, i > 0 && sp.border]}>
-                  <Text style={[sp.rowText, s === value && { color: C.accent, fontWeight: "700" }]}>{STATE_NAMES[s] ?? s}</Text>
+                <Pressable key={s} disabled={taken.includes(s)} onPress={() => { onChange(s); setOpen(false); }} style={[sp.row, i > 0 && sp.border]}>
+                  <Text style={[sp.rowText, s === value && { color: C.accent, fontWeight: "700" }, taken.includes(s) && { color: C.muted }]}>
+                    {STATE_NAMES[s] ?? s}{taken.includes(s) ? "  (already added)" : ""}
+                  </Text>
                   {s === value ? <Text style={{ color: C.accent, fontWeight: "800" }}>✓</Text> : null}
                 </Pressable>
               ))}

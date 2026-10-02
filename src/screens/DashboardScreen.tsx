@@ -3,7 +3,8 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "r
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
-import { Button, C, Card, ErrorText, fmtDate, ui, themed } from "../lib/ui";
+import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
+import { MULTI_LICENSE_PREMIUM, showUpgrade, usePremium } from "../lib/premium";
 import { useCourses } from "../lib/courses";
 import { stillNeeded } from "../lib/summary";
 
@@ -210,9 +211,12 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
   );
 }
 
-export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport }: {
+export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport, licenses = [], onSwitchLicense, onAddLicense }: {
   license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void; onExport: () => void;
+  licenses?: License[]; onSwitchLicense?: (id: string) => void; onAddLicense?: () => void;
 }) {
+  const { premium } = usePremium();
+  const addLicense = () => (MULTI_LICENSE_PREMIUM && !premium ? showUpgrade("licenses") : onAddLicense?.());
   const { rows, loading, error, load, dupeIds } = useCourses();
 
   const rules = RULES[license.state];
@@ -337,6 +341,15 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
       </View>
       <ErrorText msg={error} />
 
+      {licenses.length > 1 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }} contentContainerStyle={{ paddingRight: 8 }}>
+          {[...licenses].sort((a, b) => (STATE_NAMES[a.state] ?? a.state).localeCompare(STATE_NAMES[b.state] ?? b.state)).map(l => (
+            <Chip key={l.id} label={STATE_NAMES[l.state] ?? l.state} selected={l.id === license.id} onPress={() => onSwitchLicense?.(l.id)} />
+          ))}
+          {onAddLicense && <Chip label="+ Add state" selected={false} onPress={addLicense} />}
+        </ScrollView>
+      )}
+
       <Card>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
@@ -348,6 +361,11 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
           : cycle.end !== license.expiration_date
           ? `CPE due ${fmtDate(cycle.end)} · ${daysUntil(cycle.end)} days left`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
+        {licenses.length <= 1 && onAddLicense && (
+          <Pressable onPress={addLicense} hitSlop={6} style={{ marginTop: 8 }}>
+            <Text style={{ color: C.accent, fontWeight: "600" }}>+ Add another state license{MULTI_LICENSE_PREMIUM && !premium ? "  🔒" : ""}</Text>
+          </Pressable>
+        )}
         {rules && (() => {
           // A saved date that can't be right for this state (e.g. a Texas license set two years out).
           const problem = checkExpiration(license.expiration_date, rules, STATE_NAMES[license.state] ?? license.state);
