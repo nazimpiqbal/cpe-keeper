@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { supabase, friendlyError, License } from "../lib/supabase";
-import { Button, Card, Chip, DateField, ErrorText, toIso, toUs, ui } from "../lib/ui";
+import { Button, C, Card, Chip, DateField, ErrorText, themed, toIso, toUs, ui } from "../lib/ui";
 import { RULES, LAUNCH_STATES, STATE_NAMES } from "../rules";
 import { checkExpiration } from "../engine/engine";
 
@@ -75,13 +75,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
 
         <Card>
           <Text style={ui.label}>State</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 6 }}>
-            {LAUNCH_STATES.map(s => (
-              <Chip key={s} label={SUPPORTED.includes(s) ? s : `${s} · soon`} selected={state === s}
-                onPress={() => pickState(s)} />
-            ))}
-          </View>
-          <Text style={[ui.hint, { marginBottom: 14 }]}>More states are being added.</Text>
+          <StatePicker value={state} onChange={pickState} />
 
           <DateField label={rules?.licenseDateLabel ?? "License expiration date"} value={expiration} onChangeText={setExpiration}
             hint={rules?.licenseDateHint ?? (calendarYear ? "Your three-year registration end date. Your yearly CPE runs January–December regardless." : undefined)} />
@@ -123,3 +117,50 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel }: {
     </KeyboardAvoidingView>
   );
 }
+
+// State dropdown: tap the field to open the list of supported states (A–Z), with other states marked as coming soon.
+function StatePicker({ value, onChange }: { value: string; onChange: (s: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const states = LAUNCH_STATES.filter(s => SUPPORTED.includes(s))
+    .sort((a, b) => (STATE_NAMES[a] ?? a).localeCompare(STATE_NAMES[b] ?? b));
+  return (
+    <>
+      <Pressable onPress={() => setOpen(true)} style={[ui.input, sp.field]} accessibilityRole="button" accessibilityLabel="Choose state">
+        <Text style={sp.fieldText}>{STATE_NAMES[value] ?? value}</Text>
+        <Text style={sp.chevron}>▾</Text>
+      </Pressable>
+      <Modal visible={open} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setOpen(false)}>
+        <View style={[ui.screen, { paddingTop: 16 }]}>
+          <View style={sp.head}>
+            <Text style={[ui.h2, { marginBottom: 0 }]}>Choose your state</Text>
+            <Pressable onPress={() => setOpen(false)} hitSlop={10}><Text style={sp.done}>Done</Text></Pressable>
+          </View>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 48 }}>
+            <View style={ui.card}>
+              {states.map((s, i) => (
+                <Pressable key={s} onPress={() => { onChange(s); setOpen(false); }} style={[sp.row, i > 0 && sp.border]}>
+                  <Text style={[sp.rowText, s === value && { color: C.accent, fontWeight: "700" }]}>{STATE_NAMES[s] ?? s}</Text>
+                  {s === value ? <Text style={{ color: C.accent, fontWeight: "800" }}>✓</Text> : null}
+                </Pressable>
+              ))}
+              <View style={[sp.row, sp.border]}>
+                <Text style={[sp.rowText, { color: C.muted }]}>Other States (coming soon)</Text>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+    </>
+  );
+}
+
+const sp = themed(() => ({
+  field: { flexDirection: "row" as const, alignItems: "center" as const, justifyContent: "space-between" as const, marginBottom: 14 },
+  fieldText: { fontSize: 16, color: C.ink },
+  chevron: { fontSize: 16, color: C.muted },
+  head: { flexDirection: "row" as const, justifyContent: "space-between" as const, alignItems: "center" as const, paddingHorizontal: 16, paddingVertical: 12 },
+  done: { color: C.accent, fontWeight: "700" as const, fontSize: 16 },
+  row: { flexDirection: "row" as const, justifyContent: "space-between" as const, alignItems: "center" as const, paddingVertical: 14 },
+  border: { borderTopWidth: 1, borderTopColor: C.line },
+  rowText: { fontSize: 16, color: C.ink },
+}));
