@@ -1,13 +1,9 @@
-import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { categoriesOf, cycleBounds, Profile } from "../engine/engine";
 import { RULES } from "../rules";
 import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
-import { setThemePref, useThemePref } from "../lib/theme";
-import { nextReminder, sendTestReminder, setReminderPref, useReminderPref } from "../lib/reminders";
-import { showUpgrade, usePremium } from "../lib/premium";
-import { useEffect, useState } from "react";
 import { normalizeDelivery } from "../lib/delivery";
 import { useCourses } from "../lib/courses";
 import { sponsorOk } from "../lib/sponsor";
@@ -18,16 +14,6 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
   onEditCourse: (row: CpeRow) => void; onScenarios?: () => void;
 }) {
   const { rows, loading, error, setError, load, dupeIds, confirmDelete } = useCourses();
-  const themePref = useThemePref();
-  const reminderPref = useReminderPref();
-  const { premium } = usePremium();
-  const [nextAt, setNextAt] = useState<Date | null>(null);
-  useEffect(() => { nextReminder().then(setNextAt); }, [reminderPref]);
-  async function chooseReminders(v: "on" | "off") {
-    if (v === "on" && !premium) return showUpgrade("reminders");
-    const ok = await setReminderPref(v);
-    if (!ok) Alert.alert("Notifications are off", "To get deadline reminders, allow notifications for Expo Go / CPE Keeper in iPhone Settings → Notifications.");
-  }
 
   const rules = RULES[license.state];
   const profile: Profile = {
@@ -163,31 +149,6 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
             : `Completed before ${fmtDate(cycle.start)} — kept for your records, not counted in the current cycle.`} />}
       </>)}
 
-      <View style={{ height: 16 }} />
-      <Text style={ui.h2}>Deadline reminders{premium ? "" : "  🔒"}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        <Chip label="On" selected={premium && reminderPref === "on"} onPress={() => chooseReminders("on")} />
-        <Chip label="Off" selected={!premium || reminderPref !== "on"} onPress={() => chooseReminders("off")} />
-      </View>
-      <Text style={[ui.hint, { marginTop: 0, marginBottom: 16 }]}>
-        {!premium ? "Premium: reminders 90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in."
-          : reminderPref === "on"
-          ? (nextAt ? `Next reminder: ${nextAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}. Reminders update each time you open the app.` : "Reminders update each time you open the app.")
-          : "Reminders 90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in."}
-      </Text>
-      {__DEV__ && <Button kind="link" title="🧪 Send a test reminder in 10 seconds (dev only)" onPress={async () => {
-        const ok = await sendTestReminder();
-        Alert.alert(ok ? "Test reminder scheduled" : "Notifications are off", ok ? "Lock your phone or go to the home screen — it arrives in about 10 seconds." : "Allow notifications in iPhone Settings first.");
-      }} />}
-      <Text style={ui.h2}>Appearance</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 12 }}>
-        {([["system", "Match system"], ["light", "Light"], ["dark", "Dark"]] as const).map(([v, label]) => (
-          <Chip key={v} label={label} selected={themePref === v} onPress={() => setThemePref(v)} />
-        ))}
-      </View>
-      {__DEV__ && onScenarios && <Button kind="secondary" title="🧪 Test scenarios (dev only)" onPress={onScenarios} />}
-      <Text style={[ui.muted, { textAlign: "center" }]}>Signed in as {email}</Text>
-      <Button kind="link" title="Sign out" onPress={() => supabase.auth.signOut()} />
     </ScrollView>
   );
 }

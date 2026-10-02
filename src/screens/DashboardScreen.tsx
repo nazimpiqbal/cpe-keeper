@@ -1,12 +1,12 @@
-import { useEffect, useMemo } from "react";
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import { MULTI_LICENSE_PREMIUM, showUpgrade, usePremium } from "../lib/premium";
 import { planReminders } from "../lib/reminderPlan";
-import { scheduleReminders, setReminderPref, useReminderPref } from "../lib/reminders";
+import { nextReminder, scheduleReminders, setReminderPref, useReminderPref } from "../lib/reminders";
 import { useCourses } from "../lib/courses";
 import { stillNeeded } from "../lib/summary";
 
@@ -213,9 +213,9 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
   );
 }
 
-export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport, licenses = [], onSwitchLicense, onAddLicense }: {
+export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport, licenses = [], onSwitchLicense, onAddLicense, onSettings }: {
   license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void; onExport: () => void;
-  licenses?: License[]; onSwitchLicense?: (id: string) => void; onAddLicense?: () => void;
+  licenses?: License[]; onSwitchLicense?: (id: string) => void; onAddLicense?: () => void; onSettings?: () => void;
 }) {
   const { premium } = usePremium();
   const addLicense = () => (MULTI_LICENSE_PREMIUM && !premium ? showUpgrade("licenses") : onAddLicense?.());
@@ -234,6 +234,13 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
   // Deadline reminders (Premium): re-planned from the latest hours each time the dashboard loads, for every license.
   const reminderPref = useReminderPref();
+  const [nextAt, setNextAt] = useState<Date | null>(null);
+  const fmtShort = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  async function toggleReminders(on: boolean) {
+    if (on && !premium) return showUpgrade("reminders");
+    const ok = await setReminderPref(on ? "on" : "off");
+    if (!ok) Alert.alert("Notifications are off", "To get deadline reminders, allow notifications for this app in iPhone Settings → Notifications.");
+  }
   useEffect(() => {
     if (loading || !premium || reminderPref !== "on") return;
     const all = (licenses.length ? licenses : [license]).filter(l => RULES[l.state]).map(l => ({
@@ -243,7 +250,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
         regulatoryReviewDue: l.regulatory_review_due ?? undefined, firstRenewal: !!l.first_renewal,
       }, RULES[l.state]),
     }));
-    scheduleReminders(planReminders(all)).catch(() => {});
+    scheduleReminders(planReminders(all)).then(() => nextReminder()).then(setNextAt).catch(() => {});
   }, [loading, premium, reminderPref, records, licenses, license]);
   const cycle: { start: string; end: string; calendarYear?: boolean; label?: string } = rules ? cycleBounds(license.expiration_date, rules, profile) : { start: "0000-01-01", end: "9999-12-31" };
   const year = cycle.label ?? cycle.start.slice(0, 4); // "2026", or "2026–27" for a July–June CPE year
@@ -351,22 +358,18 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
       refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <View style={s.topRow}>
         <Text style={ui.brand}>CPE Keeper</Text>
-        <Pressable onPress={onExport} style={s.auditBtn} accessibilityRole="button" accessibilityLabel="Audit report — PDF or Excel">
-          <Text style={s.auditText}>🧾 Audit report</Text>
-        </Pressable>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <Pressable onPress={onExport} style={s.auditBtn} accessibilityRole="button" accessibilityLabel="Audit report — PDF or Excel">
+            <Text style={s.auditText}>🧾 Audit report</Text>
+          </Pressable>
+          {onSettings && (
+            <Pressable onPress={onSettings} hitSlop={8} style={s.gearBtn} accessibilityRole="button" accessibilityLabel="Settings">
+              <Text style={{ fontSize: 18 }}>⚙️</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
       <ErrorText msg={error} />
-
-      {premium && reminderPref === null && (
-        <View style={s.remindBox}>
-          <Text style={s.remindTitle}>🔔 Get deadline reminders</Text>
-          <Text style={s.remindText}>We'll remind you 90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in, even if you don't open the app.</Text>
-          <View style={{ flexDirection: "row", gap: 16, marginTop: 8 }}>
-            <Pressable onPress={() => setReminderPref("on")}><Text style={s.remindOn}>Turn on</Text></Pressable>
-            <Pressable onPress={() => setReminderPref("off")}><Text style={s.remindOff}>Not now</Text></Pressable>
-          </View>
-        </View>
-      )}
 
       {licenses.length > 1 && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }} contentContainerStyle={{ paddingRight: 8 }}>
@@ -434,6 +437,19 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
         )}
       </Card>
 
+      <View style={s.remindRow}>
+        <View style={{ flex: 1, paddingRight: 12 }}>
+          <Text style={s.remindTitle}>🔔 Deadline reminders{premium ? "" : "  🔒"}</Text>
+          <Text style={ui.hint}>
+            {premium && reminderPref === "on"
+              ? (nextAt ? `Next: ${fmtShort(nextAt)} · 90, 60, 30, 7 and 1 day before each deadline` : "90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in")
+              : "Get alerts 90, 60, 30, 7 and 1 day before each deadline, plus a monthly check-in"}
+          </Text>
+        </View>
+        <Switch value={premium && reminderPref === "on"} onValueChange={toggleReminders}
+          trackColor={{ true: C.accent, false: C.line }} accessibilityLabel="Deadline reminders" />
+      </View>
+
       <Button title="📄  Upload certificate or transcript" onPress={onScan} />
       <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
@@ -452,11 +468,9 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
 const s = themed(() => ({
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
-  remindBox: { backgroundColor: C.infoBg, borderRadius: 12, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: C.infoBorder },
-  remindTitle: { color: C.infoText, fontWeight: "800", fontSize: 15, marginBottom: 4 },
-  remindText: { color: C.infoText },
-  remindOn: { color: C.accent, fontWeight: "800", fontSize: 15 },
-  remindOff: { color: C.muted, fontWeight: "600", fontSize: 15 },
+  remindRow: { flexDirection: "row", alignItems: "center", backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: C.line },
+  remindTitle: { color: C.ink, fontWeight: "700", fontSize: 15 },
+  gearBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, borderColor: C.line, backgroundColor: C.card, alignItems: "center", justifyContent: "center" },
   coveredBox: { backgroundColor: C.subtle, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: C.line },
   coveredText: { color: C.ink, fontSize: 13, marginTop: 4 },
   coveredQuote: { color: C.muted, fontSize: 12, marginTop: 4, fontStyle: "italic" },

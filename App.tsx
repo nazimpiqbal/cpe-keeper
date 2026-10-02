@@ -15,6 +15,7 @@ import CertificatesScreen from "./src/screens/CertificatesScreen";
 import CoursesScreen from "./src/screens/CoursesScreen";
 import ExportScreen from "./src/screens/ExportScreen";
 import ScenarioScreen from "./src/screens/ScenarioScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
 import { useAppTheme } from "./src/lib/theme";
@@ -22,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ACTIVE_KEY = "cpe-keeper:activeLicense";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "addLicense" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "addLicense" | "settings" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
@@ -124,8 +125,11 @@ export default function App() {
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
   else if (view === "scenarios" && __DEV__) screen = (
-    <ScenarioScreen userId={session.user.id} license={license} onClose={() => setView("courses")}
+    <ScenarioScreen userId={session.user.id} license={license} onClose={() => setView("settings")}
       onLoaded={() => { setTab("dashboard"); setView("dashboard"); setDashKey(k => k + 1); loadLicense(); }} />
+  );
+  else if (view === "settings") screen = (
+    <SettingsScreen email={session.user.email ?? ""} onClose={() => setView(tab)} onScenarios={() => setView("scenarios")} />
   );
   else if (view === "export") screen = <ExportScreen license={license} onClose={() => setView(tab)} />;
   else if (view === "certificates") screen = (
@@ -147,7 +151,8 @@ export default function App() {
       <DashboardScreen key={dashKey} license={license}
         onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
         onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} onExport={() => setView("export")}
-        licenses={licenses ?? []} onSwitchLicense={switchLicense} onAddLicense={() => setView("addLicense")} />
+        licenses={licenses ?? []} onSwitchLicense={switchLicense} onAddLicense={() => setView("addLicense")}
+        onSettings={() => setView("settings")} />
     </Tabs>
   );
 
