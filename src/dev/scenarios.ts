@@ -1587,4 +1587,74 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 80, remaining: 80 }, { id: "ethics", earned: 0, required: 4, remaining: 4 }],
     stillNeeded: { total: 80, rows: ["Any time: Accounting & auditing 8", "Any time: Florida Board-approved ethics 4", "Any time: Any subject 68"] },
   },
+  // ── Illinois ── renewal period 10/1/2024 – 9/30/2027: 120 hours, 4 professional ethics, 1 sexual harassment prevention,
+  // at most 24 personal development and 80 self-study; no carryover.
+  {
+    id: "IL-1", state: "IL", title: "Clean slate",
+    checks: "120 hours, 4 ethics and 1 sexual harassment prevention hour (which counts toward the 120).",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "pd_max", earned: 0, required: 24 },
+      { id: "self_study_max", earned: 0, required: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "harassment", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 120, rows: ["Any time: Professional ethics 4", "Any time: Sexual harassment prevention 1", "Any time: Any subject 115"] },
+  },
+  {
+    id: "IL-2", state: "IL", title: "Everything met",
+    checks: "110 Taxes + 4 ethics + a 1-hour sexual harassment prevention course + 5 Accounting = 120.",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-03-01", hours: 110, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-06-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "Sexual Harassment Prevention for CPAs", provider: P, date: "2026-02-01", hours: 1, field: "Personnel/Human Resources", delivery: "Group Internet Based" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 5, field: "Accounting", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 120, required: 120, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+      { id: "harassment", earned: 1, required: 1, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "IL-3", state: "IL", title: "Personal development over 24",
+    checks: "40 personal development hours — only 24 count, so 16 come off. 64 of 120; more hours must be something other than personal development.",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2025-03-01", hours: 40, field: "Personal Development", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 64, required: 120, remaining: 56 },
+      { id: "pd_max", earned: 40, required: 24, over: 16 },
+    ],
+    stillNeeded: { total: 56, rows: ["Any time: Professional ethics 4", "Any time: Sexual harassment prevention 1", "Any time: Any course except personal development 51"] },
+  },
+  {
+    id: "IL-4", state: "IL", title: "Self-study over 80",
+    checks: "100 hours of self-study — only 80 count (68 Ill. Adm. Code 1420.70), so 20 come off. Behavioral Ethics counts as professional ethics.",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Library", provider: P, date: "2025-03-01", hours: 100, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-03-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 84, required: 120, remaining: 36 },
+      { id: "self_study_max", earned: 100, required: 80, over: 20 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 36, rows: ["Any time: Sexual harassment prevention 1", "Any time: Any course except self-study 35"] },
+  },
+  {
+    id: "IL-5", state: "IL", title: "First renewal",
+    checks: "Licensed 2/1/2025, inside this renewal period: exempt from CPE for the first renewal after the license is issued.",
+    license: { expiration: "2027-09-30", issued: "2025-02-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];

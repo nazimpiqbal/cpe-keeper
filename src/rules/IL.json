@@ -7,7 +7,7 @@
     "https://www.icpas.org/advocacy/licensing/cpe-requirements",
     "https://www.nasbaregistry.org/cpe-requirements/illinois"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-02",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 36,
@@ -33,7 +33,25 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 24 personal development hours count toward the 120."
+      "note": "Maximum, not a target. No more than 24 personal development hours count toward the 120.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 80,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than 80 hours of self-study (interactive and non-interactive combined) count per renewal period, and no more than 60 of them non-interactive (68 Ill. Adm. Code 1420.70). We use each course's delivery format — set it on each course.",
+      "otherLabel": "Any course except self-study",
+      "alsoReduces": [
+        "ethics"
+      ]
     },
     {
       "id": "ethics",
@@ -135,7 +153,7 @@
     ]
   },
   "limitsNotTracked": [
-    "Self-study: max 80 hours (max 60 non-interactive).",
+    "Non-interactive self-study: max 60 of the 80 self-study hours (certificates rarely say which).",
     "Non-verifiable CPE: max 60 hours.",
     "Instruction: max 60 hours."
   ],
@@ -145,5 +163,11 @@
     "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours (the rule says 'professional ethics').",
     "First-renewal exemption: inferred when the issue date falls inside the current renewal period.",
     "Registered (not licensed) CPAs have no CPE requirement — the app assumes a licensed CPA."
-  ]
+  ],
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  }
 }
