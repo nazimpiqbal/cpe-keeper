@@ -9,7 +9,7 @@
     "https://www.flrules.org/gateway/ruleNo.asp?id=61H1-33.003",
     "https://www.nasbaregistry.org/cpe-requirements/florida"
   ],
-  "lastVerified": "2026-09-28",
+  "lastVerified": "2026-10-02",
   "cycle": {
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
@@ -48,7 +48,8 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 20 behavioral hours count toward the 80. Under the rule, anything that isn't accounting & auditing, technical business or Florida-approved ethics is behavioral — including communications, personal development and general (non-Florida) ethics courses."
+      "note": "Maximum, not a target. No more than 20 behavioral hours count toward the 80. Under the rule, anything that isn't accounting & auditing, technical business or Florida-approved ethics is behavioral — including communications, personal development and general (non-Florida) ethics courses.",
+      "otherLabel": "Accounting, auditing or technical business"
     },
     {
       "id": "gov",
@@ -161,7 +162,8 @@
   },
   "limitsNotTracked": [
     "Self-study in A&A or technical business must be from NASBA QAS sponsors.",
-    "Authorship: max 20 hours per period, and never toward ethics."
+    "Authorship: max 20 hours per period, and never toward ethics.",
+    "Credit in increments of not less than one half hour (50-minute contact hour)."
   ],
   "toVerify": [
     "Economics, Business Law and Statistics treated as technical business per the Board's CPE Guidelines ('general business'); the rule text itself doesn't name them.",

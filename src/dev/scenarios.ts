@@ -1515,4 +1515,76 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 36, rows: ["2027: Any subject 20", "Any time: Georgia-specific ethics 1", "Any time: Any subject 15"] },
   },
+  // ── Florida ── CPE period 7/1/2025 – 6/30/2027: 80 hours, 8 accounting & auditing, at most 20 behavioral,
+  // 4 hours of Florida Board-approved ethics.
+  {
+    id: "FL-1", state: "FL", title: "Clean slate",
+    checks: "80 hours, 8 A&A, 4 Florida Board-approved ethics, behavioral capped at 20.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "aa", earned: 0, required: 8, remaining: 8 },
+      { id: "behavioral_max", earned: 0, required: 20 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "gov", earned: 0, required: 0, absent: true },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Accounting & auditing 8", "Any time: Florida Board-approved ethics 4", "Any time: Any subject 68"] },
+  },
+  {
+    id: "FL-2", state: "FL", title: "Everything met",
+    checks: "60 Taxes + 8 Auditing + a Florida ethics course (Chapter 473) + 8 Finance = 80.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 60, field: "Taxes" },
+      { title: "Audit Update", provider: P, date: "2025-10-01", hours: 8, field: "Auditing" },
+      { title: "Florida Ethics Chapter 473", provider: P, date: "2026-01-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "Corporate Finance", provider: P, date: "2026-02-01", hours: 8, field: "Finance" },
+    ],
+    expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "aa", earned: 8, required: 8, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "FL-3", state: "FL", title: "Behavioral over 20",
+    checks: "30 personal development + a general (non-Florida) ethics course are both behavioral in Florida: 34, so 14 don't count. 60 of 80; everything else must be accounting, auditing or technical business, plus the Florida ethics course.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2025-09-01", hours: 30, field: "Personal Development" },
+      { title: "AICPA Ethics", provider: P, date: "2026-02-01", hours: 4, field: "Regulatory Ethics" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 40, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "behavioral_max", earned: 34, required: 20, over: 14 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 20, rows: ["Any time: Accounting & auditing 8", "Any time: Florida Board-approved ethics 4", "Any time: Accounting, auditing or technical business 8"] },
+  },
+  {
+    id: "FL-4", state: "FL", title: "Yellow Book audits",
+    checks: "Government audit work: 24 governmental hours (GAO). 10 Auditing (Governmental) also meets the 8 A&A.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01", practice: ["government_audit"] },
+    courses: [
+      { title: "Single Audit Update", provider: P, date: "2025-09-01", hours: 10, field: "Auditing (Governmental)" },
+      { title: "Tax Update", provider: P, date: "2026-02-01", hours: 30, field: "Taxes" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 80, remaining: 40 },
+      { id: "aa", earned: 10, required: 8, met: true },
+      { id: "gov", earned: 10, required: 24, remaining: 14 },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Governmental 14", "Any time: Florida Board-approved ethics 4", "Any time: Any subject 22"] },
+  },
+  {
+    id: "FL-5", state: "FL", title: "First period",
+    checks: "Licensed 3/15/2025: the first period runs from the issue date to the third June 30 after it (6/30/2027), with the full 80 hours.",
+    license: { expiration: "2027-06-30", issued: "2025-03-15" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 80, remaining: 80 }, { id: "ethics", earned: 0, required: 4, remaining: 4 }],
+    stillNeeded: { total: 80, rows: ["Any time: Accounting & auditing 8", "Any time: Florida Board-approved ethics 4", "Any time: Any subject 68"] },
+  },
 ];
