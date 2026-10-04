@@ -25,6 +25,10 @@ export function friendlyError(msg: string) {
   if (/relation .* does not exist|Could not find the table/i.test(msg)) return "Database isn't set up yet — run the setup SQL in Supabase.";
   if (/column .* does not exist|Could not find the .* column/i.test(msg)) return "Database needs an update — run supabase/002_license_dates.sql in Supabase.";
   if (/Invalid login credentials/i.test(msg)) return "Email or password is incorrect.";
-  if (/Email not confirmed/i.test(msg)) return "Check your email and tap the confirmation link first.";
+  if (/Email not confirmed/i.test(msg)) return "Confirm your email with the code we sent first.";
+  if (/token has expired|token.*invalid|otp.*(expired|invalid)/i.test(msg)) return "That code is wrong or has expired. Check the latest email, or send a new code.";
+  if (/User already registered/i.test(msg)) return "There's already an account with this email. Sign in instead.";
+  if (/rate limit|too many requests|security purposes/i.test(msg)) return "Too many tries. Wait a minute, then try again.";
+  if (/same.*password|different from the old/i.test(msg)) return "Choose a password you haven't used before.";
   return msg;
 }
