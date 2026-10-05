@@ -37,7 +37,9 @@ export type Req = {
   nextYears?: number; // calendar-year cycles: also show this many later years (ID: next year's 30-hour minimum)
   role?: "total" | "annual" | "max_share" | "min_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
-  lookbackYears?: number; years?: number; categories?: string[]; when?: string; note?: string;
+  lookbackYears?: number; years?: number;
+  waiveIfIssuedInWindow?: boolean; // calendar_years_rolling (VA): no total while the license is newer than the window
+  categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   // plusCategories: hours that count toward the concentrated total on top of the one area (NY: ethics in that year).
   orConcentrated?: { hours: number; categories: string[]; plusCategories?: string[]; plusLabel?: string; plusMax?: number };
@@ -666,6 +668,15 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         parts.push({ label: `${yl(yr)} courses`, logged, counted: round(counted), why });
       }
       earned = round(earned);
+      // VA: licensed during the window → only the yearly minimums for the years after licensure apply, no total.
+      if (q.waiveIfIssuedInWindow && issuedYear != null && issuedYear >= y - n + 1 && issuedYear <= y) {
+        lines.push({
+          id: q.id, label: q.label, period: `${y - n + 1}–${y}`, required: 0, earned, remaining: 0, met: true,
+          note: `Not required yet — you were licensed in ${issuedYear}, so only each later year's minimum applies until ${issuedYear + n}.`,
+          deadline: iso(yearEnd(y)), group: q.group, parts,
+        });
+        continue;
+      }
       // CT ethics: "four hours of ethics every three CPE cycles". A new licensee's clock starts with their first
       // required CPE year (the year after the one they were licensed in), so it isn't due until that window ends.
       if (q.categories && rules.newLicensee?.exemptIfIssuedInCycle && profile.licenseIssued) {

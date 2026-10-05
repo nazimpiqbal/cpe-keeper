@@ -120,7 +120,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   // counts toward 2027's 20). If the rows add up to more than the total still needed, the year "any subject"
   // rows are trimmed (latest year first) so the card never asks for more than the total.
   let trimNote: string | undefined;
-  if (cycleTotal && !cycleTotal.alt && cycleTotal.canStillCount == null && !cycleTotal.past) {
+  if (cycleTotal && cycleTotal.required > 0 && !cycleTotal.alt && cycleTotal.canStillCount == null && !cycleTotal.past) {
     let excess = r2([...groups.values()].reduce((a, g) => a + g.rows.reduce((b, r) => b + r.hours, 0), 0) - cycleTotal.remaining);
     const trimmed: string[] = [];
     for (const g of [...groups.values()].filter(g => g !== anytime).reverse()) {

@@ -1,0 +1,156 @@
+{
+  "state": "VA",
+  "board": "Virginia Board of Accountancy (VBOA)",
+  "sourceUrls": [
+    "https://law.lis.virginia.gov/admincode/title18/agency5/chapter22/section90/",
+    "https://www.boa.virginia.gov/cpe/",
+    "https://boa.ko.virginia.gov/wp-content/uploads/2024/03/04CPEGuidelines.pdf",
+    "https://boa.virginia.gov/2025/04/cpa-license-renewals-open-for-2025"
+  ],
+  "lastVerified": "2026-10-04",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Virginia checks CPE by calendar year: 120 hours over the rolling three calendar years ending this year, at least 20 hours and a 2-hour VBOA-approved ethics course every year. You have until January 31 to finish the previous year's hours."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "The three calendar years ending this year must reach 120 hours (18VAC5-22-90)."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "group": "overall",
+      "priorYears": 2,
+      "note": "At least 20 hours every calendar year, including the ethics course."
+    },
+    {
+      "id": "ethics",
+      "label": "VBOA-approved ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "va_ethics"
+      ],
+      "group": "special",
+      "priorYears": 2,
+      "showNote": true,
+      "note": "A VBOA-approved ethics course of at least 2 hours every calendar year (it includes the VBOA segment). We count courses with \"Virginia\" and \"ethics\", or \"VBOA\", in the title.",
+      "subLabel": "This year"
+    },
+    {
+      "id": "attest",
+      "label": "Attest, compilation or financial statement preparation",
+      "hours": 8,
+      "scope": "cycle",
+      "when": "attest",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "priorYears": 2,
+      "note": "If you provide attest, compilation or financial statement preparation services: at least 8 hours a year related to those services.",
+      "subLabel": "This year"
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Licensed this calendar year: you're considered to have met this year's CPE (18VAC5-22-90 B)."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Attest, compilation or financial statement preparation"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Virginia licenses renew every year by June 30. CPE is tracked by calendar year regardless.",
+  "issueDateHint": "If you were licensed this year, no CPE is due this year. In the next two years only each year's 20 hours and ethics course apply.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "06-30",
+  "deadlineLabel": "License renews",
+  "yearEndNote": "finish by January 31",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "va_ethics": "VBOA ethics",
+    "aa": "Accounting & auditing",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "va_ethics",
+    "aa",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "va_ethics": [
+      "virginia+ethics",
+      "vboa"
+    ]
+  },
+  "limitsNotTracked": [
+    "Presentations and teaching: max 30 hours per three-year period.",
+    "Published materials: max 30 hours per three-year period.",
+    "Certifications and exams: max 60 hours per three-year period.",
+    "January grace: hours finished by January 31 can count for the previous year (each course counts toward one year only) \u2014 enter them as you report them."
+  ],
+  "recordRetention": "Keep CPE documentation for the four calendar years before the current year.",
+  "toVerify": [
+    "Attest/compilation/preparation hours matched to the NASBA Accounting and Auditing fields.",
+    "VBOA-approved ethics matched by course title (\"Virginia\"+\"ethics\" or \"VBOA\"); a general ethics course counts only as general CPE.",
+    "New licensee: licensed last year or the year before \u2192 only the yearly minimums for the years after licensure, no 120-hour total (18VAC5-22-90 B)."
+  ]
+}
