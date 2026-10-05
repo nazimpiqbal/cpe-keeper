@@ -1,0 +1,131 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "WV",
+  "board": "West Virginia Board of Accountancy",
+  "sourceUrls": [
+    "https://www.boa.wv.gov/www/download_resource.asp?id=55",
+    "https://www.boa.wv.gov/Licensing/HoursRequired.asp",
+    "https://www.boa.wv.gov/Licensing/CPE-Ethics.asp"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "note": "West Virginia counts CPE by calendar year: at least 20 hours each year and 120 over the rolling three years, 4 of them ethics. Each year is reported by January 31."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "120 hours in the three calendar years ending this year (1CSR1 \u00a71-1-7.3)."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "group": "overall",
+      "priorYears": 2,
+      "byYearsSinceIssue": [
+        {
+          "hours": 0
+        },
+        {
+          "hours": 40,
+          "note": "Your first full calendar year after licensure needs 40 hours."
+        }
+      ],
+      "note": "At least 20 hours every calendar year. The Board recommends 40."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics in the three years (ethical reasoning, West Virginia statutes and rules, professional conduct)."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the calendar year you were licensed. The next year needs 40 hours, then 20 a year; the 120 over three years applies from the third full year."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "West Virginia licenses renew every year by June 30. CPE is tracked by calendar year.",
+  "issueDateHint": "If you were licensed this year, no CPE is due this year; next year needs 40 hours.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "06-30",
+  "deadlineLabel": "License renews",
+  "reportDueMonthDay": "01-31",
+  "yearEndNote": "report by January 31",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor credit: 3 hours per hour taught the first time, max 60; publications: max 60.",
+    "Principles-of-accounting courses don't count.",
+    "Audits require original certificates."
+  ],
+  "recordRetention": "The Board keeps CPE reports for 4 years; keep your certificates at least that long.",
+  "toVerify": [
+    "New licensees: year licensed exempt, 40 hours the next calendar year, then 20 a year; the 120 starts with the first three full years (Board page).",
+    "How long licensees must keep records."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

@@ -39,6 +39,16 @@ import rne from "./NE.json";
 import rnm from "./NM.json";
 import rnh from "./NH.json";
 import rhi from "./HI.json";
+import rak from "./AK.json";
+import rde from "./DE.json";
+import rme from "./ME.json";
+import rmt from "./MT.json";
+import rnd from "./ND.json";
+import rri from "./RI.json";
+import rsd from "./SD.json";
+import rvt from "./VT.json";
+import rwv from "./WV.json";
+import rwy from "./WY.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -82,6 +92,16 @@ export const RULES: { [state: string]: Rules } = {
   NM: rnm as unknown as Rules,
   NH: rnh as unknown as Rules,
   HI: rhi as unknown as Rules,
+  AK: rak as unknown as Rules,
+  DE: rde as unknown as Rules,
+  ME: rme as unknown as Rules,
+  MT: rmt as unknown as Rules,
+  ND: rnd as unknown as Rules,
+  RI: rri as unknown as Rules,
+  SD: rsd as unknown as Rules,
+  VT: rvt as unknown as Rules,
+  WV: rwv as unknown as Rules,
+  WY: rwy as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
@@ -89,6 +109,7 @@ export const STATE_NAMES: { [state: string]: string } = {
   PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts", VA: "Virginia", NC: "North Carolina", MD: "Maryland", MN: "Minnesota", CO: "Colorado", MO: "Missouri", WI: "Wisconsin", TN: "Tennessee", IN: "Indiana", LA: "Louisiana",
   OR: "Oregon", SC: "South Carolina", KY: "Kentucky", AL: "Alabama", OK: "Oklahoma", UT: "Utah", IA: "Iowa", KS: "Kansas", NV: "Nevada", AR: "Arkansas",
   MS: "Mississippi", NE: "Nebraska", NM: "New Mexico", NH: "New Hampshire", HI: "Hawaii",
+  AK: "Alaska", DE: "Delaware", ME: "Maine", MT: "Montana", ND: "North Dakota", RI: "Rhode Island", SD: "South Dakota", VT: "Vermont", WV: "West Virginia", WY: "Wyoming",
 };
 
-export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA", "OR", "SC", "KY", "AL", "OK", "UT", "IA", "KS", "NV", "AR", "MS", "NE", "NM", "NH", "HI"];
+export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA", "OR", "SC", "KY", "AL", "OK", "UT", "IA", "KS", "NV", "AR", "MS", "NE", "NM", "NH", "HI", "AK", "DE", "ME", "MT", "ND", "RI", "SD", "VT", "WV", "WY"];

@@ -1,0 +1,142 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "VT",
+  "board": "Vermont Board of Public Accountancy (Office of Professional Regulation)",
+  "sourceUrls": [
+    "https://outside.vermont.gov/dept/sos/office_professional_regulation/professions/accountancy/accountancy_board_administrative_rules.pdf",
+    "https://legislature.vermont.gov/statutes/section/26/001/00075"
+  ],
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "fiscalSubLabels": true,
+    "label": "Reporting period",
+    "note": "Vermont licenses renew July 31 of odd-numbered years: 80 hours over the two years, including 4 of ethics and 8 of accounting and auditing. Up to 10 extra hours carry forward."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 10
+      },
+      "showNote": true,
+      "note": "80 hours each two-year period (Rule 9.1). Up to 10 hours over the 80 carry into the next period, toward the 80 only (not ethics or A&A)."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "All licensees: at least 8 hours of accounting and auditing each period (Rule 9.1(f))."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics for accountants each period (Rule 9.1(e))."
+    }
+  ],
+  "newLicensee": {
+    "byIssueYearInPeriod": [
+      {
+        "hours": {
+          "total": 40
+        },
+        "note": "Licensed in the first year of this period: 40 hours for the full year licensed, including 4 ethics and 8 accounting & auditing (Rule 9.1(b))."
+      },
+      {
+        "hours": {
+          "total": 12
+        },
+        "note": "Licensed less than a year before renewal: no general hours, but the 4 ethics and 8 accounting & auditing hours still apply (OPR renewal instructions)."
+      }
+    ]
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Vermont licenses expire July 31 of odd-numbered years (e.g. 07/31/2027).",
+  "issueDateHint": "New licensees: 40 hours for each full year licensed in the period.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "07-31",
+  "expiresYearParity": "odd",
+  "categoryLabels": {
+    "aa": "Accounting & auditing",
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "aa",
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor credit: max 50%; published articles and books: max 25%.",
+    "Only whole hours count (50 minutes = 1 hour)."
+  ],
+  "recordRetention": "Keep CPE documentation for 5 years after each program (Rule 9.3(b)).",
+  "toVerify": [
+    "Posted rules date from 2014.",
+    "Licensed less than a year before renewal: 4 ethics and 8 A&A per OPR's renewal instructions."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

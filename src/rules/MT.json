@@ -1,0 +1,127 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "MT",
+  "board": "Montana Board of Public Accountants (Department of Labor and Industry)",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/montana/department-24/chapter-24-201/subchapter-24-201-21",
+    "https://boards.bsd.dli.mt.gov/public-accountants/faq"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Montana licenses renew every year by December 31. CPE: 120 hours over the three calendar years ending this December 31, at least 60 technical and 2 of ethics. No yearly minimum."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "120 hours in the three calendar years ending December 31 (ARM 24.201.2106). Each hour counts in every three-year window it falls in."
+    },
+    {
+      "id": "technical",
+      "label": "Technical",
+      "hours": 60,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "note": "At least half (60 of 120) in technical subjects. Ethics counts as technical."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 2,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "2 hours of ethics in the three years. No Montana-specific course is required."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Licensed this year: nothing is due this year. Your first 120 hours are due December 31 of the third year after the year you were licensed (courses from the year licensed don't count)."
+  },
+  "licenseDateLabel": "License renewal date",
+  "licenseDateHint": "Montana licenses renew every year by December 31.",
+  "issueDateHint": "New licensees: the first 120 hours cover the three full calendar years after the year licensed.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical",
+    "ethics": "Ethics"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Self-study from sponsors not on the NASBA Registry earns half credit; their nano-learning earns none.",
+    "Instructor and technical reviewer credit: each max 60 hours; report reviewer: max 16 a year; publications: max 30 hours."
+  ],
+  "recordRetention": "Keep CPE records for at least 5 years. Audits go through the NASBA CPE Audit Service.",
+  "toVerify": [
+    "Window: the three calendar years ending December 31 of the renewal year.",
+    "Technical = NASBA technical fields plus all ethics."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

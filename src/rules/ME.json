@@ -1,0 +1,134 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "ME",
+  "board": "Maine Board of Accountancy (Office of Professional and Occupational Regulation)",
+  "sourceUrls": [
+    "https://www11.maine.gov/sos/cec/rules/02/280/280c005.docx",
+    "https://legislature.maine.gov/statutes/32/title32sec12233.html"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 10,
+    "note": "Maine licenses renew every September 30. Each license year (October 1 \u2013 September 30) needs 40 hours, and up to 20 extra carry into the next year. 4 hours of ethics every three years."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "carryForwardMax": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours each license year (Ch. 5 \u00a78(A)). Up to 20 hours over the 40 carry into the next license year only."
+    },
+    {
+      "id": "limited_max",
+      "label": "Limited subjects",
+      "hours": 20,
+      "scope": "cycle",
+      "categories": [
+        "limited"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than half (20 hours) from communication arts, mathematics and statistics, economics, business law, personnel and software applications (Ch. 5 \u00a79(D)).",
+      "otherLabel": "Accounting, auditing, tax, ethics, management services or industry topics"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics every three years: Maine accountancy laws and rules, or the AICPA or SEC conduct standards (Ch. 5 \u00a78(B))."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the license year your license was first issued in; your first 40 hours are due at the end of the first full license year."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Maine licenses renew every September 30.",
+  "issueDateHint": "If your license was first issued this license year (since October 1), no CPE is due for it.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "09-30",
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "limited": "Limited (max 50%)",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "limited",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "limited": [
+      "Communications and Marketing",
+      "Statistics",
+      "Economics",
+      "Business Law",
+      "Personnel/Human Resources",
+      "Computer Software and Applications",
+      "Personal Development",
+      "Business Management and Organization"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor credit: 3\u00d7 class time for the first presentation only, max 50%.",
+    "Publications: max 50%.",
+    "CPA exam review courses and committee service don't count."
+  ],
+  "recordRetention": "Keep CPE documentation for the three license years before the current one (Ch. 5 \u00a78(D)).",
+  "toVerify": [
+    "Ethics: modelled as 4 hours in the current and two previous license years (the rule counts three years from your first renewal).",
+    "Limited subjects: Personal Development and Business Management assumed to fall in the 50% group.",
+    "Carried-forward hours also count toward the 50% limit (state CPA society) \u2014 not modelled."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

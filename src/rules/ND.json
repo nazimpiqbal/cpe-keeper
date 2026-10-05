@@ -1,0 +1,121 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "ND",
+  "board": "North Dakota State Board of Accountancy",
+  "sourceUrls": [
+    "https://ndlegis.gov/api/acdata/pdf/3-03-01.pdf",
+    "https://ndlegis.gov/api/acdata/pdf/3-03-03.pdf",
+    "https://www.ndsba.nd.gov/licensees/cpa-renewal-faq"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 7,
+    "note": "North Dakota reporting years run July 1 \u2013 June 30, with CPE reported at renewal by June 30. Each year needs 20 hours; the rolling three years need 120, including 6 of ethics."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "120 hours in the three reporting years ending June 30 (N.D. Admin. Code 3-03-01-01)."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This reporting year",
+      "group": "overall",
+      "priorYears": 2,
+      "note": "At least 20 hours every reporting year (July 1 \u2013 June 30)."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 6,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "6 hours of ethics in the rolling three reporting years. No North Dakota-specific course is required."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the reporting year you were certified in. After that, 20 hours a year; the 120 and the 6 ethics hours apply once three full reporting years have passed."
+  },
+  "licenseDateLabel": "License renewal date",
+  "licenseDateHint": "North Dakota licenses renew every year by June 30, with your CPE report.",
+  "issueDateHint": "If you were certified this reporting year (since July 1), no CPE is due for it.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "06-30",
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Credit is earned in fifths of an hour (10 minutes = 0.2).",
+    "Teaching: up to twice the program credit, not for repeat presentations.",
+    "Only a certificate of attendance or completion counts as proof."
+  ],
+  "recordRetention": "Keep CPE records for 5 calendar years after the year you took the course. CPE is reported through the Board's Certemy portal.",
+  "toVerify": [
+    "A 2020 Board notice set a lower requirement (60 over three years, 16 a year) for CPAs who don't practice; it isn't in the 2024 rules and isn't modelled.",
+    "New licensees: the three-year totals start with the first full reporting year after certification."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

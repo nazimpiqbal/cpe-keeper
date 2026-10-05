@@ -1,0 +1,130 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "SD",
+  "board": "South Dakota Board of Accountancy (Department of Labor & Regulation)",
+  "sourceUrls": [
+    "https://sdlegislature.gov/api/Rules/15172.html",
+    "https://sdlegislature.gov/api/Statutes/36-20B-27.html",
+    "https://dlr.sd.gov/accountancy/continuing_education.aspx",
+    "https://dlr.sd.gov/accountancy/faq.aspx"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 7,
+    "note": "South Dakota counts CPE in July 1 \u2013 June 30 years: 120 hours over the rolling three years and at least 20 each year. Certificates renew every year by August 1. There's no ethics requirement."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "120 hours in the three CPE years ending June 30 (SDCL 36-20B-27)."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This CPE year",
+      "group": "overall",
+      "priorYears": 2,
+      "note": "At least 20 hours every CPE year (July 1 \u2013 June 30)."
+    },
+    {
+      "id": "behavioral_max",
+      "label": "Behavioral or motivational",
+      "hours": 24,
+      "scope": "calendar_years_rolling",
+      "categories": [
+        "behavioral"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. In public accounting, no more than 24 behavioral or motivational hours count per three years (ARSD 20:75:04:09). We count Personal Development courses.",
+      "otherLabel": "Any course except behavioral or motivational",
+      "years": 3,
+      "when": "public"
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the CPE year you were certified in. Then at least 20 hours a year; the 120 over three years applies from the third full year (ARSD 20:75:04:07)."
+  },
+  "practiceOptions": [
+    {
+      "id": "public",
+      "label": "I work in public accounting"
+    }
+  ],
+  "licenseDateLabel": "Certificate renewal date",
+  "licenseDateHint": "South Dakota certificates renew every year by August 1 (enter 07/31). CPE years run July 1 \u2013 June 30.",
+  "issueDateHint": "If you were certified this CPE year (since July 1), no CPE is due for it.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "07-31",
+  "deadlineLabel": "Certificate renews",
+  "categoryLabels": {
+    "behavioral": "Behavioral or motivational",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "behavioral": [
+      "Personal Development"
+    ]
+  },
+  "limitsNotTracked": [
+    "University or college teaching: max 60 hours per three years.",
+    "Published work needs Board approval first.",
+    "Self-study and nano-learning must come from NASBA Registry sponsors."
+  ],
+  "recordRetention": "Keep CPE documentation in case of the Board's yearly audit (ARSD 20:75:04:14).",
+  "toVerify": [
+    "The 20-hour yearly minimum comes from the Board FAQ, not the rule text.",
+    "Behavioral or motivational = Personal Development.",
+    "How long records must be kept."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "AK",
+  "board": "Alaska Board of Public Accountancy",
+  "sourceUrls": [
+    "https://www.commerce.alaska.gov/web/Portals/5/pub/CPARegulations.pdf",
+    "https://www.commerce.alaska.gov/web/cbpl/ProfessionalLicensing/BoardofPublicAccountancy/ContinuingEducationRenewalReinstatement",
+    "https://www.commerce.alaska.gov/web/Portals/5/pub/cpa4060.pdf"
+  ],
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "Reporting period",
+    "note": "Alaska licenses expire December 31 of odd-numbered years. CPE: 80 hours over the two calendar years, at least 20 in each year, 4 of them ethics (12 AAC 04.300)."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "80 hours each two-year period (12 AAC 04.300(c))."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "nano_max",
+      "label": "Micro-learning",
+      "hours": 10,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Activities shorter than an hour (micro-learning) count for no more than 10 hours a period (12 AAC 04.300(e)). We count nano-learning courses.",
+      "otherLabel": "Any course except micro-learning"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics each period (12 AAC 04.300(d)). Any approved ethics course counts; no Alaska-specific course is required."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Licenses first issued during this period need no CPE for their first renewal (Board renewal form)."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Alaska licenses expire December 31 of odd-numbered years (e.g. 12/31/2027).",
+  "issueDateHint": "If your license was first issued during this period, no CPE is due for your first renewal.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "expiresYearParity": "odd",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "nano": "Micro-learning",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "From 2026: no more than 12 hours count for any one day.",
+    "Instructor credit: max 30 hours a period (preparation up to twice the teaching time).",
+    "Published articles and books no longer earn credit."
+  ],
+  "recordRetention": "Keep CPE documentation for at least 4 years (renewal form).",
+  "toVerify": [
+    "First-renewal exemption comes from the renewal form (licenses first issued in the period), not the regulation text.",
+    "Micro-learning = any activity under an hour; we only count courses whose format is Nano Learning."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

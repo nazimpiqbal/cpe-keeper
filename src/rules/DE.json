@@ -1,0 +1,224 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "DE",
+  "board": "Delaware Board of Accountancy (Division of Professional Regulation)",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/delaware/title-24/department-of-state/division-of-professional-regulation/100/section-100-7-0",
+    "https://archive.regulations.delaware.gov/register/june2024/final/27%20DE%20Reg%20978%2006-01-24.htm",
+    "https://dpr.delaware.gov/boards/accountancy/accountancy-service-requests"
+  ],
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "fiscalSubLabels": true,
+    "label": "Reporting period",
+    "note": "Delaware permits expire June 30 of odd-numbered years. Each period needs 80 hours, at least 20 each year, with 8 accounting or auditing, 8 tax, 36 in accounting, auditing or tax overall, and a 4-hour Delaware ethics course."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "80 hours each two-year period (24 Del. Admin. Code 100 \u00a77.2.1)."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "aat",
+      "label": "Accounting, auditing or tax",
+      "hours": 36,
+      "scope": "cycle",
+      "categories": [
+        "aat"
+      ],
+      "group": "subject",
+      "note": "At least 36 of the 80 in accounting, auditing or tax: the 8 + 8 below plus 20 more in any of them."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting or auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "aa"
+      ],
+      "partOf": [
+        "aat"
+      ],
+      "group": "subject",
+      "note": "At least 8 hours of accounting or auditing."
+    },
+    {
+      "id": "tax",
+      "label": "Tax",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "tax"
+      ],
+      "partOf": [
+        "aat"
+      ],
+      "group": "subject",
+      "note": "At least 8 hours of tax."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Self-study counts for no more than 30% of the requirement (24 of 80) (\u00a77.2.8).",
+      "otherLabel": "Any course except self-study"
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Nano-learning counts for no more than 5% of the requirement (4 of 80).",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "de_ethics",
+      "label": "Delaware ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "de_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "A 4-hour Board-approved Delaware ethics course each period (\u00a77.2.6). We count courses with \"Delaware\" and \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "byIssueYearInPeriod": [
+      {
+        "hours": {
+          "total": 40,
+          "aat": 16,
+          "self_study_max": 12,
+          "nano_max": 2
+        },
+        "noYearlyMinimum": true,
+        "note": "Permit issued 1\u20132 years before renewal: 40 hours, including 8 accounting or auditing, 8 tax and the 4-hour Delaware ethics course (\u00a77.2.3)."
+      },
+      {
+        "none": true,
+        "note": "Permit issued less than a year before renewal: no CPE is due for this period (\u00a77.2.3)."
+      }
+    ]
+  },
+  "licenseDateLabel": "Permit expiration date",
+  "licenseDateHint": "Delaware permits expire June 30 of odd-numbered years (e.g. 06/30/2027).",
+  "issueDateHint": "If your permit was first issued during this period, fewer hours (or none) are due.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "06-30",
+  "expiresYearParity": "odd",
+  "categoryLabels": {
+    "aat": "Accounting, auditing or tax",
+    "aa": "Accounting or auditing",
+    "tax": "Tax",
+    "de_ethics": "Delaware ethics",
+    "self_study": "Self-study",
+    "nano": "Nano-learning",
+    "other": "Other subjects"
+  },
+  "tagCategories": [
+    "aa",
+    "tax",
+    "de_ethics",
+    "other"
+  ],
+  "fieldOfStudyMap": {
+    "aat": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes"
+    ],
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "tax": [
+      "Taxes"
+    ],
+    "other": [
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "de_ethics": [
+      "delaware+ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study"
+    ],
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor/developer credit: max 50%; author credit: max 25%.",
+    "Specialized group learning and technical committees combined: max 25%."
+  ],
+  "recordRetention": "Keep CPE evidence for 5 years after completing each activity (\u00a77.2.9).",
+  "toVerify": [
+    "New permit 1\u20132 years before renewal: 40 hours with 8 A&A, 8 tax and Delaware ethics; the extra 20 A/A/tax hours and the 20-a-year minimum assumed not to apply.",
+    "Delaware ethics matched by title (\"Delaware\" + \"ethics\")."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

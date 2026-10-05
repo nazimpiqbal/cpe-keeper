@@ -1,0 +1,188 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "WY",
+  "board": "Wyoming Board of Certified Public Accountants",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/wyoming/061-5-Wyo-Code-R-SS-5-3",
+    "https://wyoleg.gov/arules/2012/rules/ERR19-023.pdf",
+    "https://cpaboard.wyo.gov/cpe",
+    "https://cpaboard.wyo.gov/cpe/wyoming-ethics"
+  ],
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Wyoming certificates renew every December 31. CPE: 120 hours over the three calendar years ending this year, at least 80 technical, plus the 4-hour Wyoming ethics course once every three years."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "group": "overall",
+      "showNote": true,
+      "byYearsSinceIssue": [
+        {
+          "hours": 0,
+          "note": "No CPE is due for your first renewal (Ch. 5 \u00a75-3(c))."
+        },
+        {
+          "hours": 60,
+          "years": 2,
+          "note": "Second renewal: 60 hours over the year you were certified and this year (only courses after your certificate count)."
+        }
+      ],
+      "note": "120 hours in the three calendar years ending December 31 (Ch. 5 \u00a75-3(c))."
+    },
+    {
+      "id": "technical",
+      "label": "Technical",
+      "hours": 80,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "byYearsSinceIssue": [
+        {
+          "hours": 0
+        },
+        {
+          "hours": 40,
+          "years": 2,
+          "note": "Second renewal: at least 40 of the 60 hours technical."
+        }
+      ],
+      "note": "At least two-thirds (80 of 120) in technical subjects."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Independent study",
+      "hours": 12,
+      "scope": "calendar_years_rolling",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 12 hours of independent (self) study count per three-year period.",
+      "otherLabel": "Any course except independent study",
+      "years": 3
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 10,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 10 nano-learning hours count each calendar year.",
+      "otherLabel": "Any course except nano-learning",
+      "subLabel": "This year"
+    },
+    {
+      "id": "wy_ethics",
+      "label": "Wyoming ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "categories": [
+        "wy_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "The Board-approved 4-hour Wyoming ethics course (Wyoming statutes and rules, 80% to pass) once every three years, and within 6 months of first certification. We count courses with \"Wyoming\" and \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "note": "First renewal: no CPE. Second renewal: 60 hours over two years. After that, 120 over three. The Wyoming ethics course is due within 6 months of certification."
+  },
+  "licenseDateLabel": "Certificate renewal date",
+  "licenseDateHint": "Wyoming certificates renew every year on December 31.",
+  "issueDateHint": "New certificate holders: nothing for the first renewal, 60 hours for the second, then 120 over three years.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "Certificate renews",
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical",
+    "wy_ethics": "Wyoming ethics",
+    "self_study": "Independent study",
+    "nano": "Nano-learning"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "wy_ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "wy_ethics": [
+      "wyoming+ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study"
+    ],
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "All 4 Wyoming ethics hours must be completed in the same calendar year.",
+    "Publications: max 25% (30 hours).",
+    "A course repeated in the same year doesn't count again."
+  ],
+  "recordRetention": "Keep CPE evidence for 4 years after completion.",
+  "toVerify": [
+    "Independent-study limit (12) applied per three-year window; nano limit per calendar year \u2014 from the 2019 rule filing.",
+    "Second renewal window = the year certified plus the next year.",
+    "Wyoming ethics matched by title (\"Wyoming\" + \"ethics\")."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

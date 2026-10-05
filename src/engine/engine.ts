@@ -48,6 +48,9 @@ export type Req = {
   // AR (calendar-year total): alternatively met by this many hours over the last N calendar years.
   orRolling?: { years: number; hours: number }; // calendar_years_rolling (LA): the calendar year licensed counts as at least this many hours
   yearParity?: "even" | "odd";
+  // Calendar-year states (WV, WY): this line's hours by years since the (CPE) year licensed — index 0 = that year,
+  // 1 = the next… For a rolling total, `years` can shorten the window (WY: 60 over two years at the second renewal).
+  byYearsSinceIssue?: { hours: number; years?: number; note?: string }[];
   fixedFrom?: number; // calendar_years_rolling (MS ethics): fixed windows of `years` starting with this (CPE) year // calendar-year states (LA): only required in even (or odd) years // calendar_years_rolling (VA): no total while the license is newer than the window
   categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
@@ -396,7 +399,13 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
     const yrRules = bmc && issuedHere
       ? { ...rules, requirements: rules.requirements.map(q => q.id === "total" ? { ...q, hours: bmc[Number(profile.licenseIssued!.slice(5, 7)) - 1] } : q) }
       : rules;
-    const lines = evaluateWindow(records, profile, yrRules, d(start), d(end), name, asOf);
+    const issuedFy = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
+    const stepped = (rs: Rules, y: number): Rules => issuedFy == null || y < issuedFy || !rs.requirements.some(q => q.byYearsSinceIssue) ? rs
+      : { ...rs, requirements: rs.requirements.map(q => {
+          const st = q.byYearsSinceIssue?.[y - issuedFy];
+          return st ? { ...q, hours: st.hours, years: st.years ?? q.years, note: st.note ?? q.note, waiveIfIssuedInWindow: false } : q;
+        }) };
+    const lines = evaluateWindow(records, profile, stepped(yrRules, fyIndex(start, sm)), d(start), d(end), name, asOf);
     if (bmc && issuedHere && rules.newLicensee?.note) { const t = lines.find(l => l.id === "total"); if (t) t.note = rules.newLicensee.note; }
     const orq = rules.requirements.find(q => q.orRolling);
     const orl = orq && lines.find(l => l.id === orq.id && !l.met);
@@ -423,7 +432,7 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
       ].filter(y => issued == null || y > issued); // nothing was due in or before the year licensed
       for (const y of others) {
         const ys = fyStartD(y, sm), ye = fyEndD(y, sm);
-        const [l] = evaluateWindow(records, profile, { ...rules, requirements: [q] }, ys, ye, fyLabel(y, sm), asOf);
+        const [l] = evaluateWindow(records, profile, stepped({ ...rules, requirements: [q] }, y), ys, ye, fyLabel(y, sm), asOf);
         if (!l) continue;
         l.id = `${q.id}_${y}`; l.group = q.group;
         l.sub = { index: 5 + (y - cur), label: fyLabel(y, sm), start: iso(ys), end: iso(ye) };
@@ -1044,10 +1053,14 @@ function applyMaximums(lines: Line[], rules: Rules) {
       if (t) { t.earned = round(t.earned - h); t.remaining = round(Math.max(0, t.required - t.earned)); t.met = t.remaining === 0; }
     }
   }
-  const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when);
-  const total = totalReq && lines.find(l => l.id === totalReq.id);
+  // Calendar-year states can have a rolling total (OK, WY): a yearly cap's excess comes off it too.
+  const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when)
+    ?? (isCalendarYear(rules) ? rules.requirements.find(r => r.scope === "calendar_years_rolling" && !r.categories && !r.when && r.kind !== "max") : undefined);
+  const total = totalReq && lines.find(l => l.id === totalReq.id && !l.sub);
   if (!total) return;
-  const excess = round(lines.filter(l => l.kind === "max").reduce((a, l) => a + (l.over ?? 0), 0));
+  // Caps over a rolling window already took their excess off the total (evaluateWindow).
+  const rollingMax = new Set(rules.requirements.filter(r => r.kind === "max" && r.scope === "calendar_years_rolling").map(r => r.id));
+  const excess = round(lines.filter(l => l.kind === "max" && !rollingMax.has(l.id)).reduce((a, l) => a + (l.over ?? 0), 0));
   if (excess > 0) {
     total.earned = round(total.earned - excess);
     total.remaining = round(Math.max(0, total.required - total.earned));

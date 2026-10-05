@@ -1,0 +1,163 @@
+{
+  "lastVerified": "2026-10-05",
+  "state": "RI",
+  "board": "Rhode Island Board of Accountancy (Department of Business Regulation)",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/rhode-island/title-400/chapter-00/subchapter-00/part-1/section-400-ricr-00-00-1-8",
+    "https://dbr.ri.gov/contractors-and-building-design-fire-professionals-board-accountancy/board-accountancy/continuing"
+  ],
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "fiscalSubLabels": true,
+    "label": "Reporting period",
+    "note": "Rhode Island licenses run three years ending June 30: 120 hours, at least 6 of them ethics. No yearly minimum."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "120 hours each three-year period (400-RICR-00-00-1.8.1)."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 80,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 80 self-study hours count per period (\u00a71.8.1(D)).",
+      "otherLabel": "Any course except self-study"
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development and marketing",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "pd"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 24 hours of personal development or marketing per period (\u00a71.8.2(C)).",
+      "otherLabel": "Any other subject"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 6,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 6 hours (4 in your first cycle) covering regulatory and behavioral ethics (\u00a71.8.2(E)). No Rhode Island-specific course is required."
+    }
+  ],
+  "newLicensee": {
+    "byIssueYearInPeriod": [
+      {
+        "hours": {
+          "total": 80,
+          "ethics": 4
+        },
+        "note": "First renewal cycle: 80 hours, including 4 of ethics (\u00a71.8.1(A)(3))."
+      },
+      {
+        "hours": {
+          "total": 80,
+          "ethics": 4
+        },
+        "note": "First renewal cycle: 80 hours, including 4 of ethics (\u00a71.8.1(A)(3))."
+      },
+      {
+        "none": true,
+        "note": "Licensed in the last year of this period: no CPE is required in the year your certificate is issued."
+      }
+    ]
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Rhode Island licenses expire June 30 every three years; your license shows which year.",
+  "issueDateHint": "New licensees: 80 hours, including 4 of ethics, for the first renewal cycle.",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "06-30",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "self_study": "Self-study",
+    "pd": "Personal development and marketing",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "pd",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "pd": [
+      "Personal Development",
+      "Communications and Marketing"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching: max 60 hours; authorship: max 60 hours.",
+    "If your main office is in another state, meeting that state's rules satisfies Rhode Island's."
+  ],
+  "recordRetention": "Keep CPE documentation for the current and the previous renewal period (\u00a71.8.1(E)).",
+  "toVerify": [
+    "New licensees: 80 hours with 4 ethics for the first cycle; licensed in the period's last year assumed to owe none (no CPE in the year issued).",
+    "Personal development cap = Personal Development and Communications and Marketing fields."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}
