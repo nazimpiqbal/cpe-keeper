@@ -2131,4 +2131,58 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Wisconsin ── period 12/15/2025 – 12/14/2027: 80 hours, 20 in each year (2025–26, 2026–27), 3 ethics;
+  // up to 40 over the previous period's 80 carry forward.
+  {
+    id: "WI-1", state: "WI", title: "Clean slate",
+    checks: "80 hours, 20 in each year, 3 ethics.",
+    license: { expiration: "2027-12-14", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 3, remaining: 3 },
+    ],
+    stillNeeded: { total: 80, rows: ["2025–26: Any subject 20", "2026–27: Any subject 20", "Any time: Ethics 3", "Any time: Any subject 37"] },
+  },
+  {
+    id: "WI-2", state: "WI", title: "Carry forward 40",
+    checks: "Previous period: 130 hours → 40 carry (the max). This period: 17 + 3 ethics in year 1 = 20 + 40 = 60 of 80; year 2 still needs 20.",
+    license: { expiration: "2027-12-14", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2024-06-01", hours: 130, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 17, field: "Accounting", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 3, field: "Regulatory Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "annual_total", y: 1, earned: 20, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 3, required: 3, met: true },
+    ],
+    stillNeeded: { total: 20, rows: ["2026–27: Any subject 20"] },
+  },
+  {
+    id: "WI-3", state: "WI", title: "Initial license 1–2 years before expiration",
+    checks: "Issued 3/1/2026 (year 1 of the period): 40 hours, no year-1 minimum, year 2 needs 20; 3 ethics.",
+    license: { expiration: "2027-12-14", issued: "2026-03-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 15, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 15, required: 40, remaining: 25 },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 3, remaining: 3 },
+    ],
+    stillNeeded: { total: 25, rows: ["2026–27: Any subject 20", "Any time: Ethics 3", "Any time: Any subject 2"] },
+  },
+  {
+    id: "WI-4", state: "WI", title: "Initial license less than a year before expiration",
+    checks: "Issued 2/1/2027 (year 2): nothing due at this renewal.",
+    license: { expiration: "2027-12-14", issued: "2027-02-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];

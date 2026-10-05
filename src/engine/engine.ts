@@ -410,7 +410,10 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
   const bi = rules.newLicensee?.byIssueYearInPeriod;
   if (bi && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {
     // GA: requirements depend on which calendar year of the period the license was issued.
-    const idx = Number(profile.licenseIssued.slice(0, 4)) - start.getUTCFullYear();
+    // WI (12-month sub-periods, not calendar years): which sub-period of the period the license was issued in.
+    const subLen = rules.cycle.subPeriods && !rules.cycle.calendarSubPeriods ? (rules.cycle.lengthMonths ?? 24) / rules.cycle.subPeriods : 0;
+    let idx = Number(profile.licenseIssued.slice(0, 4)) - start.getUTCFullYear();
+    if (subLen) { idx = 0; while (addMonths(start, (idx + 1) * subLen) <= d(profile.licenseIssued)) idx++; }
     const stage = bi[Math.min(idx, bi.length - 1)];
     if (stage.none) {
       return [{ id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
