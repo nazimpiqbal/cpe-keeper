@@ -1,0 +1,77 @@
+{
+  "state": "MD",
+  "board": "Maryland State Board of Public Accountancy",
+  "sourceUrls": [
+    "https://www.dllr.state.md.us/license/cpa/cpacperep.shtml",
+    "https://labor.maryland.gov/license/cpa/cpapolicy.shtml",
+    "https://www.surgentcpe.com/cpe-requirements/maryland/"
+  ],
+  "lastVerified": "2026-10-04",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "License period",
+    "note": "Maryland licenses run two years. Each renewal needs 80 hours from the license period, including 4 of ethics; no yearly minimum."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": { "max": 80 },
+      "showNote": true,
+      "note": "80 hours each license period. Up to 80 hours over the 80 from your previous period carry forward (they count toward the total, not toward ethics)."
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": ["ethics"],
+      "group": "special",
+      "note": "4 hours of professional ethics every license period. Extra ethics hours count as general CPE but can't carry forward as ethics."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "First renewal: no CPE is due. Report what you took anyway — only reported hours can carry forward to your next period."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Maryland licenses renew every two years on your license's own date.",
+  "issueDateHint": "If your license was issued during this period, no CPE is due at your first renewal.",
+  "renewalMonths": 24,
+  "requirementGroups": [
+    { "id": "overall", "label": "Overall requirements" },
+    { "id": "special", "label": "Special requirements" }
+  ],
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": ["ethics", "general"],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
+      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
+      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
+      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development",
+      "Regulatory Ethics", "Behavioral Ethics"
+    ],
+    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 45 hours per period.",
+    "Published material: max 40 hours per period.",
+    "Peer review: max 16 hours per period."
+  ],
+  "recordRetention": "Keep CPE documentation for four years.",
+  "toVerify": [
+    "Renewal date: newer sources say each license's own two-year date; older ones say December 31 of even years.",
+    "Carryforward measured over 80 in the previous period; hours from a first (exempt) period carry only if reported.",
+    "Both Regulatory and Behavioral Ethics count toward the 4 (Circular 230 ethics is usually Regulatory Ethics)."
+  ]
+}

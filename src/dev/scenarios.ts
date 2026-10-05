@@ -1895,4 +1895,54 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 4, rows: ["Any time: Any subject 4"] },
   },
+  // ── Maryland ── license period 3/1/2025 – 2/28/2027 (two years): 80 hours incl. 4 ethics; up to 80 hours over
+  // the previous period's 80 carry forward; first renewal exempt.
+  {
+    id: "MD-1", state: "MD", title: "Clean slate",
+    checks: "80 hours, including 4 of ethics.",
+    license: { expiration: "2027-02-28", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Professional ethics 4", "Any time: Any subject 76"] },
+  },
+  {
+    id: "MD-2", state: "MD", title: "Carry forward from the last period",
+    checks: "Previous period (3/1/2023 – 2/28/2025): 115 hours → 35 carry. This period: 30 + 4 ethics = 34 + 35 = 69 of 80.",
+    license: { expiration: "2027-02-28", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2024-03-01", hours: 115, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2025-06-01", hours: 30, field: "Accounting", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-09-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 69, required: 80, remaining: 11 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 11, rows: ["Any time: Any subject 11"] },
+  },
+  {
+    id: "MD-3", state: "MD", title: "Carryforward capped at 80, not ethics",
+    checks: "Previous period: 200 hours incl. 10 ethics → only 80 carry. This period: no courses. 80 of 80 met, but 4 ethics are still needed this period.",
+    license: { expiration: "2027-02-28", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2024-03-01", hours: 190, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics Deep Dive", provider: P, date: "2024-04-01", hours: 10, field: "Behavioral Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Professional ethics 4"] },
+  },
+  {
+    id: "MD-4", state: "MD", title: "First renewal",
+    checks: "Licensed 9/1/2025, inside this period: no CPE is due at the first renewal.",
+    license: { expiration: "2027-02-28", issued: "2025-09-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];
