@@ -5,7 +5,7 @@ import { Button, C, Card, Chip, DateField, ErrorText, themed, toIso, toUs, ui } 
 import { RULES, LAUNCH_STATES, STATE_NAMES } from "../rules";
 import { checkExpiration } from "../engine/engine";
 
-// States with verified rule files. Others appear as "coming soon".
+// States with verified rule files (all 50).
 const SUPPORTED = Object.keys(RULES);
 
 export default function SetupScreen({ userId, existing, onSaved, onCancel, otherStates = [], adding, onRemove }: {
@@ -137,7 +137,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel, other
   );
 }
 
-// State dropdown: tap the field to open the list of supported states (A–Z), with other states marked as coming soon.
+// State dropdown: tap the field to open the list of supported states (A–Z).
 function StatePicker({ value, onChange, taken = [] }: { value: string; onChange: (s: string) => void; taken?: string[] }) {
   const [open, setOpen] = useState(false);
   const states = LAUNCH_STATES.filter(s => SUPPORTED.includes(s))
@@ -164,9 +164,6 @@ function StatePicker({ value, onChange, taken = [] }: { value: string; onChange:
                   {s === value ? <Text style={{ color: C.accent, fontWeight: "800" }}>✓</Text> : null}
                 </Pressable>
               ))}
-              <View style={[sp.row, sp.border]}>
-                <Text style={[sp.rowText, { color: C.muted }]}>Other States (coming soon)</Text>
-              </View>
             </View>
           </ScrollView>
         </View>
