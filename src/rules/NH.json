@@ -10,7 +10,9 @@
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
     "label": "Certification period",
-    "note": "New Hampshire licenses run two years from their own issue date (Ac 401.03): 80 hours each period, 4 of them ethics, up to 40 carried forward."
+    "note": "New Hampshire licenses run two years from their own issue date (Ac 401.03): 80 hours each period, at least 20 in each year, 4 of them ethics, up to 40 carried forward.",
+    "subPeriods": 2,
+    "fiscalSubLabels": true
   },
   "carryover": true,
   "requirements": [
@@ -25,6 +27,14 @@
       },
       "showNote": true,
       "note": "80 hours each two-year period (Ac 403.01). Up to 40 hours over the 80 carry to the next period only."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall",
+      "note": "All licensees: at least 20 hours each year (Ac 403.01(c))."
     },
     {
       "id": "nano_max",
@@ -48,7 +58,7 @@
         "ethics"
       ],
       "group": "special",
-      "note": "At least 4 hours of professional ethics each period. No New Hampshire-specific course is required."
+      "note": "All licensees: at least 4 hours of professional ethics each period (Ac 403.01(d)). No New Hampshire-specific course is required."
     }
   ],
   "newLicensee": {
@@ -56,7 +66,8 @@
       "rates": {
         "total": 1.6666666666666667
       },
-      "includeIssueMonth": false
+      "includeIssueMonth": false,
+      "annualPerMonth": 1.6666666666666667
     },
     "note": "New licensees: at least 20 hours for each year before renewal"
   },
@@ -110,8 +121,7 @@
   ],
   "recordRetention": "Keep CPE records for at least 4 years from the renewal date.",
   "toVerify": [
-    "New licensees: 20 hours per year before renewal, prorated by full month; ethics kept at 4.",
-    "Whether the 20-a-year minimum applies to everyone (OPLC page) or only new/reactivated licensees (Ac 403.01(b))."
+    "New licensees: 20 hours per year before renewal, prorated by full month; ethics kept at 4."
   ],
   "requirementGroups": [
     {

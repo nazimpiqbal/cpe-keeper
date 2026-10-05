@@ -2789,27 +2789,33 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 0, rows: [] } },
   // ── New Hampshire ── period 5/15/2025 – 5/14/2027: 80 hours, 4 ethics, carry up to 40.
-  { id: "NH-1", state: "NH", title: "Clean slate", checks: "80 hours, 4 ethics.", license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [], expect: [
+  { id: "NH-1", state: "NH", title: "Clean slate", checks: "80 hours, 20 in each year (2025–26 and 2026–27), 4 ethics.", license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 80, rows: ["Any time: Professional ethics 4", "Any time: Any subject 76"] } },
-  { id: "NH-2", state: "NH", title: "Carry forward 40", checks: "Previous period: 150 → 40 carry. This period: 20 + 4 ethics = 24 + 40 = 64 of 80.",
+    stillNeeded: { total: 80, rows: ["2026–27: Any subject 20", "Any time: Professional ethics 4", "Any time: Any subject 56"] } },
+  { id: "NH-2", state: "NH", title: "Carry forward 40", checks: "Previous period: 150 → 40 carry. This period: 20 + 4 ethics in the first year = 24 + 40 = 64 of 80; the second year still needs its own 20.",
     license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [
       { title: "Tax Marathon", provider: P, date: "2024-06-01", hours: 150, field: "Taxes", delivery: "Group Live" },
       { title: "Tax Update", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Group Live" },
       { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" }], expect: [
-      { id: "total", earned: 64, required: 80, remaining: 16 },
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "annual_total", y: 1, earned: 24, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "ethics", earned: 4, required: 4, met: true },
     ],
-    stillNeeded: { total: 16, rows: ["Any time: Any subject 16"] } },
-  { id: "NH-3", state: "NH", title: "New licensee", checks: "Licensed 1/20/2026: 16 full months to expiration × 20 a year ≈ 27 hours; ethics 4.",
+    stillNeeded: { total: 20, rows: ["2026–27: Any subject 20"] } },
+  { id: "NH-3", state: "NH", title: "New licensee", checks: "Licensed 1/20/2026: 16 full months to expiration × 20 a year ≈ 27 hours; the first year (to May 2026) needs about 7 of them and the second year 20; ethics 4.",
     license: { expiration: "2027-05-14", issued: "2026-01-20" }, courses: [
       { title: "Tax Update", provider: P, date: "2026-05-01", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
-      { id: "total", earned: 10, required: 27, remaining: 17 },
+      { id: "total", earned: 7, required: 27, remaining: 20 },
+      { id: "annual_total", y: 1, earned: 10, required: 7, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 17, rows: ["Any time: Professional ethics 4", "Any time: Any subject 13"] } },
+    stillNeeded: { total: 20, rows: ["2026–27: Any subject 16", "Any time: Professional ethics 4"] } },
   // ── Hawaii ── biennium 2026–2027: 80, 20 each year, 4 ethics, carry up to 40.
   { id: "HI-1", state: "HI", title: "Clean slate", checks: "80, 20 in 2026 and 2027, 4 ethics.", license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 80, remaining: 80 },
