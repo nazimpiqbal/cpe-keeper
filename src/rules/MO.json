@@ -1,0 +1,72 @@
+{
+  "state": "MO",
+  "board": "Missouri State Board of Accountancy",
+  "sourceUrls": [
+    "https://www.sos.mo.gov/CMSImages/AdRules/csr/previous/20csr/20csr0423/20c2010-4.pdf",
+    "https://www.mocpa.org/about-cpe/mo",
+    "https://www.westerncpe.com/blog-post/missouri-cpe-requirements-stay-compliant-and-avoid-last-minute-stress/"
+  ],
+  "lastVerified": "2026-10-04",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Missouri CPE runs by calendar year: 40 hours each year, 2 of them ethics. Licensees in good standing can make up a shortage until March 1 of the next year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "At least 40 hours each calendar year (20 CSR 2010-4.010)."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": ["ethics"],
+      "group": "special",
+      "note": "At least 2 of the 40 hours each year in ethics. Regulatory and behavioral ethics both count."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the calendar year you were first licensed; the 40 hours start the next January 1."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "The renewal date on your Missouri license. CPE is tracked by calendar year regardless.",
+  "issueDateHint": "If you were first licensed this year, no CPE is due until next year.",
+  "renewalMonths": 24,
+  "deadlineLabel": "License renews",
+  "yearEndNote": "make-up until March 1",
+  "requirementGroups": [
+    { "id": "overall", "label": "Overall requirements" },
+    { "id": "special", "label": "Special requirements" }
+  ],
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": ["ethics", "general"],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
+      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
+      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
+      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development"
+    ],
+    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+  },
+  "limitsNotTracked": [
+    "Authorship: max 2 hours a calendar year (minimum 750 words).",
+    "March 1 grace: hours taken by March 1 to cure last year's shortage count for last year only — enter them in the year you report them."
+  ],
+  "recordRetention": "Keep CPE documentation for at least 5 calendar years after the year completed.",
+  "toVerify": [
+    "New licensees: assumed exempt for the calendar year of initial licensure (the rule doesn't prorate).",
+    "License renewal timing (sources differ: annual vs. every two years) — the app only uses the date for the renewal reminder."
+  ]
+}

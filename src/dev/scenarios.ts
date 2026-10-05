@@ -2096,4 +2096,39 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 40, rows: ["Any time: Ethics 4", "Any time: Any subject 36"] },
   },
+  // ── Missouri ── calendar year (2026): 40 hours including 2 ethics; no carryforward.
+  {
+    id: "MO-1", state: "MO", title: "Clean slate",
+    checks: "40 hours this year, including 2 ethics.",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 40, remaining: 40 },
+      { id: "ethics", earned: 0, required: 2, remaining: 2 },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Ethics 2", "Any time: Any subject 38"] },
+  },
+  {
+    id: "MO-2", state: "MO", title: "Last year's extra hours don't carry",
+    checks: "60 hours in 2025 don't help 2026. 2026: 30 Tax + 2 behavioral ethics = 32 of 40.",
+    license: { expiration: "2027-09-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-05-01", hours: 60, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-04-01", hours: 2, field: "Behavioral Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 32, required: 40, remaining: 8 },
+      { id: "ethics", earned: 2, required: 2, met: true },
+    ],
+    stillNeeded: { total: 8, rows: ["Any time: Any subject 8"] },
+  },
+  {
+    id: "MO-3", state: "MO", title: "First licensed this year",
+    checks: "Licensed 4/1/2026: nothing due until 2027.",
+    license: { expiration: "2027-09-30", issued: "2026-04-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];

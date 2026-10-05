@@ -19,6 +19,7 @@ import nc from "./NC.json";
 import md from "./MD.json";
 import mn from "./MN.json";
 import co from "./CO.json";
+import mo from "./MO.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -42,11 +43,12 @@ export const RULES: { [state: string]: Rules } = {
   MD: md as unknown as Rules,
   MN: mn as unknown as Rules,
   CO: co as unknown as Rules,
+  MO: mo as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
   CA: "California", NY: "New York", TX: "Texas", FL: "Florida", IL: "Illinois",
-  PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts", VA: "Virginia", NC: "North Carolina", MD: "Maryland", MN: "Minnesota", CO: "Colorado",
+  PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts", VA: "Virginia", NC: "North Carolina", MD: "Maryland", MN: "Minnesota", CO: "Colorado", MO: "Missouri",
 };
 
-export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO"];
+export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO"];
