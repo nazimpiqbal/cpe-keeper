@@ -122,7 +122,7 @@ export type Rules = {
     exemptExcept?: string[];
     // GA: by which calendar year of the period the license was issued in (index 0 = first year).
     // none = nothing due; otherwise hours overrides by requirement id, and yearly minimums through the licensure year waived.
-    byIssueYearInPeriod?: { none?: boolean; hours?: { [id: string]: number }; note?: string }[];
+    byIssueYearInPeriod?: { none?: boolean; hours?: { [id: string]: number }; noYearlyMinimum?: boolean; note?: string }[];
     // MI: nothing is due for this many months from the original license date; a CE year partly inside it is prorated.
     exemptMonthsFromIssue?: number;
     // OH: first period = Jan 1 of the year certified through Dec 31 of the following year(s), with only a total.
@@ -420,7 +420,7 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
         deadline: iso(end), group: "overall", note: stage.note ?? "No CPE is due for your first renewal." }];
     }
     const requirements = rules.requirements.map(q => stage.hours?.[q.id] != null ? { ...q, hours: stage.hours[q.id] } : q);
-    const lines = evaluateWindow(records, profile, { ...rules, requirements, cycle: { ...rules.cycle, waiveSubPeriodsThrough: idx + 1 } },
+    const lines = evaluateWindow(records, profile, { ...rules, requirements, cycle: { ...rules.cycle, waiveSubPeriodsThrough: stage.noYearlyMinimum ? 99 : idx + 1 } },
       start, end, rules.cycle.label ?? "Cycle", asOf);
     const total = lines.find(l => l.id === "total");
     if (total && stage.note) total.note = stage.note;
@@ -854,7 +854,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       const mine = lines.filter(l => l.id === q.id && l.sub);
       const waive = rules.cycle.waiveSubPeriodsThrough;
       if (waive) for (const l of mine.filter(l => l.kind !== "max" && l.sub!.index <= waive)) {
-        l.required = 0; l.remaining = 0; l.met = true; l.note = rules.newLicensee?.note ?? "Not required in the year you were licensed.";
+        l.required = 0; l.remaining = 0; l.met = true; l.note = rules.newLicensee?.note ?? (waive >= 99 ? "No yearly minimum for your first renewal." : "Not required in the year you were licensed.");
       }
       // MI: no CE is due for N months after the original license; a year partly in that window is prorated by days.
       const exM = rules.newLicensee?.exemptMonthsFromIssue;

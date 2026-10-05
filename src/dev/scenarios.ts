@@ -2185,4 +2185,75 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Tennessee ── period 1/1/2026 – 12/31/2027: 80 hours, 20 each calendar year, 40 technical, 2-hour Tennessee
+  // ethics; attest adds 20 A&A (inside the technical); up to 24 over the previous period's 80 carry (total only).
+  {
+    id: "TN-1", state: "TN", title: "Clean slate",
+    checks: "80 hours; 20 in 2026 and 2027; 40 technical; Tennessee ethics 2.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20 },
+      { id: "technical", earned: 0, required: 40, remaining: 40 },
+      { id: "tn_ethics", earned: 0, required: 2, remaining: 2 },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Any subject 20", "2027: Any subject 18", "Any time: Technical 40", "Any time: Tennessee ethics 2"] },
+  },
+  {
+    id: "TN-2", state: "TN", title: "Carryover counts toward the 80 only",
+    checks: "2024–25 period: 110 hours → 24 carry. 2026: 30 non-technical + Tennessee ethics 2. 32 + 24 = 56 of 80; technical still 0 of 40, and 2027 needs 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-03-01", hours: 110, field: "Taxes", delivery: "Group Live" },
+      { title: "Leadership Summit", provider: P, date: "2026-03-01", hours: 30, field: "Personal Development", delivery: "Group Live" },
+      { title: "Tennessee Ethics for CPAs", provider: P, date: "2026-05-01", hours: 2, field: "Behavioral Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 56, required: 80, remaining: 24 },
+      { id: "technical", earned: 0, required: 40, remaining: 40 },
+      { id: "annual_total", y: 1, earned: 32, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "tn_ethics", earned: 2, required: 2, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Technical 40"] },
+  },
+  {
+    id: "TN-3", state: "TN", title: "Attest: A&A inside technical",
+    checks: "Practice: attest. 40 Tax (technical) but no A&A: 20 A&A still needed, and they also count toward technical.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+      { title: "Tennessee Ethics for CPAs", provider: P, date: "2026-05-01", hours: 2, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 42, required: 80, remaining: 38 },
+      { id: "technical", earned: 42, required: 40, met: true },
+      { id: "aa", earned: 0, required: 20, remaining: 20 },
+    ],
+    stillNeeded: { total: 38, rows: ["2027: Any subject 18", "Any time: Accounting & auditing 20"] },
+  },
+  {
+    id: "TN-4", state: "TN", title: "Licensed in the first year of the period",
+    checks: "Licensed 4/1/2026: 40 hours, 20 technical, Tennessee ethics 2; no yearly minimum.",
+    license: { expiration: "2027-12-31", issued: "2026-04-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 12, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 12, required: 40, remaining: 28 },
+      { id: "technical", earned: 12, required: 20, remaining: 8 },
+      { id: "annual_total", y: 2, earned: 0, required: 0, met: true },
+      { id: "tn_ethics", earned: 0, required: 2, remaining: 2 },
+    ],
+    stillNeeded: { total: 28, rows: ["Any time: Technical 8", "Any time: Tennessee ethics 2", "Any time: Any subject 18"] },
+  },
+  {
+    id: "TN-5", state: "TN", title: "Licensed in the renewal year",
+    checks: "Licensed 3/1/2027: nothing due for the first renewal.",
+    license: { expiration: "2027-12-31", issued: "2027-03-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];

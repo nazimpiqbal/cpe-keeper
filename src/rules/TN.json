@@ -1,0 +1,118 @@
+{
+  "state": "TN",
+  "board": "Tennessee State Board of Accountancy",
+  "sourceUrls": [
+    "https://www.tn.gov/commerce/regboards/accountancy/license/cont-edu.html",
+    "https://support.commerce.tn.gov/hc/en-us/articles/39336591468051-CPE-FAQs"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "Reporting period",
+    "note": "Tennessee CPE runs over two calendar years ending December 31 of your renewal year: 80 hours, at least 20 each year, 40 technical and a 2-hour Tennessee ethics course."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": { "max": 24 },
+      "showNote": true,
+      "note": "80 hours each two-year period. Up to 24 hours over the 80 from your previous period carry forward — toward the 80 only, not the yearly minimums, technical hours or ethics."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "technical",
+      "label": "Technical",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": ["technical"],
+      "group": "subject",
+      "note": "At least 40 of the 80 in technical subjects (NASBA technical fields of study)."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 20,
+      "scope": "cycle",
+      "when": "attest",
+      "categories": ["aa"],
+      "partOf": ["technical"],
+      "group": "subject",
+      "note": "If you provide attest services, at least 20 of the 40 technical hours in accounting and auditing."
+    },
+    {
+      "id": "tn_ethics",
+      "label": "Tennessee ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": ["tn_ethics"],
+      "group": "special",
+      "showNote": true,
+      "note": "A 2-hour Board-approved Tennessee state-specific ethics course every two-year period. We count courses with \"Tennessee\" and \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "byIssueYearInPeriod": [
+      { "hours": { "total": 40, "technical": 20, "aa": 10 }, "noYearlyMinimum": true, "note": "Licensed in the first year of this period: 40 hours, including 20 technical and the 2-hour Tennessee ethics course; no yearly minimum." },
+      { "none": true, "note": "Licensed in the same year as your renewal: no CPE is due for the first renewal." }
+    ]
+  },
+  "practiceOptions": [
+    { "id": "attest", "label": "Attest services" }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Tennessee licenses renew every two years on December 31; your license tells you whether that's an odd or even year.",
+  "issueDateHint": "If you were licensed during this period, fewer hours (or none) are due for your first renewal.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "requirementGroups": [
+    { "id": "overall", "label": "Overall requirements" },
+    { "id": "subject", "label": "Subject requirements" },
+    { "id": "special", "label": "Special requirements" }
+  ],
+  "categoryLabels": {
+    "technical": "Technical",
+    "aa": "Accounting & auditing",
+    "tn_ethics": "Tennessee ethics",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": ["technical", "aa", "non_technical", "tn_ethics"],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
+      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
+      "Statistics", "Specialized Knowledge", "Computer Software and Applications", "Production", "Regulatory Ethics"
+    ],
+    "aa": ["Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)"],
+    "non_technical": [
+      "Communications and Marketing", "Business Management and Organization", "Personnel/Human Resources",
+      "Personal Development", "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "tn_ethics": ["tennessee+ethics"]
+  },
+  "limitsNotTracked": [
+    "Expert witnesses: at least 20 hours in the area the court deems you an expert.",
+    "New licensees licensed 1–2 years: carryforward is capped at 12 hours instead of 24."
+  ],
+  "recordRetention": "Keep CPE documentation for five years after completion.",
+  "toVerify": [
+    "Technical = NASBA technical fields; Regulatory Ethics technical, Behavioral Ethics non-technical.",
+    "New licensee (first year of the period): A&A for attest assumed halved to 10 with the 20 technical.",
+    "Tennessee ethics matched by title (\"Tennessee\" + \"ethics\")."
+  ]
+}
