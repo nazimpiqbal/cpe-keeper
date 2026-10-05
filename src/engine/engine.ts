@@ -38,7 +38,9 @@ export type Req = {
   role?: "total" | "annual" | "max_share" | "min_share"; share?: number; // how a phase-in schedule adjusts this line (TX)
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number;
-  waiveIfIssuedInWindow?: boolean; // calendar_years_rolling (VA): no total while the license is newer than the window
+  waiveIfIssuedInWindow?: boolean;
+  licensedYearCredit?: number; // calendar_years_rolling (LA): the calendar year licensed counts as at least this many hours
+  yearParity?: "even" | "odd"; // calendar-year states (LA): only required in even (or odd) years // calendar_years_rolling (VA): no total while the license is newer than the window
   categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   // plusCategories: hours that count toward the concentrated total on top of the one area (NY: ethics in that year).
@@ -365,6 +367,11 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
         deadline: end, group: "overall", note: rules.newLicensee.note ?? "No CPE is due for the year you're licensed.",
       }];
     }
+    if (rules.requirements.some(q => q.yearParity)) {
+      // LA: the Board-approved ethics course is due only in even-numbered years.
+      const odd = fyIndex(start, sm) % 2 === 1;
+      rules = { ...rules, requirements: rules.requirements.filter(q => !q.yearParity || (q.yearParity === "odd") === odd) };
+    }
     const bmc = rules.newLicensee?.totalByIssueMonth;
     const issuedHere = !!profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === fyIndex(start, sm);
     // NC: the year the certificate is issued needs fewer hours, by the month issued (courses earlier that year count).
@@ -376,6 +383,9 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
     // Neighbouring years for a yearly minimum (ID: last year, this year, next year — each needs 30).
     const cur = fyIndex(start, sm);
     const issued = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
+    // Yearly lines without neighbouring years (LA ethics, attest) still sit in this year's box.
+    for (const l of lines) if (l.sub && l.sub.index === 1 && rules.requirements.find(r => r.id === l.id && r.subLabel && !r.priorYears && !r.nextYears))
+      l.sub = { ...l.sub, index: 5, label: fyLabel(cur, sm) };
     for (const q of rules.requirements.filter(r => r.scope === "cycle" && (r.priorYears || r.nextYears))) {
       const here = lines.find(l => l.id === q.id);
       if (here?.sub) here.sub = { ...here.sub, index: 5, label: fyLabel(cur, sm) };
@@ -701,6 +711,9 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         if (!q.categories && ly && issuedYear === yr &&
             sum(yearStart(yr), yearEnd(yr), ly.requirement.categories) >= ly.requirement.hours && ly.creditIfMet > h) {
           h = ly.creditIfMet; why = "year licensed — credited";
+        }
+        if (!q.categories && q.licensedYearCredit && profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === yr && h < q.licensedYearCredit) {
+          h = q.licensedYearCredit; why = "year licensed — credited";
         }
         const counted = q.perYearMax != null ? Math.min(q.perYearMax, h) : h;
         if (!why && counted < h) why = `only ${q.perYearMax} a year count`;

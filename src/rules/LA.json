@@ -1,0 +1,169 @@
+{
+  "state": "LA",
+  "board": "Louisiana State Board of Certified Public Accountants",
+  "sourceUrls": [
+    "https://state-rules.com/louisiana/lac/XIX.1301/",
+    "https://lumiqlearn.com/blog/louisiana-cpa-cpe-requirements",
+    "https://www.mypescpe.com/louisiana-cpe-requirements",
+    "https://www.louisiana.cpa/cpe/038542imp:2026-ethics-course-for-louisiana-c-p-as-in-public-practice-a-case-study-approach"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Louisiana CPE runs by calendar year, due December 31 and reported by January 31: at least 20 hours a year and 80 over the last two calendar years, plus a Board-approved ethics course in even-numbered years."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Two-year total",
+      "hours": 80,
+      "scope": "calendar_years_rolling",
+      "years": 2,
+      "licensedYearCredit": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "Last year plus this year must reach 80 hours (LAC 46:XIX.1301). The year you were licensed counts as 20."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "group": "overall",
+      "priorYears": 1,
+      "note": "At least 20 hours every calendar year."
+    },
+    {
+      "id": "attest",
+      "label": "Accounting & auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "when": "attest",
+      "categories": [
+        "aa"
+      ],
+      "subLabel": "This year",
+      "group": "subject",
+      "note": "If you take part in attest engagements this year (audits, reviews, compilations, agreed-upon procedures): at least 8 hours of accounting and auditing."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 20,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Personal development over 20 hours in a calendar year is disallowed.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "la_ethics",
+      "label": "Louisiana ethics",
+      "hours": 3,
+      "scope": "cycle",
+      "categories": [
+        "la_ethics"
+      ],
+      "subLabel": "This year",
+      "yearParity": "even",
+      "group": "special",
+      "showNote": true,
+      "note": "In even-numbered years, a Board-approved Louisiana ethics course (3 hours in 2026). General ethics doesn't count. We count courses with \"Louisiana\" and \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due in the calendar year you were licensed; it starts the next full calendar year."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Attest engagements (audits, reviews, compilations, agreed-upon procedures)"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Louisiana certificates renew every year by December 31. CPE is tracked by calendar year.",
+  "issueDateHint": "If you were licensed this year, no CPE is due until next year.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "License renews",
+  "yearEndNote": "report by January 31",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "aa": "Accounting & auditing",
+    "la_ethics": "Louisiana ethics",
+    "personal_development": "Personal development",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "aa",
+    "la_ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ]
+  },
+  "titleKeywordMap": {
+    "la_ethics": [
+      "louisiana+ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Published materials: max 10 hours a year; teaching/speaking: max 20; credentialing exams: max 20.",
+    "Self-study must be interactive (most NASBA QAS courses are).",
+    "Personal development over 20 in a year is shown as over the cap but isn't taken off the two-year total."
+  ],
+  "recordRetention": "Keep CPE documentation in case the Board asks for it.",
+  "toVerify": [
+    "Louisiana ethics hours in future even years (3 in 2026; earlier years were 2).",
+    "Licensure year counted as 20 toward the two-year 80 (sources: '60 the following year')."
+  ]
+}

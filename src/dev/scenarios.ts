@@ -2318,4 +2318,73 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }, { id: "ethics", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Louisiana ── calendar years: 20 each year, 80 over 2025–2026, Board-approved Louisiana ethics (3 hours) in
+  // even years, attest A&A 8 a year, personal development max 20 a year.
+  {
+    id: "LA-1", state: "LA", title: "Clean slate",
+    checks: "80 over 2025–2026; 20 this year (2025 ended short); Louisiana ethics 3 (2026 is even).",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_min", y: 5, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_min_2025", y: 4, earned: 0, required: 20, past: true },
+      { id: "la_ethics", y: 5, earned: 0, required: 3, remaining: 3 },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Louisiana ethics 3", "2026: Any subject 17", "Any time: Any subject 60"] },
+  },
+  {
+    id: "LA-2", state: "LA", title: "General ethics isn't the Louisiana course",
+    checks: "2025: 45 Tax. 2026: 30 Tax + AICPA ethics 4 (general). 79 of 80; the Louisiana ethics course is still needed.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-04-01", hours: 45, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+      { title: "AICPA Code of Professional Conduct", provider: P, date: "2026-04-01", hours: 4, field: "Regulatory Ethics", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 79, required: 80, remaining: 1 },
+      { id: "annual_min", y: 5, earned: 34, required: 20, met: true },
+      { id: "la_ethics", y: 5, earned: 0, required: 3, remaining: 3 },
+    ],
+    stillNeeded: { total: 3, rows: ["2026: Louisiana ethics 3"] },
+  },
+  {
+    id: "LA-3", state: "LA", title: "Attest A&A this year",
+    checks: "Practice: attest. 2026: 30 Tax + 2026 Ethics Course for Louisiana CPAs 3, no A&A: 8 A&A still needed this year.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01", practice: ["attest"] },
+    courses: [
+      { title: "Audit Update", provider: P, date: "2025-04-01", hours: 50, field: "Auditing", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+      { title: "2026 Ethics Course for Louisiana CPAs", provider: P, date: "2026-05-01", hours: 3, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 83, required: 80, met: true },
+      { id: "la_ethics", y: 5, earned: 3, required: 3, met: true },
+      { id: "attest", y: 5, earned: 0, required: 8, remaining: 8 },
+    ],
+    stillNeeded: { total: 8, rows: ["2026: Accounting & auditing 8"] },
+  },
+  {
+    id: "LA-4", state: "LA", title: "Licensed last year",
+    checks: "Licensed 6/1/2025: 2025 counts as 20 toward the 80, so 2026 needs 60 (and its own 20 and the ethics course).",
+    license: { expiration: "2026-12-31", issued: "2025-06-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 50, required: 80, remaining: 30 },
+      { id: "annual_min", y: 5, earned: 30, required: 20, met: true },
+      { id: "annual_min_2025", y: 4, absent: true, earned: 0, required: 0 },
+    ],
+    stillNeeded: { total: 30, rows: ["2026: Louisiana ethics 3", "Any time: Any subject 27"] },
+  },
+  {
+    id: "LA-5", state: "LA", title: "Licensed this year",
+    checks: "Licensed 2/1/2026: nothing due until 2027.",
+    license: { expiration: "2026-12-31", issued: "2026-02-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];
