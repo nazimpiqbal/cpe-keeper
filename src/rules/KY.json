@@ -1,0 +1,189 @@
+{
+  "state": "KY",
+  "board": "Kentucky State Board of Accountancy",
+  "sourceUrls": [
+    "https://apps.legislature.ky.gov/law/kar/titles/201/001/100/",
+    "https://cpa.ky.gov/practicingcpas/Pages/Continuing-Professional-Education.aspx",
+    "https://cpa.ky.gov/Documents/FAQS%20ON%20RECENT%20CHANGES%20TO%20KY%20CPE%20REQUIREMENTS.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "CPE period",
+    "note": "Kentucky licenses renew every two years; the CPE period is always the two calendar years before the renewal year. 80 hours if you worked at a CPA firm, otherwise 60; half technical; 2 ethics."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 60,
+      "whenHours": {
+        "public_firm": 80
+      },
+      "scope": "cycle",
+      "group": "overall",
+      "showNote": true,
+      "note": "80 hours if you worked at least 3,000 hours at a licensed CPA firm during the period; otherwise 60 (201 KAR 1:100)."
+    },
+    {
+      "id": "technical",
+      "label": "Technical standards",
+      "hours": 30,
+      "whenHours": {
+        "public_firm": 40
+      },
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "note": "At least half the hours in technical standards courses."
+    },
+    {
+      "id": "aa_annual",
+      "label": "Accounting & auditing each year",
+      "hours": 8,
+      "scope": "each_sub_period",
+      "when": "attest",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "If you perform attest or compilation/preparation work at a firm: 8 hours of auditing or accounting each calendar year."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 12,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Personal development is capped at 12 hours (8 if you need 80).",
+      "otherLabel": "Any course except personal development",
+      "whenHours": {
+        "public_firm": 8
+      }
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "2 hours of ethics each period. Courses don't have to be Kentucky-specific."
+    }
+  ],
+  "newLicensee": {
+    "perMonthFromIssue": {
+      "rates": {
+        "total": 2,
+        "technical": 1,
+        "ethics": 0
+      },
+      "includeIssueMonth": false
+    },
+    "note": "First period: 2 hours for each full month your license was held (ethics waived)"
+  },
+  "practiceOptions": [
+    {
+      "id": "public_firm",
+      "label": "Worked 3,000+ hours at a licensed CPA firm this period"
+    },
+    {
+      "id": "attest",
+      "label": "Attest or compilation/preparation work"
+    }
+  ],
+  "licenseDateLabel": "CPE period end date",
+  "licenseDateHint": "December 31 of the year before your renewal year (e.g. 12/31/2026 for a 2027 renewal).",
+  "issueDateHint": "If you were licensed during this period, you need 2 hours for each full month you held the license.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "CPE period ends",
+  "categoryLabels": {
+    "technical": "Technical",
+    "aa": "Accounting & auditing",
+    "ethics": "Ethics",
+    "personal_development": "Personal development",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "technical",
+    "aa",
+    "non_technical",
+    "ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
+    ],
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching (with preparation): max 60% of the requirement; published articles: max 25%.",
+    "Nano-learning isn't addressed by the rule."
+  ],
+  "recordRetention": "Keep CPE records for 5 years.",
+  "toVerify": [
+    "Technical standards = NASBA technical fields.",
+    "Ethics waived for a new licensee's partial period.",
+    "Renewal deadline (July/August 1)."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

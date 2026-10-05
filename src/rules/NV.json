@@ -1,0 +1,126 @@
+{
+  "state": "NV",
+  "board": "Nevada State Board of Accountancy",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/nevada/NAC-628-210",
+    "https://www.nasbaregistry.org/cpe-requirements/nevada"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Since 2024, Nevada requires 40 hours every calendar year, including 2 of ethics. The permit renews every year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "At least 40 hours each calendar year (NAC 628.210)."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "when": "attest",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "In any year you work on an audit, review, full-disclosure compilation or attestation: 8 hours of accounting and auditing."
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "2 hours of professional ethics each year."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "Your first annual renewal of an initial permit is exempt."
+  },
+  "practiceOptions": [
+    {
+      "id": "attest",
+      "label": "Audits, reviews, full-disclosure compilations or attestation"
+    }
+  ],
+  "licenseDateLabel": "Permit expiration date",
+  "licenseDateHint": "Nevada permits renew every year. CPE is tracked by calendar year.",
+  "issueDateHint": "If your permit was first issued this year, no CPE is due for the first renewal.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "Permit renews",
+  "categoryLabels": {
+    "aa": "Accounting & auditing",
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "aa",
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instructor preparation: max twice the presentation time."
+  ],
+  "recordRetention": "Keep CPE records for 3 years after filing the renewal.",
+  "toVerify": [
+    "Older summaries show the pre-2024 rule (80 hours over two years); the app uses the 2024 rule."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

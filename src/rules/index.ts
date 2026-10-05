@@ -24,6 +24,16 @@ import wi from "./WI.json";
 import tn from "./TN.json";
 import inr from "./IN.json";
 import la from "./LA.json";
+import ror from "./OR.json";
+import rsc from "./SC.json";
+import rky from "./KY.json";
+import ral from "./AL.json";
+import rok from "./OK.json";
+import rut from "./UT.json";
+import ria from "./IA.json";
+import rks from "./KS.json";
+import rnv from "./NV.json";
+import rar from "./AR.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -52,11 +62,22 @@ export const RULES: { [state: string]: Rules } = {
   TN: tn as unknown as Rules,
   IN: inr as unknown as Rules,
   LA: la as unknown as Rules,
+  OR: ror as unknown as Rules,
+  SC: rsc as unknown as Rules,
+  KY: rky as unknown as Rules,
+  AL: ral as unknown as Rules,
+  OK: rok as unknown as Rules,
+  UT: rut as unknown as Rules,
+  IA: ria as unknown as Rules,
+  KS: rks as unknown as Rules,
+  NV: rnv as unknown as Rules,
+  AR: rar as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
   CA: "California", NY: "New York", TX: "Texas", FL: "Florida", IL: "Illinois",
   PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts", VA: "Virginia", NC: "North Carolina", MD: "Maryland", MN: "Minnesota", CO: "Colorado", MO: "Missouri", WI: "Wisconsin", TN: "Tennessee", IN: "Indiana", LA: "Louisiana",
+  OR: "Oregon", SC: "South Carolina", KY: "Kentucky", AL: "Alabama", OK: "Oklahoma", UT: "Utah", IA: "Iowa", KS: "Kansas", NV: "Nevada", AR: "Arkansas",
 };
 
-export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA"];
+export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA", "OR", "SC", "KY", "AL", "OK", "UT", "IA", "KS", "NV", "AR"];

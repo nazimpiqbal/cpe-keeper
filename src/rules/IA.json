@@ -1,0 +1,150 @@
+{
+  "state": "IA",
+  "board": "Iowa Accountancy Examining Board",
+  "sourceUrls": [
+    "https://www.legis.iowa.gov/docs/iac/chapter/09-30-2026.481.1030.pdf",
+    "https://regulations.justia.com/states/iowa/agency-193a/chapter-10/rule-193a-10-5"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Iowa licenses renew every July 1. CPE: 120 hours, 4 of them ethics, in the three years ending the December 31 before renewal (you may use June 30 instead). No yearly minimum."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "prorateIfIssuedInWindow": "linear",
+      "group": "overall",
+      "showNote": true,
+      "note": "120 hours in the three calendar years ending December 31 (481 IAC 1030.5). New licensees: 40 per full year licensed."
+    },
+    {
+      "id": "compilation",
+      "label": "Financial statement presentation",
+      "hours": 8,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "when": "compilation",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "If you supervise compilations or sign compilation reports: 8 hours of financial statement presentation per three years."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 60,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than half the hours (60) from self-study.",
+      "otherLabel": "Any course except self-study"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "prorateIfIssuedInWindow": "all",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics and rules of professional conduct per three years."
+    }
+  ],
+  "practiceOptions": [
+    {
+      "id": "compilation",
+      "label": "Supervise compilations or sign compilation reports"
+    }
+  ],
+  "licenseDateLabel": "License renewal date",
+  "licenseDateHint": "Iowa licenses renew every July 1. CPE is tracked by calendar year.",
+  "issueDateHint": "New licensees: none in the first 12 months, then 40 hours for each full year licensed.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "07-01",
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "aa": "Financial statement presentation",
+    "ethics": "Ethics",
+    "self_study": "Self-study",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Non-technical skills, teaching and professional exams: each max 50%.",
+    "Meal meetings of 2 hours or less: max 25%.",
+    "You can use the three years ending June 30 instead of December 31."
+  ],
+  "recordRetention": "Keep CPE records for 3 years after submitting the report that claims them.",
+  "toVerify": [
+    "Rules moved to 481 IAC 1030 (2026).",
+    "New licensees measured from the license date (the rule uses the application filing date)."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

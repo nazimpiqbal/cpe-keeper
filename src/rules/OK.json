@@ -1,0 +1,160 @@
+{
+  "state": "OK",
+  "board": "Oklahoma Accountancy Board",
+  "sourceUrls": [
+    "https://oklahoma.gov/oab/departments/continuing-professional-education/cpe-requirements-reporting.html",
+    "https://oklahoma.gov/content/dam/ok/en/oab/documents/cpe/OK%20CPE%20Info%20Graph%202024.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Oklahoma counts CPE by calendar year in a rolling three-year window: 120 hours and 4 ethics over any three years, at least 20 every year. Licenses renew yearly at the end of your birth month."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "Any three consecutive calendar years must reach 120 hours (starting with the year you were certified)."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "group": "overall",
+      "priorYears": 2,
+      "note": "At least 20 hours every calendar year \u2014 including the year you're first certified."
+    },
+    {
+      "id": "technical",
+      "label": "Technical (permit holders)",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This year",
+      "when": "permit",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "priorYears": 2,
+      "note": "Permit holders: at least 20 technical hours each year (not in the year the permit is first issued)."
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Up to 20 nano courses (4 hours) count each year.",
+      "otherLabel": "Any course except nano-learning",
+      "subLabel": "This year"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics in each rolling three-year period."
+    }
+  ],
+  "practiceOptions": [
+    {
+      "id": "permit",
+      "label": "I hold a permit to practice"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Oklahoma licenses renew every year on the last day of your birth month. CPE is tracked by calendar year.",
+  "issueDateHint": "New registrants need 20 hours by December 31 of the year they're certified; the three-year totals start that year.",
+  "renewalMonths": 12,
+  "expiresEndOfMonth": true,
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "technical": "Technical",
+    "ethics": "Ethics",
+    "nano": "Nano-learning",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "CPAs in industry: 72 of the 120 in subjects related to public accounting, plus 8 a year in accounting, tax or assurance.",
+    "Compilation permit holders: 4 hours of compilation CPE each year.",
+    "Published materials: max 10 hours a year; self-study must be interactive."
+  ],
+  "recordRetention": "Keep CPE records for at least 5 years from the end of the year completed.",
+  "toVerify": [
+    "New registrants: 20 hours by December 31 of the certification year.",
+    "Technical = NASBA technical fields."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

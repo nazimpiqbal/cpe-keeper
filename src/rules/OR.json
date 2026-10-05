@@ -1,0 +1,170 @@
+{
+  "state": "OR",
+  "board": "Oregon Board of Accountancy",
+  "sourceUrls": [
+    "https://oregon.public.law/oar_801-040-0010",
+    "https://oregon.public.law/rules/oar_801-040-0050",
+    "https://oregon.public.law/rules/oar_801-040-0100",
+    "https://www.oregon.gov/boa/Pages/CPE.aspx"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "fiscalSubLabels": true,
+    "label": "Renewal period",
+    "note": "Oregon licenses renew every two years on June 30. CPE counts from the two years before: 80 hours, at least 20 each year (July\u2013June), including 4 hours of Oregon ethics."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 20
+      },
+      "showNote": true,
+      "note": "80 hours each renewal period (OAR 801-040). Up to 20 extra hours from your previous period carry forward \u2014 not toward the yearly minimum."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "non_technical_max",
+      "label": "Non-technical",
+      "hours": 16,
+      "scope": "cycle",
+      "categories": [
+        "non_technical"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 16 non-technical hours count each period.",
+      "otherLabel": "Technical"
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Nano-learning is limited to 10% of the required hours (8).",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "or_ethics",
+      "label": "Oregon ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "or_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "4 hours of Oregon-specific ethics each period (Oregon statutes and rules, the Board's Code of Professional Conduct). We count courses with \"Oregon\" and \"ethics\", \"laws\" or \"rules\" in the title. If your principal office is in another state with an ethics requirement, those hours can count instead."
+    }
+  ],
+  "newLicensee": {
+    "perMonthFromIssue": {
+      "rates": {
+        "total": 3.3333333333333335,
+        "non_technical_max": 0.6666666666666666,
+        "nano_max": 0.3333333333333333
+      },
+      "annualPerMonth": 2,
+      "includeIssueMonth": true
+    },
+    "note": "First period prorated at 3\u2153 hours a month, counting the month your license was issued (OAR 801-040-0100)"
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Oregon licenses expire June 30 every two years.",
+  "issueDateHint": "If your license was issued during this period, the hours are prorated from the month it was issued.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "06-30",
+  "categoryLabels": {
+    "or_ethics": "Oregon ethics",
+    "technical": "Technical",
+    "non_technical": "Non-technical",
+    "nano": "Nano-learning"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "or_ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "or_ethics": [
+      "oregon+ethics",
+      "oregon+laws",
+      "oregon+rules"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching and published articles combined: max half the hours.",
+    "Municipal auditors: 24 governmental hours per period (16 in governmental auditing).",
+    "Carried-forward hours can't be non-technical."
+  ],
+  "recordRetention": "Keep CPE records for 5 years after completing each course.",
+  "toVerify": [
+    "Yearly minimum 20 (the Board's pages) vs 24 (one copy of the rule).",
+    "The 4 Oregon ethics hours aren't prorated for a new licensee."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

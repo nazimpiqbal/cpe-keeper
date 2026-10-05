@@ -1,0 +1,259 @@
+{
+  "state": "AR",
+  "board": "Arkansas State Board of Public Accountancy",
+  "sourceUrls": [
+    "https://labor.arkansas.gov/wp-content/uploads/17-CAR-236-1203.pdf",
+    "https://labor.arkansas.gov/wp-content/uploads/17-CAR-236-1206.pdf",
+    "https://labor.arkansas.gov/licensing/state-board-of-public-accountancy/summary-of-rule-13-cpe-requirements/"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "Arkansas licenses renew every year; CPE is due December 31: either 40 hours this year or 120 over the last three years. 4 ethics hours (1 on Arkansas laws and rules) every three years."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "orRolling": {
+        "years": 3,
+        "hours": 120
+      },
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours this calendar year \u2014 or 120 over the last three (17 CAR 236-1203)."
+    },
+    {
+      "id": "core",
+      "label": "Accounting, ethics, attest or tax",
+      "hours": 8,
+      "whenHours": {
+        "public": 16
+      },
+      "scope": "cycle",
+      "categories": [
+        "core"
+      ],
+      "group": "subject",
+      "note": "20% of your hours (40% if you're in public practice) in accounting, ethics, attest or tax."
+    },
+    {
+      "id": "attest",
+      "label": "Attest & accounting theory",
+      "hours": 8,
+      "scope": "cycle",
+      "when": "attest",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "If you do attest or compilation work: another 20% in attest and accounting theory."
+    },
+    {
+      "id": "group_min",
+      "label": "Group learning",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "group"
+      ],
+      "summaryFormat": true,
+      "group": "subject",
+      "note": "Self-study, nano and publications together can't exceed 80%, so at least 8 hours must be group (live or webinar)."
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 4 nano-learning hours a year.",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 0,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Personal development topics don't count toward Arkansas CPE.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics every 36 months, including 1 hour on Arkansas Board laws and rules (the Board's free \"Arkansas Board Laws and Rules\" course counts)."
+    },
+    {
+      "id": "ar_rules",
+      "label": "Arkansas laws & rules",
+      "hours": 1,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ar_rules"
+      ],
+      "partOf": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "1 hour on Arkansas Board laws and rules every 36 months. We count courses with \"Arkansas\" and \"laws\", \"rules\" or \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "totalByIssueMonth": [
+      40.0,
+      36.5,
+      33.5,
+      30.0,
+      26.5,
+      23.5,
+      20.0,
+      16.5,
+      13.5,
+      10.0,
+      6.5,
+      3.5
+    ],
+    "note": "The year you're first licensed is prorated by month (about 3\u2153 hours a month). Ethics starts with your first full calendar year."
+  },
+  "practiceOptions": [
+    {
+      "id": "public",
+      "label": "Public practice"
+    },
+    {
+      "id": "attest",
+      "label": "Attest or compilation work"
+    }
+  ],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Arkansas licenses renew every year; CPE is due December 31.",
+  "issueDateHint": "If you were first licensed this year, this year's hours are prorated by month.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "License renews",
+  "categoryLabels": {
+    "core": "Accounting, ethics, attest or tax",
+    "aa": "Attest & accounting",
+    "ethics": "Ethics",
+    "ar_rules": "Arkansas laws & rules",
+    "group": "Group learning",
+    "nano": "Nano-learning",
+    "general": "General CPE",
+    "personal_development": "Personal development"
+  },
+  "tagCategories": [
+    "core",
+    "ethics",
+    "ar_rules",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "core": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ]
+  },
+  "titleKeywordMap": {
+    "ar_rules": [
+      "arkansas+laws",
+      "arkansas+rules",
+      "arkansas+ethics"
+    ],
+    "ethics": [
+      "arkansas+laws",
+      "arkansas+rules",
+      "arkansas+ethics"
+    ]
+  },
+  "deliveryMap": {
+    "group": [
+      "Group Live",
+      "Group Internet Based",
+      "Blended"
+    ],
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Subject and group percentages scale with the 120-hour option (48/24 and 24); the app checks this year's 40."
+  ],
+  "recordRetention": "Keep CPE records for five years after the end of the year completed.",
+  "toVerify": [
+    "New-licensee proration (3\u2153 hours a month is from a third-party source).",
+    "Whether the 36-month window is rolling (the rule) or fixed (the Board's summary)."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ]
+}

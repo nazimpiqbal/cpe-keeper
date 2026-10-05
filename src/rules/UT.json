@@ -1,0 +1,136 @@
+{
+  "state": "UT",
+  "board": "Utah Board of Accountancy (DOPL)",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/utah/Utah-Admin-Code-R156-26a-303b",
+    "https://commerce.utah.gov/wp-content/uploads/2024/01/cpa-cpe-faqs.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "Licensure cycle",
+    "note": "Utah licenses and CPE run January 1 of an odd year to December 31 of the even year: 80 hours, including 4 ethics (1 on Utah law and rules). No yearly minimum."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 40
+      },
+      "showNote": true,
+      "note": "80 hours each two-year cycle (R156-26a-303b). Up to 40 extra hours carry forward as general CPE."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics each cycle, including the 1-hour Utah laws and rules course."
+    },
+    {
+      "id": "ut_rules",
+      "label": "Utah laws & rules",
+      "hours": 1,
+      "scope": "cycle",
+      "categories": [
+        "ut_rules"
+      ],
+      "partOf": [
+        "ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "1 hour on Utah's CPA Licensing Act and Board rules. We count courses with \"Utah\" and \"laws\", \"rules\" or \"ethics\" in the title."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is required at your first renewal after initial licensure."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Utah licenses expire December 31 of even-numbered years (e.g. 12/31/2026).",
+  "issueDateHint": "If you were first licensed this cycle, no CPE is due at your first renewal.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "expiresYearParity": "even",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "ut_rules": "Utah laws & rules",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "ut_rules",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "titleKeywordMap": {
+    "ut_rules": [
+      "utah+laws",
+      "utah+rules",
+      "utah+ethics"
+    ],
+    "ethics": [
+      "utah+laws",
+      "utah+rules",
+      "utah+ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "The current rule has no caps on self-study, nano or instruction (some older summaries still list them)."
+  ],
+  "recordRetention": "Keep CPE certificates; reporting goes through NASBA's CPE Audit Service.",
+  "toVerify": [
+    "Record retention period isn't stated in the current rule."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

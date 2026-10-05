@@ -1,0 +1,143 @@
+{
+  "state": "SC",
+  "board": "South Carolina Board of Accountancy",
+  "sourceUrls": [
+    "https://www.nasbaregistry.org/cpe-requirements/south-carolina",
+    "https://www.llr.sc.gov/acct/News/2023-2Q-Newsletter-SC.pdf",
+    "https://llr.sc.gov/acct/forms/Accountancy%20Regulations_4923_official%202020.06.26.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "South Carolina CPE runs by calendar year: 40 hours, 2 of them ethics. Up to 20 extra hours carry forward. The license renews every year."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "carryForwardMax": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours each calendar year. Up to 20 hours over last year's 40 carry forward (not toward ethics)."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Personal development is limited to 20% (8 hours) a year.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 4 nano-learning hours a year.",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 2 hours of ethics every year. Since 2022 any behavioral or regulatory ethics course counts."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is required in the year you're first licensed (and no carryover is earned that year)."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "South Carolina licenses renew every year. CPE is tracked by calendar year.",
+  "issueDateHint": "If you were first licensed this year, no CPE is due until next year.",
+  "renewalMonths": 12,
+  "deadlineLabel": "License renews",
+  "yearEndNote": "carry up to 20",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "personal_development": "Personal development",
+    "nano": "Nano-learning",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Authored works: max 10 hours; college instruction: max 10; committee/technical meetings: max 16.",
+    "At most 12 hours a day; blended learning isn't accepted.",
+    "Some kinds of hours (nano, authored works, higher education) may not carry forward."
+  ],
+  "recordRetention": "Keep CPE records for at least 5 years from the reporting due date.",
+  "toVerify": [
+    "Which kinds of hours can carry forward since the 2023 changes.",
+    "Renewal date (January 31 vs February 1)."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

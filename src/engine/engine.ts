@@ -39,7 +39,14 @@ export type Req = {
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number;
   waiveIfIssuedInWindow?: boolean;
-  licensedYearCredit?: number; // calendar_years_rolling (LA): the calendar year licensed counts as at least this many hours
+  licensedYearCredit?: number;
+  // KY/AR: hours depend on the practice (KY: 80 if you worked at a CPA firm, otherwise 60). Highest that applies wins.
+  whenHours?: { [practice: string]: number };
+  // IA (calendar_years_rolling): licensed inside the window → "linear": hours × full years licensed ÷ years;
+  // "all": the full hours once licensed a full year, none before.
+  prorateIfIssuedInWindow?: "linear" | "all";
+  // AR (calendar-year total): alternatively met by this many hours over the last N calendar years.
+  orRolling?: { years: number; hours: number }; // calendar_years_rolling (LA): the calendar year licensed counts as at least this many hours
   yearParity?: "even" | "odd"; // calendar-year states (LA): only required in even (or odd) years // calendar_years_rolling (VA): no total while the license is newer than the window
   categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
@@ -121,6 +128,10 @@ export type Rules = {
     // IN: by the quarter of the period the certificate was issued in (index 0 = first quarter): requirement hours
     // by id, and the minimum for the calendar year of issuance (earlier years: none). Courses earlier in the period count.
     byIssueQuarter?: { hours: { [id: string]: number }; issueYear: number }[];
+    // OR/KY: a first period from the issue date to the period end, scaled per month (OR: 3⅓ an hour a month counting the
+    // month of issue; KY: 2 a month for each full month). rates = hours per month by requirement id (0 = waived);
+    // annualPerMonth = the yearly minimum per month in each year of the period.
+    perMonthFromIssue?: { rates: { [id: string]: number }; annualPerMonth?: number; includeIssueMonth?: boolean };
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
@@ -345,6 +356,12 @@ export function evaluate(records: Record[], profile: Profile, rules: Rules, asOf
 }
 
 function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: string): Line[] {
+  if (rules.requirements.some(q => q.whenHours)) {
+    rules = { ...rules, requirements: rules.requirements.map(q => {
+      const alt = Object.entries(q.whenHours ?? {}).filter(([p]) => profile.practice?.includes(p)).map(([, h]) => h);
+      return alt.length ? { ...q, hours: Math.max(...alt) } : q;
+    }) };
+  }
   if (isCalendarYear(rules)) {
     const sm = startMonth(rules);
     // The year the per-year lines are built around: this year, or (ID) the last year before the entered date.
@@ -380,6 +397,16 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
       : rules;
     const lines = evaluateWindow(records, profile, yrRules, d(start), d(end), name, asOf);
     if (bmc && issuedHere && rules.newLicensee?.note) { const t = lines.find(l => l.id === "total"); if (t) t.note = rules.newLicensee.note; }
+    const orq = rules.requirements.find(q => q.orRolling);
+    const orl = orq && lines.find(l => l.id === orq.id && !l.met);
+    if (orq?.orRolling && orl) {
+      // AR: 40 this year, or 120 over the 36 months ending this year.
+      const n = orq.orRolling.years, s0 = fyStartD(fyIndex(start, sm) - n + 1, sm);
+      const rolled = round(records.filter(r => d(r.date) >= s0 && d(r.date) <= d(end)).reduce((a, r) => a + r.hours, 0));
+      const left = round(Math.max(0, orq.orRolling.hours - rolled));
+      if (left === 0) { orl.met = true; orl.remaining = 0; orl.note = `Met through the ${orq.orRolling.hours}-hour option: ${rolled} hours over ${fyLabel(fyIndex(start, sm) - n + 1, sm)}–${fyLabel(fyIndex(start, sm), sm)}.`; }
+      else if (left < orl.remaining) { orl.remaining = left; orl.note = `${orq.note ?? ""} You're closer to the ${orq.orRolling.hours}-hour option: ${rolled} over the last ${n} years.`.trim(); }
+    }
     // Neighbouring years for a yearly minimum (ID: last year, this year, next year — each needs 30).
     const cur = fyIndex(start, sm);
     const issued = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
@@ -419,6 +446,32 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
     }, ...still];
+  }
+  const pm = rules.newLicensee?.perMonthFromIssue;
+  if (pm && profile.licenseIssued && d(profile.licenseIssued) > start && d(profile.licenseIssued) <= end) {
+    const iss = d(profile.licenseIssued);
+    const monthsTo = (e: Date) => {
+      let m = (e.getUTCFullYear() - iss.getUTCFullYear()) * 12 + (e.getUTCMonth() - iss.getUTCMonth()) + 1;
+      if (!pm.includeIssueMonth && iss.getUTCDate() !== 1) m--;
+      return Math.max(0, m);
+    };
+    const months = monthsTo(end);
+    const half = (x: number) => Math.ceil(x * 2 - 1e-9) / 2;
+    const requirements = rules.requirements.map(q => pm.rates[q.id] != null ? { ...q, hours: half(pm.rates[q.id] * months) } : q);
+    // Years stay anchored to the normal period; only courses from the issue date on count.
+    const lines = evaluateWindow(records.filter(r => d(r.date) >= iss), profile, { ...rules, requirements }, start, end, "First period", asOf);
+    if (pm.annualPerMonth != null) {
+      const annualIds = rules.requirements.filter(q => q.scope === "each_sub_period" && !q.categories && !q.kind).map(q => q.id);
+      for (const l of lines.filter(l => l.sub && annualIds.includes(l.id))) {
+        const se = d(l.sub!.end), ss = d(l.sub!.start);
+        const m = se < iss ? 0 : ss > iss ? (se.getUTCFullYear() - ss.getUTCFullYear()) * 12 + (se.getUTCMonth() - ss.getUTCMonth()) + 1 : monthsTo(se);
+        l.required = Math.min(l.required, half(pm.annualPerMonth * m));
+        l.remaining = round(Math.max(0, l.required - l.earned)); l.met = l.earned >= l.required;
+      }
+    }
+    const total = lines.find(l => l.id === "total");
+    if (total) total.note = `${rules.newLicensee?.note ?? "First period prorated"} — ${months} months.`;
+    return lines.filter(l => !(l.required === 0 && l.kind !== "max" && l.id !== "total"));
   }
   const bq = rules.newLicensee?.byIssueQuarter;
   if (bq && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {
@@ -721,8 +774,31 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         parts.push({ label: `${yl(yr)} courses`, logged, counted: round(counted), why });
       }
       earned = round(earned);
+      if (q.kind === "max") {
+        // IA: a cap over the whole window (self-study ≤ 60 of 120). The excess comes off the window's total.
+        const over = round(Math.max(0, earned - q.hours));
+        lines.push({ id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`, kind: "max",
+          required: q.hours, earned, remaining: 0, met: true, over, note: q.note, deadline: iso(yearEnd(y)), group: q.group });
+        const tot = lines.find(l => l.id === "total" && !l.sub);
+        if (tot && over > 0) { tot.earned = round(tot.earned - over); tot.remaining = round(Math.max(0, tot.required - tot.earned)); tot.met = tot.earned >= tot.required; }
+        continue;
+      }
       // VA: licensed during the window → only the yearly minimums for the years after licensure apply, no total.
       const fi = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
+      if (q.prorateIfIssuedInWindow && profile.licenseIssued && d(profile.licenseIssued) > yearStart(y - n + 1)) {
+        // IA: licensed less than N years before the window ends → hours for each full year licensed.
+        const iss = d(profile.licenseIssued), we = yearEnd(y);
+        const yrs = Math.floor(((we.getUTCFullYear() - iss.getUTCFullYear()) * 12 + we.getUTCMonth() - iss.getUTCMonth() + 1) / 12);
+        if (yrs < n) {
+          const req = q.prorateIfIssuedInWindow === "all" ? (yrs >= 1 ? q.hours : 0) : round(q.hours * yrs / n);
+          lines.push({
+            id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`, required: req, earned,
+            remaining: round(Math.max(0, req - earned)), met: earned >= req, deadline: iso(yearEnd(y)), group: q.group,
+            note: req ? `Licensed ${yrs} full year${yrs === 1 ? "" : "s"} by the end of ${yl(y)}: ${req} hours.` : "Not required yet — licensed less than a year.",
+          });
+          continue;
+        }
+      }
       if (q.waiveIfIssuedInWindow && fi != null && fi >= y - n + 1 && fi <= y) {
         lines.push({
           id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`, required: 0, earned, remaining: 0, met: true,

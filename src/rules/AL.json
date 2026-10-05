@@ -1,0 +1,160 @@
+{
+  "state": "AL",
+  "board": "Alabama State Board of Public Accountancy",
+  "sourceUrls": [
+    "https://asbpa.alabama.gov/accountancy-rules/",
+    "https://www.asbpa.alabama.gov/PDF/2019724CPEChanges.pdf",
+    "https://asbpa.alabama.gov/wp-content/uploads/2026/04/2022-2-4-New-CPA-Quickguide.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 10,
+    "note": "Alabama CPE years run October 1 \u2013 September 30: 40 hours, including 2 ethics and 8 accounting & auditing. You register every year."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "40 hours each CPE year (Ala. Admin. Code 30-X-5)."
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "At least 8 of the 40 in accounting and auditing \u2014 required of every active CPA."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 12,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 12 personal development hours count.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 10,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Nano-learning is limited to 25% (10 hours).",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 2 hours in a qualifying ethics course every year."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "New CPAs start earning CPE on the October 1 after their first active registration."
+  },
+  "licenseDateLabel": "Registration date",
+  "licenseDateHint": "Alabama registrations are renewed every year (due by October 1, with a grace period). CPE years run October\u2013September regardless.",
+  "issueDateHint": "If you were licensed this CPE year (since October 1), CPE starts next October 1.",
+  "renewalMonths": 12,
+  "deadlineLabel": "Registration due",
+  "yearEndNote": "due September 30",
+  "categoryLabels": {
+    "aa": "Accounting & auditing",
+    "ethics": "Ethics",
+    "personal_development": "Personal development",
+    "nano": "Nano-learning",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "aa",
+    "ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching: twice the lecture hours, no credit for repeats.",
+    "Software courses count as A&A only if about accounting or audit applications."
+  ],
+  "recordRetention": "Keep CPE records for 5 years after completion.",
+  "toVerify": [
+    "A rule amendment filed May 2026 (effective date pending).",
+    "Registration deadline (October 1 vs December 31)."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

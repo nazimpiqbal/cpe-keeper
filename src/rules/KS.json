@@ -1,0 +1,130 @@
+{
+  "state": "KS",
+  "board": "Kansas Board of Accountancy",
+  "sourceUrls": [
+    "https://ksboa.kansas.gov/wp-content/uploads/Article-4.-April-26-2024.pdf",
+    "https://ksboa.kansas.gov/wp-content/uploads/kansas_newsletter_april16.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "Permit period",
+    "note": "Kansas permits renew every two years on July 1; CPE runs July 1 \u2013 June 30 over the two years before: 80 hours, 2 of them ethics."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 20
+      },
+      "showNote": true,
+      "note": "80 hours each permit period (K.A.R. 74-4-7). Up to 20 extra hours carry forward (not toward ethics)."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 24,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Personal development is limited to 30% (24 hours).",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "2 hours of professional ethics relating to CPA practice each period."
+    }
+  ],
+  "newLicensee": {
+    "prorateByQuarter": {
+      "except": [],
+      "fullCalendarQuarters": true
+    },
+    "note": "First period prorated: 10 hours for each full quarter after your permit was issued"
+  },
+  "licenseDateLabel": "CPE period end date",
+  "licenseDateHint": "June 30 before your permit renews on July 1 (odd or even years by your certificate number).",
+  "issueDateHint": "If your permit was issued during this period, hours are prorated by quarter.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "06-30",
+  "deadlineLabel": "CPE period ends",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "personal_development": "Personal development",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction and preparation: max 50%; college credit: max 50%.",
+    "Municipal public accountants: 16 hours a year, 8 in municipal A&A.",
+    "Missing CPE adds 8 extra hours."
+  ],
+  "recordRetention": "Keep CPE records for six years from the end of the year completed.",
+  "toVerify": [
+    "New-permit proration (10 hours per full quarter; the Board shows the exact hours on the renewal form).",
+    "Ethics prorated with the total for a new permit."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}
