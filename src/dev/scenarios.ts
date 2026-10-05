@@ -2256,4 +2256,66 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Indiana ── period 1/1/2024 – 12/31/2026: 120 hours, 20 each calendar year, 12 A&A, 4 ethics, self-study max 60.
+  // New certificates prorated by the quarter of issue (872 IAC 1-3-16).
+  {
+    id: "IN-1", state: "IN", title: "Clean slate",
+    checks: "120 hours; 20 in each of 2024, 2025, 2026 (the first two have ended); 12 A&A; 4 ethics.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, past: true },
+      { id: "aa", earned: 0, required: 12, remaining: 12 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 120, rows: ["2026: Any subject 20", "Any time: Accounting & auditing 12", "Any time: Ethics 4", "Any time: Any subject 84"] },
+  },
+  {
+    id: "IN-2", state: "IN", title: "Too much self-study",
+    checks: "100 hours of self-study — only 60 count. 60 + 20 live A&A + 4 ethics = 84 of 120; the rest can't be self-study.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Library", provider: P, date: "2024-03-01", hours: 40, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "Tax Library II", provider: P, date: "2025-03-01", hours: 40, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "Tax Library III", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "Audit Update", provider: P, date: "2026-05-01", hours: 20, field: "Auditing", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-06-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 84, required: 120, remaining: 36 },
+      { id: "self_study_max", earned: 100, required: 60, over: 40 },
+      { id: "aa", earned: 20, required: 12, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 36, rows: ["Any time: Any course except self-study 36"] },
+  },
+  {
+    id: "IN-3", state: "IN", title: "Certificate issued in May of year 2",
+    checks: "Issued 5/15/2025 (Apr–Jun, year 2): 70 hours, 15 in 2025, none in 2024, 20 in 2026; A&A 7; ethics 4; self-study max 35. A 2024 course still counts.",
+    license: { expiration: "2026-12-31", issued: "2025-05-15" },
+    courses: [
+      { title: "Exam Review", provider: P, date: "2024-10-01", hours: 10, field: "Accounting", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2025-08-01", hours: 15, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 25, required: 70, remaining: 45 },
+      { id: "annual_total", y: 1, earned: 10, required: 0, met: true },
+      { id: "annual_total", y: 2, earned: 15, required: 15, met: true },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "aa", earned: 10, required: 7, met: true },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "self_study_max", earned: 0, required: 35 },
+    ],
+    stillNeeded: { total: 45, rows: ["2026: Any subject 20", "Any time: Ethics 4", "Any time: Any subject 21"] },
+  },
+  {
+    id: "IN-4", state: "IN", title: "Certificate issued in the last quarter",
+    checks: "Issued 11/1/2026 (Oct–Dec, year 3): nothing due this period.",
+    license: { expiration: "2026-12-31", issued: "2026-11-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }, { id: "ethics", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];

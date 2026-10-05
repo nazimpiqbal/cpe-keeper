@@ -116,6 +116,9 @@ export type Rules = {
     // MA: first renewal total by the month the license was issued (index 0 = January); other requirements unchanged.
     // In calendar-year states (NC) it sets the licensure year's total instead.
     totalByIssueMonth?: number[];
+    // IN: by the quarter of the period the certificate was issued in (index 0 = first quarter): requirement hours
+    // by id, and the minimum for the calendar year of issuance (earlier years: none). Courses earlier in the period count.
+    byIssueQuarter?: { hours: { [id: string]: number }; issueYear: number }[];
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
@@ -406,6 +409,25 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
       id: "total", label: "Total CPE", period: `First renewal (${iso(end)})`, required: 0, earned: 0, remaining: 0, met: true,
       deadline: iso(end), group: "overall", note: rules.newLicensee.note ?? "No CPE is due for your first renewal.",
     }, ...still];
+  }
+  const bq = rules.newLicensee?.byIssueQuarter;
+  if (bq && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {
+    let qi = 0; while (qi < bq.length - 1 && addMonths(start, (qi + 1) * 3) <= d(profile.licenseIssued)) qi++;
+    const row = bq[qi];
+    const requirements = rules.requirements.map(q => row.hours[q.id] != null ? { ...q, hours: row.hours[q.id] } : q);
+    const lines = evaluateWindow(records, profile, { ...rules, requirements }, start, end, rules.cycle.label ?? "Cycle", asOf);
+    const issueYear = Number(profile.licenseIssued.slice(0, 4));
+    const annualIds = rules.requirements.filter(q => q.scope === "each_sub_period" && !q.categories && !q.kind).map(q => q.id);
+    for (const l of lines.filter(l => l.sub && annualIds.includes(l.id))) {
+      const y = Number(l.sub!.start.slice(0, 4));
+      if (y > issueYear) continue;
+      l.required = y === issueYear ? row.issueYear : 0;
+      l.remaining = round(Math.max(0, l.required - l.earned)); l.met = l.earned >= l.required;
+      l.note = y === issueYear ? `Year you were licensed: ${row.issueYear} hours.` : "Before you were licensed.";
+    }
+    const total = lines.find(l => l.id === "total");
+    if (total && rules.newLicensee?.note) total.note = `${rules.newLicensee.note} — ${row.hours.total ?? total.required} hours for this period.`;
+    return lines;
   }
   const bi = rules.newLicensee?.byIssueYearInPeriod;
   if (bi && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {

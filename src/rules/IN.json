@@ -1,0 +1,266 @@
+{
+  "state": "IN",
+  "board": "Indiana Board of Accountancy",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/indiana/title-872/article-1/rule-3/section-16/",
+    "https://regulations.justia.com/states/indiana/title-872/article-1/rule-3/section-8/",
+    "https://www.incpas.org/learn/licensure-requirements/",
+    "https://www.nasbaregistry.org/cpe-requirements/indiana"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "calendarSubPeriods": true,
+    "label": "Reporting period",
+    "note": "Indiana CPE runs in three-calendar-year periods (now January 1, 2024 \u2013 December 31, 2026); licenses then renew the following June 30. 120 hours, at least 20 each year, 12 accounting & auditing, 4 ethics."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "120 hours in the three-year period (872 IAC 1-3)."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "aa",
+      "label": "Accounting & auditing",
+      "hours": 12,
+      "scope": "cycle",
+      "categories": [
+        "aa"
+      ],
+      "group": "subject",
+      "note": "At least 10% of your required hours (12 of a full 120) in accounting and auditing \u2014 required of every licensee."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 60,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "showNote": true,
+      "note": "Maximum, not a target. No more than half your required hours (60 of a full 120) can be self-study. We use each course's delivery format.",
+      "otherLabel": "Any course except self-study"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics each period (not prorated except for a certificate issued in the last quarter)."
+    }
+  ],
+  "newLicensee": {
+    "byIssueQuarter": [
+      {
+        "hours": {
+          "total": 120,
+          "aa": 12,
+          "ethics": 4,
+          "self_study_max": 60
+        },
+        "issueYear": 20
+      },
+      {
+        "hours": {
+          "total": 110,
+          "aa": 11,
+          "ethics": 4,
+          "self_study_max": 55
+        },
+        "issueYear": 15
+      },
+      {
+        "hours": {
+          "total": 100,
+          "aa": 10,
+          "ethics": 4,
+          "self_study_max": 50
+        },
+        "issueYear": 10
+      },
+      {
+        "hours": {
+          "total": 90,
+          "aa": 9,
+          "ethics": 4,
+          "self_study_max": 45
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80,
+          "aa": 8,
+          "ethics": 4,
+          "self_study_max": 40
+        },
+        "issueYear": 20
+      },
+      {
+        "hours": {
+          "total": 70,
+          "aa": 7,
+          "ethics": 4,
+          "self_study_max": 35
+        },
+        "issueYear": 15
+      },
+      {
+        "hours": {
+          "total": 60,
+          "aa": 6,
+          "ethics": 4,
+          "self_study_max": 30
+        },
+        "issueYear": 10
+      },
+      {
+        "hours": {
+          "total": 50,
+          "aa": 5,
+          "ethics": 4,
+          "self_study_max": 25
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 40,
+          "aa": 4,
+          "ethics": 4,
+          "self_study_max": 20
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 30,
+          "aa": 3,
+          "ethics": 4,
+          "self_study_max": 15
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 20,
+          "aa": 2,
+          "ethics": 4,
+          "self_study_max": 10
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 0,
+          "aa": 0,
+          "ethics": 0,
+          "self_study_max": 0
+        },
+        "issueYear": 0
+      }
+    ],
+    "note": "Certificate issued during this period: hours depend on the quarter it was issued (872 IAC 1-3-16). Courses earlier in the period count"
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "CPE period end date",
+  "licenseDateHint": "December 31 of the last year of your three-year period (2026, 2029, \u2026). Your license renews the following June 30.",
+  "issueDateHint": "If your certificate was issued during this period, fewer hours are due depending on the quarter.",
+  "renewalMonths": 36,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "CPE period ends",
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "categoryLabels": {
+    "aa": "Accounting & auditing",
+    "ethics": "Ethics",
+    "self_study": "Self-study",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "aa",
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "aa": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)"
+    ],
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 50% of the hours.",
+    "University credit: graduate-level courses only, grade C or better.",
+    "Ethics can also be met through verified unpaid work for a professional organization applying the code of conduct."
+  ],
+  "recordRetention": "Keep certificates of completion for 36 months after the end of the renewal period.",
+  "toVerify": [
+    "Nano learning counted as self-study for the 50% cap.",
+    "The A&A 12 applies to every licensee (sources say so)."
+  ]
+}
