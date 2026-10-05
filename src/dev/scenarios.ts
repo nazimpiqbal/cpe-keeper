@@ -2694,4 +2694,148 @@ export const SCENARIOS: Scenario[] = [
       { id: "ar_rules", earned: 0, required: 0, met: true },
     ],
     stillNeeded: { total: 8, rows: ["Any time: Any subject 8"] } },
+  // ── Mississippi ── compliance year 7/1/2026 – 6/30/2027: 40 hours (carry up to 20); triennium 7/2025 – 6/2028:
+  // 3 Board-approved ethics + 1 Mississippi law & regulations.
+  { id: "MS-1", state: "MS", title: "Clean slate", checks: "40 this compliance year; Mississippi ethics 3 and law 1 this triennium.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 40, remaining: 40 },
+      { id: "ms_ethics", earned: 0, required: 3, remaining: 3 },
+      { id: "ms_law", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Mississippi ethics 3", "Any time: Mississippi law & regulations 1", "Any time: Any subject 36"] } },
+  { id: "MS-2", state: "MS", title: "Carry forward and the triennium courses", checks: "2025–26: 70 hours → 20 carry. 2026–27: 15 Tax + Ethics for Mississippi CPAs 3 + Mississippi Public Accountancy Law and Regulations 1 = 19 + 20 = 39 of 40.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-09-01", hours: 70, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 15, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for Mississippi CPAs", provider: P, date: "2026-09-01", hours: 3, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+      { title: "Mississippi Public Accountancy Law and Regulations", provider: P, date: "2026-09-02", hours: 1, field: "Regulatory Ethics", delivery: "Group Internet Based" }], expect: [
+      { id: "total", earned: 39, required: 40, remaining: 1 },
+      { id: "ms_ethics", earned: 3, required: 3, met: true },
+      { id: "ms_law", earned: 1, required: 1, met: true },
+    ],
+    stillNeeded: { total: 1, rows: ["Any time: Any subject 1"] } },
+  { id: "MS-3", state: "MS", title: "General ethics isn't the Mississippi course", checks: "AICPA ethics 4 + Tax 36 = 40 of 40, but the Mississippi ethics and law courses are still needed this triennium.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+      { title: "AICPA Code of Professional Conduct", provider: P, date: "2026-08-01", hours: 4, field: "Regulatory Ethics", delivery: "QAS Self Study" },
+      { title: "Tax Update", provider: P, date: "2026-09-01", hours: 36, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 40, required: 40, met: true },
+      { id: "ms_ethics", earned: 0, required: 3, remaining: 3 },
+      { id: "ms_law", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Mississippi ethics 3", "Any time: Mississippi law & regulations 1"] } },
+  { id: "MS-4", state: "MS", title: "Licensed this compliance year", checks: "Licensed 8/1/2026: nothing due this compliance year, and no ethics this triennium.",
+    license: { expiration: "2027-12-31", issued: "2026-08-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 0, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] } },
+  // ── Nebraska ── CPE period 1/1/2025 – 12/31/2026 (renewal June 2027): 80 hours, 4 ethics, self-study max 40, PD max 16.
+  { id: "NE-1", state: "NE", title: "Clean slate", checks: "80 hours, 4 ethics.", license: { expiration: "2026-12-31", issued: "2010-05-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Ethics 4", "Any time: Any subject 76"] } },
+  { id: "NE-2", state: "NE", title: "Self-study over 40", checks: "60 self-study — only 40 count. 40 + 20 live + 4 ethics = 64 of 80.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" }, courses: [
+      { title: "Tax Library", provider: P, date: "2025-04-01", hours: 60, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "GAAP Update", provider: P, date: "2026-04-01", hours: 20, field: "Accounting", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-05-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 64, required: 80, remaining: 16 },
+      { id: "self_study_max", earned: 60, required: 40, over: 20 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 16, rows: ["Any time: Any course except self-study 16"] } },
+  { id: "NE-3", state: "NE", title: "Permit issued after July 1 of the last year", checks: "Issued 8/15/2026: 40 hours for the renewal.",
+    license: { expiration: "2026-12-31", issued: "2026-08-15" }, courses: [
+      { title: "Tax Update", provider: P, date: "2026-09-01", hours: 12, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 12, required: 40, remaining: 28 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 28, rows: ["Any time: Ethics 4", "Any time: Any subject 24"] } },
+  { id: "NE-4", state: "NE", title: "Permit issued earlier in the period", checks: "Issued 3/1/2026 (before July 1 of the last year): the full 80; a 2025 course counts.",
+    license: { expiration: "2026-12-31", issued: "2026-03-01" }, courses: [
+      { title: "Exam Review", provider: P, date: "2025-05-01", hours: 30, field: "Accounting", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 30, required: 80, remaining: 50 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["Any time: Ethics 4", "Any time: Any subject 46"] } },
+  // ── New Mexico ── 36 months 4/1/2024 – 3/31/2027 (birth month March): 120, 20 each reporting year, 96 technical, 4 ethics.
+  { id: "NM-1", state: "NM", title: "Clean slate", checks: "120, 20 each reporting year, 96 technical, 4 ethics.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20, past: true },
+      { id: "annual_total", y: 3, earned: 0, required: 20, remaining: 20 },
+      { id: "technical", earned: 0, required: 96, remaining: 96 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 120, rows: ["2026–27: Any subject 20", "Any time: Technical 96", "Any time: Ethics 4"] } },
+  { id: "NM-2", state: "NM", title: "Not enough technical", checks: "40 personal development + 40 communications + 40 Tax + 4 Regulatory Ethics: 124 hours, but only 44 technical of 96.",
+    license: { expiration: "2027-03-31", issued: "2010-05-01" }, courses: [
+      { title: "Leadership Summit", provider: P, date: "2024-06-01", hours: 40, field: "Personal Development", delivery: "Group Live" },
+      { title: "Business Writing", provider: P, date: "2025-06-01", hours: 40, field: "Communications and Marketing", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-07-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 120, required: 120, met: true },
+      { id: "annual_total", y: 1, earned: 40, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 40, required: 20, met: true },
+      { id: "annual_total", y: 3, earned: 44, required: 20, met: true },
+      { id: "technical", earned: 44, required: 96, remaining: 52 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 52, rows: ["Any time: Technical 52"] } },
+  { id: "NM-3", state: "NM", title: "First expiration", checks: "Licensed 1/10/2025: no CPE until the first expiration.",
+    license: { expiration: "2027-03-31", issued: "2025-01-10" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 0, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] } },
+  // ── New Hampshire ── period 5/15/2025 – 5/14/2027: 80 hours, 4 ethics, carry up to 40.
+  { id: "NH-1", state: "NH", title: "Clean slate", checks: "80 hours, 4 ethics.", license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Professional ethics 4", "Any time: Any subject 76"] } },
+  { id: "NH-2", state: "NH", title: "Carry forward 40", checks: "Previous period: 150 → 40 carry. This period: 20 + 4 ethics = 24 + 40 = 64 of 80.",
+    license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [
+      { title: "Tax Marathon", provider: P, date: "2024-06-01", hours: 150, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 64, required: 80, remaining: 16 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 16, rows: ["Any time: Any subject 16"] } },
+  { id: "NH-3", state: "NH", title: "New licensee", checks: "Licensed 1/20/2026: 16 full months to expiration × 20 a year ≈ 27 hours; ethics 4.",
+    license: { expiration: "2027-05-14", issued: "2026-01-20" }, courses: [
+      { title: "Tax Update", provider: P, date: "2026-05-01", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 10, required: 27, remaining: 17 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 17, rows: ["Any time: Professional ethics 4", "Any time: Any subject 13"] } },
+  // ── Hawaii ── biennium 2026–2027: 80, 20 each year, 4 ethics, carry up to 40.
+  { id: "HI-1", state: "HI", title: "Clean slate", checks: "80, 20 in 2026 and 2027, 4 ethics.", license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [], expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "annual_total", y: 1, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["2026: Any subject 20", "2027: Any subject 20", "Any time: Ethics 4", "Any time: Any subject 36"] } },
+  { id: "HI-2", state: "HI", title: "Carry forward 40", checks: "2024–25: 140 → 40 carry. 2026: 25 + 4 ethics = 29 + 40 = 69 of 80; 2027 still needs 20.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-03-01", hours: 140, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 25, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "annual_total", y: 1, earned: 29, required: 20, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 20, rows: ["2027: Any subject 20"] } },
+  { id: "HI-3", state: "HI", title: "Permit approved in August of year 1", checks: "Approved 8/10/2026 (third quarter): 60 hours; no 2026 minimum; 2027 needs 20; ethics 4.",
+    license: { expiration: "2027-12-31", issued: "2026-08-10" }, courses: [
+      { title: "Tax Update", provider: P, date: "2026-09-01", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 10, required: 60, remaining: 50 },
+      { id: "annual_total", y: 1, earned: 10, required: 0, met: true },
+      { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["2027: Any subject 20", "Any time: Ethics 4", "Any time: Any subject 26"] } },
 ];

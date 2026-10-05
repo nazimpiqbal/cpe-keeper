@@ -1,0 +1,157 @@
+{
+  "state": "MS",
+  "board": "Mississippi State Board of Public Accountancy",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/mississippi/30-Miss-Code-R-SS-1-4-1",
+    "https://www.law.cornell.edu/regulations/mississippi/30-Miss-Code-R-SS-1-4-2",
+    "https://www.msbpa.ms.gov/node/42",
+    "https://www.msbpa.ms.gov/sites/accounting/files/2026%20to%202028%20Approved_Ethics_Courses.pdf"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 7,
+    "note": "Mississippi compliance years run July 1 \u2013 June 30 (report by August 1): 40 hours a year, up to 20 carried from last year. Each triennium (now July 1, 2025 \u2013 June 30, 2028) also needs 3 hours of Board-approved ethics and 1 hour of Mississippi law and regulations."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "carryForwardMax": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours each July\u2013June compliance year (30 Miss. Code R. 1-4.1). Up to 20 hours over last year's 40 carry forward."
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 20,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 20 personal development hours count each year.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "ms_ethics",
+      "label": "Mississippi ethics",
+      "hours": 3,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "fixedFrom": 2025,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ms_ethics"
+      ],
+      "group": "special",
+      "showNote": true,
+      "note": "3 hours of Board-approved ethics and professional conduct each triennium (now July 2025 \u2013 June 2028). We count courses with \"Mississippi\" and \"ethics\" in the title."
+    },
+    {
+      "id": "ms_law",
+      "label": "Mississippi law & regulations",
+      "hours": 1,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "fixedFrom": 2025,
+      "waiveIfIssuedInWindow": true,
+      "categories": [
+        "ms_law"
+      ],
+      "group": "special",
+      "note": "1 hour on Mississippi Public Accountancy Law and Regulations each triennium. We count titles with \"Mississippi\" and \"law\" or \"regulation\"."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due in the compliance year you're licensed, and the ethics courses aren't due for the rest of that triennium."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Mississippi licenses renew every year. CPE years run July 1 \u2013 June 30 regardless.",
+  "issueDateHint": "If you were licensed this compliance year (since July 1), no CPE is due until next July 1.",
+  "renewalMonths": 12,
+  "deadlineLabel": "License renews",
+  "yearEndNote": "report by August 1",
+  "categoryLabels": {
+    "ms_ethics": "Mississippi ethics",
+    "ms_law": "Mississippi law",
+    "personal_development": "Personal development",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ms_ethics",
+    "ms_law",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ]
+  },
+  "titleKeywordMap": {
+    "ms_ethics": [
+      "mississippi+ethics"
+    ],
+    "ms_law": [
+      "mississippi+law",
+      "mississippi+regulation"
+    ]
+  },
+  "categoryExcludes": {
+    "ms_law": [
+      "ms_ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Self-study must be NASBA QAS-approved; independent study isn't accepted.",
+    "Teaching: preparation credit up to twice the presentation time.",
+    "Personal development over 20 doesn't carry forward."
+  ],
+  "recordRetention": "Keep CPE records for at least 5 years after the end of the compliance year and triennium.",
+  "toVerify": [
+    "Ethics titles: only Board-approved courses count (list on the Board site); the app matches \"Mississippi\" + \"ethics\"."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

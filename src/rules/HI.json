@@ -1,0 +1,167 @@
+{
+  "state": "HI",
+  "board": "Hawaii Board of Public Accountancy",
+  "sourceUrls": [
+    "https://www.law.cornell.edu/regulations/hawaii/title-16/chapter-71/subchapter-5",
+    "https://www.law.cornell.edu/regulations/hawaii/Haw-Code-R-SS-16-71-33"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "Biennium",
+    "note": "Hawaii permits expire December 31 of odd-numbered years. CPE: 80 hours over the two calendar years, at least 20 each year, 4 of them ethics; up to 40 carry forward."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 40
+      },
+      "showNote": true,
+      "note": "80 hours each biennium (HAR \u00a716-71-33). Up to 40 extra hours carry forward (not toward ethics)."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of ethics or professional conduct each biennium. Extra ethics counts as regular CPE but doesn't carry as ethics."
+    }
+  ],
+  "newLicensee": {
+    "byIssueQuarter": [
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 20
+      },
+      {
+        "hours": {
+          "total": 70
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 60
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 50
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 40
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 30
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 20
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 10
+        },
+        "issueYear": 0
+      }
+    ],
+    "note": "First biennium prorated: 80 hours, less 10 for each three-month period that had passed when your permit was approved"
+  },
+  "licenseDateLabel": "Permit expiration date",
+  "licenseDateHint": "Hawaii permits expire December 31 of odd-numbered years (e.g. 12/31/2027).",
+  "issueDateHint": "If your permit was approved during this biennium, the hours are reduced by 10 for each quarter that had passed.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "expiresYearParity": "odd",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "limitsNotTracked": [
+    "Teaching or speaking: max 40 hours; publications: max 20; quality review: half credit, max 20.",
+    "Passing the CPA exam counts as 80 hours for two years."
+  ],
+  "recordRetention": "Keep certificates in case you're chosen for audit.",
+  "toVerify": [
+    "First-biennium proration beyond 60 hours inferred from \"ten hours for each three-month period\".",
+    "Yearly minimum in the year a new permit is approved."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

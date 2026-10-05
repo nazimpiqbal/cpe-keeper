@@ -1,0 +1,199 @@
+{
+  "state": "NE",
+  "board": "Nebraska Board of Public Accountancy",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/nebraska/board-of-public-accountancy/title-288/chapter-8/",
+    "https://nbpa.nebraska.gov/node/353",
+    "https://nbpa.nebraska.gov/sites/default/files/doc/CPE%20GUIDELINES%2011-%202023.pdf",
+    "https://nbpa.nebraska.gov/licensing-requirements"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "subPeriods": 2,
+    "calendarSubPeriods": true,
+    "label": "CPE period",
+    "note": "Nebraska permits renew every two years by June 30. CPE comes from the two calendar years before the renewal year: 80 hours including 4 ethics, due December 31 and reported by January 31."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "80 hours in the two calendar years before renewal (288 NAC 8)."
+    },
+    {
+      "id": "self_study_max",
+      "label": "Self-study",
+      "hours": 40,
+      "scope": "cycle",
+      "categories": [
+        "self_study"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 40 self-study hours count each period. We use each course's delivery format.",
+      "otherLabel": "Any course except self-study"
+    },
+    {
+      "id": "pd_max",
+      "label": "Personal development",
+      "hours": 16,
+      "scope": "cycle",
+      "categories": [
+        "personal_development"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 16 personal development hours count each period.",
+      "otherLabel": "Any course except personal development"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics each period (general or professional ethics, independence, Circular 230 and similar)."
+    }
+  ],
+  "newLicensee": {
+    "byIssueQuarter": [
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 80
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 40,
+          "self_study_max": 20,
+          "pd_max": 8
+        },
+        "issueYear": 0
+      },
+      {
+        "hours": {
+          "total": 40,
+          "self_study_max": 20,
+          "pd_max": 8
+        },
+        "issueYear": 0
+      }
+    ],
+    "note": "Permit issued during this period: 80 hours, or 40 if it was issued after July 1 of the year before it expires"
+  },
+  "licenseDateLabel": "CPE period end date",
+  "licenseDateHint": "December 31 before your June 30 renewal year (e.g. 12/31/2026 for a June 2027 renewal).",
+  "issueDateHint": "If your permit was issued after July 1 of the last year of this period, only 40 hours are due.",
+  "renewalMonths": 24,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "CPE period ends",
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "self_study": "Self-study",
+    "personal_development": "Personal development",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "personal_development",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
+    ],
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "self_study": [
+      "QAS Self Study",
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Instruction: max 40 hours; firm meetings: max 16.",
+    "Audit, review or compilation work: 40% A&A is recommended, not required."
+  ],
+  "recordRetention": "Keep CPE records for six years.",
+  "toVerify": [
+    "Renewal year mapping (birth year) and date \u2014 the Board says June 30.",
+    "Nano counted with self-study for the 40-hour cap."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

@@ -47,7 +47,8 @@ export type Req = {
   prorateIfIssuedInWindow?: "linear" | "all";
   // AR (calendar-year total): alternatively met by this many hours over the last N calendar years.
   orRolling?: { years: number; hours: number }; // calendar_years_rolling (LA): the calendar year licensed counts as at least this many hours
-  yearParity?: "even" | "odd"; // calendar-year states (LA): only required in even (or odd) years // calendar_years_rolling (VA): no total while the license is newer than the window
+  yearParity?: "even" | "odd";
+  fixedFrom?: number; // calendar_years_rolling (MS ethics): fixed windows of `years` starting with this (CPE) year // calendar-year states (LA): only required in even (or odd) years // calendar_years_rolling (VA): no total while the license is newer than the window
   categories?: string[]; when?: string; note?: string;
   // Alternative way to meet it, e.g. NY: 40 hours in any areas OR 24 hours in one area.
   // plusCategories: hours that count toward the concentrated total on top of the one area (NY: ethics in that year).
@@ -753,7 +754,9 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
     if (q.scope === "calendar_years_rolling") {
       // Sum of the last N calendar years (this one included), each capped. The licensure year counts as
       // creditIfMet once its required course is done (ID: 2-hr Idaho ethics → 50).
-      const y = fyIndex(iso(end), sm), n = q.years ?? 2; // the window's last year
+      const n = q.years ?? 2;
+      // MS: a fixed window (triennium starting with fixedFrom), not rolling — the one containing this year.
+      const y = q.fixedFrom != null ? q.fixedFrom + Math.floor((fyIndex(iso(end), sm) - q.fixedFrom) / n) * n + n - 1 : fyIndex(iso(end), sm); // the window's last year
       const ly = rules.newLicensee?.licensureYear;
       const issuedYear = profile.licenseIssued ? Number(profile.licenseIssued.slice(0, 4)) : null;
       let earned = 0;

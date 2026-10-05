@@ -1,0 +1,131 @@
+{
+  "state": "NH",
+  "board": "New Hampshire Board of Accountancy (OPLC)",
+  "sourceUrls": [
+    "https://gc.nh.gov/rules/state_agencies/ac100-500.html",
+    "https://oplc.nh.gov/accountancy-continuing-professional-education"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 24,
+    "label": "Certification period",
+    "note": "New Hampshire licenses run two years from their own issue date (Ac 401.03): 80 hours each period, 4 of them ethics, up to 40 carried forward."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 80,
+      "scope": "cycle",
+      "group": "overall",
+      "carryFromPreviousPeriod": {
+        "max": 40
+      },
+      "showNote": true,
+      "note": "80 hours each two-year period (Ac 403.01). Up to 40 hours over the 80 carry to the next period only."
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 6,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. No more than 3 nano-learning hours a year (6 per period).",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "At least 4 hours of professional ethics each period. No New Hampshire-specific course is required."
+    }
+  ],
+  "newLicensee": {
+    "perMonthFromIssue": {
+      "rates": {
+        "total": 1.6666666666666667
+      },
+      "includeIssueMonth": false
+    },
+    "note": "New licensees: at least 20 hours for each year before renewal"
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Two years from your license's issue or last renewal date. (Some licenses from the 2023 transition run three years and need 120 hours.)",
+  "issueDateHint": "If you were newly licensed during this period, about 20 hours a year are due.",
+  "renewalMonths": 36,
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "nano": "Nano-learning",
+    "general": "General CPE"
+  },
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "Authoring: max 50%; instructing: max 50% (preparation up to twice the presentation time).",
+    "Three-year transition licenses: 120 hours, carry up to 60 \u2014 not modelled."
+  ],
+  "recordRetention": "Keep CPE records for at least 4 years from the renewal date.",
+  "toVerify": [
+    "New licensees: 20 hours per year before renewal, prorated by full month; ethics kept at 4.",
+    "Whether the 20-a-year minimum applies to everyone (OPLC page) or only new/reactivated licensees (Ac 403.01(b))."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}

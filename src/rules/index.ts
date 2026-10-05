@@ -34,6 +34,11 @@ import ria from "./IA.json";
 import rks from "./KS.json";
 import rnv from "./NV.json";
 import rar from "./AR.json";
+import rms from "./MS.json";
+import rne from "./NE.json";
+import rnm from "./NM.json";
+import rnh from "./NH.json";
+import rhi from "./HI.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -72,12 +77,18 @@ export const RULES: { [state: string]: Rules } = {
   KS: rks as unknown as Rules,
   NV: rnv as unknown as Rules,
   AR: rar as unknown as Rules,
+  MS: rms as unknown as Rules,
+  NE: rne as unknown as Rules,
+  NM: rnm as unknown as Rules,
+  NH: rnh as unknown as Rules,
+  HI: rhi as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
   CA: "California", NY: "New York", TX: "Texas", FL: "Florida", IL: "Illinois",
   PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts", VA: "Virginia", NC: "North Carolina", MD: "Maryland", MN: "Minnesota", CO: "Colorado", MO: "Missouri", WI: "Wisconsin", TN: "Tennessee", IN: "Indiana", LA: "Louisiana",
   OR: "Oregon", SC: "South Carolina", KY: "Kentucky", AL: "Alabama", OK: "Oklahoma", UT: "Utah", IA: "Iowa", KS: "Kansas", NV: "Nevada", AR: "Arkansas",
+  MS: "Mississippi", NE: "Nebraska", NM: "New Mexico", NH: "New Hampshire", HI: "Hawaii",
 };
 
-export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA", "OR", "SC", "KY", "AL", "OK", "UT", "IA", "KS", "NV", "AR"];
+export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA", "VA", "NC", "MD", "MN", "CO", "MO", "WI", "TN", "IN", "LA", "OR", "SC", "KY", "AL", "OK", "UT", "IA", "KS", "NV", "AR", "MS", "NE", "NM", "NH", "HI"];

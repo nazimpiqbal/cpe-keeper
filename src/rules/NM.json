@@ -1,0 +1,150 @@
+{
+  "state": "NM",
+  "board": "New Mexico Public Accountancy Board",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/new-mexico/title-16/chapter-60/part-3/section-16-60-3-15",
+    "https://www.srca.nm.gov/nmac/nmregister/xxxii/16.60.3amend.html",
+    "https://www.rld.state.nm.us/boards/Accountancy_Requirements_and_Continuing_Education.aspx"
+  ],
+  "lastVerified": "2026-10-05",
+  "cycle": {
+    "type": "ending_at_license_expiration",
+    "lengthMonths": 36,
+    "subPeriods": 3,
+    "fiscalSubLabels": true,
+    "label": "Reporting period",
+    "note": "New Mexico counts the 36 months ending the last day of your birth month: 120 hours, at least 20 each reporting year, 96 technical and 4 ethics."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Total CPE",
+      "hours": 120,
+      "scope": "cycle",
+      "group": "overall",
+      "note": "120 hours in the 36 months ending your birth month (16.60.3.15 NMAC)."
+    },
+    {
+      "id": "annual_total",
+      "label": "Total hours each year",
+      "hours": 20,
+      "scope": "each_sub_period",
+      "group": "overall"
+    },
+    {
+      "id": "technical",
+      "label": "Technical",
+      "hours": 96,
+      "scope": "cycle",
+      "categories": [
+        "technical"
+      ],
+      "group": "subject",
+      "note": "At least 96 of the 120 in technical subjects."
+    },
+    {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 8,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "note": "Maximum, not a target. Only 8 nano-learning hours count per three-year cycle.",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 4,
+      "scope": "cycle",
+      "categories": [
+        "ethics"
+      ],
+      "group": "special",
+      "note": "4 hours of ethics in the 36 months (AICPA code, New Mexico code of conduct, Circular 230 and similar)."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is required between your issue date and your first expiration."
+  },
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "The last day of your birth month (e.g. 03/31/2027).",
+  "issueDateHint": "If you were licensed during this period, no CPE is due at your first expiration.",
+  "renewalMonths": 36,
+  "expiresEndOfMonth": true,
+  "categoryLabels": {
+    "technical": "Technical",
+    "non_technical": "Non-technical",
+    "ethics": "Ethics",
+    "nano": "Nano-learning"
+  },
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "ethics"
+  ],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
+  },
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  },
+  "limitsNotTracked": [
+    "At least 24 hours not sponsored by your own firm or employer.",
+    "Instruction and authorship combined: max 60 hours; authorship max 50%."
+  ],
+  "recordRetention": "Keep CPE records for five years after completion or reporting.",
+  "toVerify": [
+    "Renewal frequency (annual vs triennial in the birth month) \u2014 the CPE window is 36 months either way.",
+    "Technical = NASBA technical fields."
+  ],
+  "requirementGroups": [
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
+  ],
+  "practiceOptions": []
+}
