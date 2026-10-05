@@ -111,7 +111,8 @@ export type Rules = {
     firstPeriodFromIssue?: boolean;
     // AZ-style: a first period shorter than the full cycle starts on the issue date and is prorated by quarter
     // (hours × quarters ÷ quarters in a full cycle, part quarters rounded up), except the listed requirements.
-    prorateByQuarter?: { except: string[] };
+    // fullCalendarQuarters (CO): count only full calendar quarters (Jan–Mar, Apr–Jun…) after the issue date.
+    prorateByQuarter?: { except: string[]; fullCalendarQuarters?: boolean };
     // MA: first renewal total by the month the license was issued (index 0 = January); other requirements unchanged.
     // In calendar-year states (NC) it sets the licensure year's total instead.
     totalByIssueMonth?: number[];
@@ -446,7 +447,13 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
   if (pq && start > normalStart) {
     // Short first period (AZ): scale each requirement by quarters in the period ÷ quarters in a full cycle.
     const fullQuarters = (rules.cycle.lengthMonths ?? 24) / 3;
-    const quarters = Math.min(fullQuarters, Math.ceil((end.getTime() - start.getTime() + 86400000) / (86400000 * 365.25 / 4)));
+    let quarters = Math.min(fullQuarters, Math.ceil((end.getTime() - start.getTime() + 86400000) / (86400000 * 365.25 / 4)));
+    if (pq.fullCalendarQuarters) {
+      // Full calendar quarters that start on or after the issue date and end by the period end.
+      quarters = 0;
+      for (let q = d(`${start.getUTCFullYear()}-${String(Math.floor(start.getUTCMonth() / 3) * 3 + 1).padStart(2, "0")}-01`); addDays(addMonths(q, 3), -1) <= end; q = addMonths(q, 3))
+        if (q >= start) quarters++;
+    }
     const f = quarters / fullQuarters;
     const requirements = rules.requirements.map(q => pq.except.includes(q.id) ? q : { ...q, hours: Math.ceil(q.hours * f * 2) / 2 });
     const lines = evaluateWindow(records, profile, { ...rules, requirements }, start, end, "First period", asOf);

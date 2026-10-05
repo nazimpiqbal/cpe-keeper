@@ -2038,4 +2038,62 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Colorado ── reporting period 1/1/2026 – 12/31/2027 (license renews 11/30/2027): 80 hours (10 per full
+  // quarter), 4 ethics (up to 2 CR&R), personal development max 16.
+  {
+    id: "CO-1", state: "CO", title: "Clean slate",
+    checks: "80 hours, including 4 ethics; personal development capped at 16.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "pd_max", earned: 0, required: 16 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Ethics 4", "Any time: Any subject 76"] },
+  },
+  {
+    id: "CO-2", state: "CO", title: "CR&R counts as ethics",
+    checks: "Colorado CPAs CR&R 2 (filed under Business Law) + AICPA ethics 2 = 4 ethics; 70 Tax. 74 of 80.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Colorado CPAs CR&R", provider: P, date: "2026-02-01", hours: 2, field: "Business Law", delivery: "QAS Self Study" },
+      { title: "AICPA Code of Professional Conduct", provider: P, date: "2026-03-01", hours: 2, field: "Regulatory Ethics", delivery: "QAS Self Study" },
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 70, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 74, required: 80, remaining: 6 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 6, rows: ["Any time: Any subject 6"] },
+  },
+  {
+    id: "CO-3", state: "CO", title: "Personal development over 16",
+    checks: "30 personal development hours — only 16 count, so 14 come off. 16 + 40 Tax + 4 ethics = 60 of 80.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2026-02-01", hours: 30, field: "Personal Development", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-07-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 60, required: 80, remaining: 20 },
+      { id: "pd_max", earned: 30, required: 16, over: 14 },
+    ],
+    stillNeeded: { total: 20, rows: ["Any time: Any course except personal development 20"] },
+  },
+  {
+    id: "CO-4", state: "CO", title: "New certificate mid-period",
+    checks: "Issued 2/10/2026: full quarters from Apr 2026 to Dec 2027 = 7, so 70 hours; ethics stays 4; PD cap 14.",
+    license: { expiration: "2027-12-31", issued: "2026-02-10" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 30, required: 70, remaining: 40 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+      { id: "pd_max", earned: 0, required: 14 },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Ethics 4", "Any time: Any subject 36"] },
+  },
 ];
