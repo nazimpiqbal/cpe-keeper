@@ -110,6 +110,8 @@ export type Rules = {
     // AZ-style: a first period shorter than the full cycle starts on the issue date and is prorated by quarter
     // (hours × quarters ÷ quarters in a full cycle, part quarters rounded up), except the listed requirements.
     prorateByQuarter?: { except: string[] };
+    // MA: first renewal total by the month the license was issued (index 0 = January); other requirements unchanged.
+    totalByIssueMonth?: number[];
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
     // NJ: requirements that still apply during that exempt first renewal (e.g. the state ethics course).
@@ -417,6 +419,16 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
     const total = rules.requirements.find(q => q.id === "total")!;
     const lines = evaluateWindow(records, profile, { ...rules, requirements: [{ ...total, hours: ip.hours }] }, ics, end, "Initial period", asOf);
     if (lines[0] && rules.newLicensee?.note) lines[0].note = rules.newLicensee.note;
+    return lines;
+  }
+  const bm = rules.newLicensee?.totalByIssueMonth;
+  if (bm && profile.licenseIssued && d(profile.licenseIssued) >= start && d(profile.licenseIssued) <= end) {
+    // MA: the first renewal runs from the issue date; the total depends on the month issued.
+    const hours = bm[Number(profile.licenseIssued.slice(5, 7)) - 1];
+    const requirements = rules.requirements.map(q => q.id === "total" ? { ...q, hours } : q);
+    const lines = evaluateWindow(records, profile, { ...rules, requirements }, d(profile.licenseIssued), end, "First period", asOf);
+    const total = lines.find(l => l.id === "total");
+    if (total && rules.newLicensee?.note) total.note = rules.newLicensee.note;
     return lines;
   }
   const pq = rules.newLicensee?.prorateByQuarter;

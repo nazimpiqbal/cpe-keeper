@@ -13,6 +13,7 @@ import pa from "./PA.json";
 import oh from "./OH.json";
 import mi from "./MI.json";
 import ga from "./GA.json";
+import ma from "./MA.json";
 
 // States with verified rule files. Add a state by adding its JSON here.
 export const RULES: { [state: string]: Rules } = {
@@ -30,11 +31,12 @@ export const RULES: { [state: string]: Rules } = {
   OH: oh as unknown as Rules,
   MI: mi as unknown as Rules,
   GA: ga as unknown as Rules,
+  MA: ma as unknown as Rules,
 };
 
 export const STATE_NAMES: { [state: string]: string } = {
   CA: "California", NY: "New York", TX: "Texas", FL: "Florida", IL: "Illinois",
-  PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona",
+  PA: "Pennsylvania", OH: "Ohio", NJ: "New Jersey", MI: "Michigan", GA: "Georgia", ID: "Idaho", CT: "Connecticut", WA: "Washington", AZ: "Arizona", MA: "Massachusetts",
 };
 
-export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA"];
+export const LAUNCH_STATES = ["CA", "NY", "TX", "FL", "IL", "ID", "CT", "WA", "AZ", "PA", "OH", "NJ", "MI", "GA", "MA"];

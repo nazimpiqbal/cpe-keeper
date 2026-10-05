@@ -1657,4 +1657,73 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Massachusetts ── renewal period 7/1/2025 – 6/30/2027: 80 hours, 4 professional ethics, no yearly minimum,
+  // no carryover. First renewal prorated by issue month (Jul–Sep 80, Oct–Dec 70, Jan–Mar 60, Apr–Jun 50).
+  {
+    id: "MA-1", state: "MA", title: "Clean slate",
+    checks: "80 hours, including 4 professional ethics.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 80, remaining: 80 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 80, rows: ["Any time: Professional ethics 4", "Any time: Any subject 76"] },
+  },
+  {
+    id: "MA-2", state: "MA", title: "All 80 in one year",
+    checks: "76 Taxes + 4 Behavioral Ethics, all in the first year of the period. No yearly minimum, so it's met.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-09-01", hours: 76, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-02-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "MA-3", state: "MA", title: "Course before the period",
+    checks: "A 40-hour course on 6/15/2025 is before the period (7/1/2025) and doesn't count; no carryover. Only the 30 hours from 2026 count.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Audit Update", provider: P, date: "2025-06-15", hours: 40, field: "Auditing", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 30, required: 80, remaining: 50 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["Any time: Professional ethics 4", "Any time: Any subject 46"] },
+  },
+  {
+    id: "MA-4", state: "MA", title: "First renewal, licensed in November",
+    checks: "Licensed 11/15/2025 (Oct–Dec): 70 hours for the first renewal, plus the 4 ethics hours. A course before licensure doesn't count.",
+    license: { expiration: "2027-06-30", issued: "2025-11-15" },
+    courses: [
+      { title: "Exam Review", provider: P, date: "2025-09-01", hours: 10, field: "Accounting", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 20, required: 70, remaining: 50 },
+      { id: "ethics", earned: 0, required: 4, remaining: 4 },
+    ],
+    stillNeeded: { total: 50, rows: ["Any time: Professional ethics 4", "Any time: Any subject 46"] },
+  },
+  {
+    id: "MA-5", state: "MA", title: "First renewal, licensed in May",
+    checks: "Licensed 5/10/2026 (Apr–June): 50 hours, including 4 ethics.",
+    license: { expiration: "2027-06-30", issued: "2026-05-10" },
+    courses: [
+      { title: "Ethics for CPAs", provider: P, date: "2026-08-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2026-09-15", hours: 16, field: "Accounting", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 20, required: 50, remaining: 30 },
+      { id: "ethics", earned: 4, required: 4, met: true },
+    ],
+    stillNeeded: { total: 30, rows: ["Any time: Any subject 30"] },
+  },
 ];
