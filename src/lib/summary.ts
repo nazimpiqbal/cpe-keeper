@@ -133,8 +133,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     }
     if (trimmed.length) trimNote = `This assumes the "any time" courses are taken in ${trimmed.reverse().join(" and ")}, so they also count toward that year's minimum.`;
   }
-  const notes = open.filter(isFormat).map(l => `At least ${l.remaining} more of these must be ${clean(l.label).toLowerCase()}.`);
-
+  const notes: string[] = [];
   if (trimNote) notes.push(trimNote);
 
   // ID: past years are closed and each open year counts at most 50, so only so many more hours can count.
@@ -152,6 +151,14 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     }
     const short = r2(cycleTotal.required - cycleTotal.earned - cap);
     if (short > 0) notes.push(`Only ${cap} more hours can count toward the ${cycleTotal.required} — you'd still be ${short} short.`);
+  }
+  // Delivery-format minimums (AZ live, MN group) are met by the same hours as everything above. Beyond what's
+  // listed they need more courses of their own (MN: 120 done, all self-study, 24 group still needed).
+  for (const l of open.filter(isFormat)) {
+    const listed = r2([...groups.values()].reduce((a, g) => a + g.rows.reduce((b, r) => b + r.hours, 0), 0));
+    const within = Math.min(l.remaining, listed);
+    if (within > 0) notes.unshift(`At least ${within} more of these must be ${clean(l.label).toLowerCase()}.`);
+    if (l.remaining > listed) add(anytime, clean(l.label), l.remaining - listed);
   }
   const out = [...groups.values()].filter(g => g.rows.length);
   // Deadline order: earlier years first, then the anytime group.

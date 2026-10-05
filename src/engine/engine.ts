@@ -677,10 +677,11 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       }
       earned = round(earned);
       // VA: licensed during the window → only the yearly minimums for the years after licensure apply, no total.
-      if (q.waiveIfIssuedInWindow && issuedYear != null && issuedYear >= y - n + 1 && issuedYear <= y) {
+      const fi = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
+      if (q.waiveIfIssuedInWindow && fi != null && fi >= y - n + 1 && fi <= y) {
         lines.push({
-          id: q.id, label: q.label, period: `${y - n + 1}–${y}`, required: 0, earned, remaining: 0, met: true,
-          note: `Not required yet — you were licensed in ${issuedYear}, so only each later year's minimum applies until ${issuedYear + n}.`,
+          id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`, required: 0, earned, remaining: 0, met: true,
+          note: `Not required yet — you were licensed in ${yl(fi)}, so this first applies to the ${n} years ending ${yl(fi + n)}.`,
           deadline: iso(yearEnd(y)), group: q.group, parts,
         });
         continue;

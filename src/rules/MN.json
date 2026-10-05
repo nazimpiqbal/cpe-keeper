@@ -1,0 +1,123 @@
+{
+  "state": "MN",
+  "board": "Minnesota Board of Accountancy",
+  "sourceUrls": [
+    "https://mn.gov/boa/continuing-education/",
+    "https://mncpa.org/cpe/faq/minnesota-cpe-rules-requirements",
+    "https://www.surgentcpe.com/cpe-requirements/minnesota/"
+  ],
+  "lastVerified": "2026-10-04",
+  "cycle": {
+    "type": "calendar_year",
+    "yearStartMonth": 7,
+    "note": "Minnesota CPE years run July 1 – June 30 and are reported by December 31. Each year needs 20 hours; the rolling three CPE years need 120, with 60 technical, 8 ethics and 24 group or blended."
+  },
+  "carryover": false,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Three-year total",
+      "hours": 120,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "group": "overall",
+      "showNote": true,
+      "note": "The three CPE years ending June 30 must reach 120 hours."
+    },
+    {
+      "id": "annual_min",
+      "label": "Minimum each year",
+      "hours": 20,
+      "scope": "cycle",
+      "subLabel": "This CPE year",
+      "group": "overall",
+      "priorYears": 2,
+      "note": "At least 20 hours every CPE year (July 1 – June 30), reported by December 31."
+    },
+    {
+      "id": "technical",
+      "label": "Technical",
+      "hours": 60,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": ["technical"],
+      "group": "subject",
+      "note": "At least 60 of the 120 from technical subjects (NASBA technical fields of study, including Regulatory Ethics)."
+    },
+    {
+      "id": "group_study",
+      "label": "Group or blended learning",
+      "hours": 24,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": ["group"],
+      "group": "subject",
+      "summaryFormat": true,
+      "note": "At least 24 of the 120 from group (live or online live) or blended programs. We use each course's delivery format."
+    },
+    {
+      "id": "ethics",
+      "label": "Ethics",
+      "hours": 8,
+      "scope": "calendar_years_rolling",
+      "years": 3,
+      "waiveIfIssuedInWindow": true,
+      "categories": ["ethics"],
+      "group": "special",
+      "note": "8 hours of regulatory or behavioral ethics in the rolling three CPE years."
+    }
+  ],
+  "newLicensee": {
+    "exemptIfIssuedInCycle": true,
+    "note": "No CPE is due for the CPE year you were licensed in; your first CPE year starts the next July 1."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "Minnesota licenses renew every year on December 31. CPE years run July 1 – June 30 regardless.",
+  "issueDateHint": "If you were licensed this CPE year (since July 1), no CPE is due until the next July 1.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "12-31",
+  "deadlineLabel": "License renews",
+  "yearEndNote": "report by December 31",
+  "requirementGroups": [
+    { "id": "overall", "label": "Overall requirements" },
+    { "id": "subject", "label": "Subject requirements" },
+    { "id": "special", "label": "Special requirements" }
+  ],
+  "categoryLabels": {
+    "technical": "Technical",
+    "ethics": "Ethics",
+    "group": "Group or blended",
+    "non_technical": "Non-technical"
+  },
+  "tagCategories": ["technical", "non_technical", "ethics"],
+  "fieldOfStudyMap": {
+    "technical": [
+      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
+      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
+      "Statistics", "Specialized Knowledge", "Computer Software and Applications", "Production", "Regulatory Ethics"
+    ],
+    "non_technical": [
+      "Communications and Marketing", "Business Management and Organization", "Personnel/Human Resources",
+      "Personal Development", "Behavioral Ethics"
+    ],
+    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+  },
+  "deliveryMap": {
+    "group": ["Group Live", "Group Internet Based", "Blended"]
+  },
+  "limitsNotTracked": [
+    "At least 72 of the 120 from approved CPE sponsors (NASBA Registry sponsors, peer-reviewed firms, universities, professional organizations).",
+    "Instruction: max 60 hours; published materials: max 60 hours.",
+    "The same self-study course can't be repeated for credit within one CPE year.",
+    "Carryback: hours after June 30 can count for the prior CPE year with late fees, but only once."
+  ],
+  "recordRetention": "Keep CPE documentation for 5 years.",
+  "toVerify": [
+    "New licensees: the three-year totals (120, 60 technical, 24 group, 8 ethics) are treated as not due until three full CPE years after licensure; each year's 20 still applies.",
+    "Technical = NASBA's technical fields of study, with Regulatory Ethics technical and Behavioral Ethics non-technical."
+  ]
+}

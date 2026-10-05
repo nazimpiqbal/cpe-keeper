@@ -1945,4 +1945,97 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── Minnesota ── CPE years July 1 – June 30; as of Oct 2026 the window is 2024–25, 2025–26, 2026–27:
+  // 120 hours with 60 technical, 24 group or blended and 8 ethics; at least 20 every CPE year.
+  {
+    id: "MN-1", state: "MN", title: "Clean slate",
+    checks: "120 / 60 technical / 24 group / 8 ethics over three CPE years; 20 this year. The two earlier CPE years have ended short.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 120, remaining: 120 },
+      { id: "technical", earned: 0, required: 60, remaining: 60 },
+      { id: "group_study", earned: 0, required: 24, remaining: 24 },
+      { id: "ethics", earned: 0, required: 8, remaining: 8 },
+      { id: "annual_min", y: 5, earned: 0, required: 20, remaining: 20 },
+      { id: "annual_min_2025", y: 4, earned: 0, required: 20, past: true },
+    ],
+    stillNeeded: { total: 120, rows: ["2026–27: Any subject 20", "Any time: Technical 60", "Any time: Ethics 8", "Any time: Any subject 32"] },
+  },
+  {
+    id: "MN-2", state: "MN", title: "Everything met",
+    checks: "40 hours each CPE year: 116 technical, 80 group or blended, 8 ethics.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2024-09-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Webinar Series", provider: P, date: "2025-09-01", hours: 36, field: "Accounting", delivery: "Group Internet Based" },
+      { title: "Ethical Decision Making", provider: P, date: "2026-03-01", hours: 4, field: "Behavioral Ethics", delivery: "Group Live" },
+      { title: "Tax Library", provider: P, date: "2026-08-01", hours: 36, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "AICPA Code of Conduct", provider: P, date: "2026-09-01", hours: 4, field: "Regulatory Ethics", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 120, required: 120, met: true },
+      { id: "technical", earned: 116, required: 60, met: true },
+      { id: "group_study", earned: 80, required: 24, met: true },
+      { id: "ethics", earned: 8, required: 8, met: true },
+      { id: "annual_min", y: 5, earned: 40, required: 20, met: true },
+    ],
+    stillNeeded: { total: 0, rows: [] },
+  },
+  {
+    id: "MN-3", state: "MN", title: "Not enough technical",
+    checks: "80 non-technical (personal development, communications) + 20 Tax + 8 ethics: 108 of 120, technical 20 of 60, and 40 technical hours are still needed — more than the 12 the total needs.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Leadership Summit", provider: P, date: "2024-09-01", hours: 40, field: "Personal Development", delivery: "Group Live" },
+      { title: "Business Writing", provider: P, date: "2025-09-01", hours: 40, field: "Communications and Marketing", delivery: "Group Live" },
+      { title: "Ethical Decision Making", provider: P, date: "2025-10-01", hours: 8, field: "Behavioral Ethics", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 108, required: 120, remaining: 12 },
+      { id: "technical", earned: 20, required: 60, remaining: 40 },
+      { id: "ethics", earned: 8, required: 8, met: true },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Technical 40"] },
+  },
+  {
+    id: "MN-4", state: "MN", title: "All self-study",
+    checks: "120 hours, all QAS self-study: total met but 24 group or blended hours are still needed.",
+    license: { expiration: "2026-12-31", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Library", provider: P, date: "2024-09-01", hours: 40, field: "Taxes", delivery: "QAS Self Study" },
+      { title: "GAAP Library", provider: P, date: "2025-09-01", hours: 36, field: "Accounting", delivery: "QAS Self Study" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-10-01", hours: 8, field: "Regulatory Ethics", delivery: "QAS Self Study" },
+      { title: "Audit Library", provider: P, date: "2026-08-01", hours: 36, field: "Auditing", delivery: "QAS Self Study" },
+    ],
+    expect: [
+      { id: "total", earned: 120, required: 120, met: true },
+      { id: "group_study", earned: 0, required: 24, remaining: 24 },
+    ],
+    stillNeeded: { total: 24, rows: ["Any time: Group or blended learning 24"] },
+  },
+  {
+    id: "MN-5", state: "MN", title: "Licensed last CPE year",
+    checks: "Licensed 2/1/2026 (the 2025–26 CPE year): no CPE was due that year and the three-year totals don't apply yet. This CPE year needs 20.",
+    license: { expiration: "2026-12-31", issued: "2026-02-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-08-01", hours: 8, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 8, required: 0, met: true },
+      { id: "ethics", earned: 0, required: 0, met: true },
+      { id: "annual_min", y: 5, earned: 8, required: 20, remaining: 12 },
+      { id: "annual_min_2025", y: 4, absent: true, earned: 0, required: 0 },
+    ],
+    stillNeeded: { total: 12, rows: ["2026–27: Any subject 12"] },
+  },
+  {
+    id: "MN-6", state: "MN", title: "Licensed this CPE year",
+    checks: "Licensed 8/1/2026, in the current CPE year: nothing due until July 1, 2027.",
+    license: { expiration: "2026-12-31", issued: "2026-08-01" },
+    courses: [],
+    expect: [{ id: "total", earned: 0, required: 0, met: true }],
+    stillNeeded: { total: 0, rows: [] },
+  },
 ];
