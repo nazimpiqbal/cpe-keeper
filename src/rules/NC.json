@@ -1,0 +1,76 @@
+{
+  "state": "NC",
+  "board": "North Carolina State Board of CPA Examiners",
+  "sourceUrls": [
+    "https://regulations.justia.com/states/north-carolina/title-21/chapter-08/subchapter-g/section-0400/section-08g-0401",
+    "https://nccpaboard.gov/?p=822",
+    "https://www.nasbaregistry.org/cpe-requirements/north-carolina"
+  ],
+  "lastVerified": "2026-10-04",
+  "cycle": {
+    "type": "calendar_year",
+    "note": "CPE is due by December 31 every year: 40 hours (2,000 minutes), including 1 hour of ethics. Up to 20 extra hours carry forward to the next year. You report at license renewal by June 30."
+  },
+  "carryover": true,
+  "requirements": [
+    {
+      "id": "total",
+      "label": "Annual CPE",
+      "hours": 40,
+      "scope": "cycle",
+      "carryForwardMax": 20,
+      "group": "overall",
+      "showNote": true,
+      "note": "40 hours (2,000 minutes) by December 31 (21 NCAC 08G .0401). Up to 20 hours over last year's requirement carry forward."
+    },
+    {
+      "id": "ethics",
+      "label": "Professional ethics",
+      "hours": 1,
+      "scope": "cycle",
+      "categories": ["ethics"],
+      "group": "special",
+      "note": "At least 50 minutes a year of regulatory or behavioral professional ethics from a NASBA-registered sponsor. Carried-forward hours can't meet it."
+    }
+  ],
+  "newLicensee": {
+    "totalByIssueMonth": [40, 40, 40, 30, 30, 30, 20, 20, 20, 10, 10, 10],
+    "note": "The year your certificate was approved needs fewer hours: April–June 30, July–Sept 20, Oct–Dec 10 (21 NCAC 08G .0401). Courses earlier that year count."
+  },
+  "practiceOptions": [],
+  "licenseDateLabel": "License expiration date",
+  "licenseDateHint": "North Carolina licenses renew every year by June 30. CPE is tracked by calendar year regardless.",
+  "issueDateHint": "If your certificate was approved this year, this year's hours are reduced by the month it was approved.",
+  "renewalMonths": 12,
+  "expiresOnMonthDay": "06-30",
+  "deadlineLabel": "License renews",
+  "yearEndNote": "due December 31",
+  "requirementGroups": [
+    { "id": "overall", "label": "Overall requirements" },
+    { "id": "special", "label": "Special requirements" }
+  ],
+  "categoryLabels": {
+    "ethics": "Ethics",
+    "general": "General CPE"
+  },
+  "tagCategories": ["ethics", "general"],
+  "fieldOfStudyMap": {
+    "general": [
+      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
+      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
+      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
+      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development"
+    ],
+    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+  },
+  "limitsNotTracked": [
+    "Instruction, college courses and CPE technical review combined: max 50% of the minutes.",
+    "Published materials: max 25% of the minutes.",
+    "Ethics minutes can't be carried forward to meet next year's ethics."
+  ],
+  "recordRetention": "Keep CPE records for the current year and the four calendar years before it.",
+  "toVerify": [
+    "The 1-hour ethics still applies in the year the certificate was approved (the rule says 'annually').",
+    "Carryforward measured over the year's requirement (the reduced one in the licensure year)."
+  ]
+}

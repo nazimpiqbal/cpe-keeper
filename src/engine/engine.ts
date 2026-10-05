@@ -113,6 +113,7 @@ export type Rules = {
     // (hours × quarters ÷ quarters in a full cycle, part quarters rounded up), except the listed requirements.
     prorateByQuarter?: { except: string[] };
     // MA: first renewal total by the month the license was issued (index 0 = January); other requirements unchanged.
+    // In calendar-year states (NC) it sets the licensure year's total instead.
     totalByIssueMonth?: number[];
     // IL-style: no CPE for the first renewal — applies when the license was issued during the current period.
     exemptIfIssuedInCycle?: boolean;
@@ -360,7 +361,14 @@ function evaluateAll(records: Record[], profile: Profile, rules: Rules, asOf: st
         deadline: end, group: "overall", note: rules.newLicensee.note ?? "No CPE is due for the year you're licensed.",
       }];
     }
-    const lines = evaluateWindow(records, profile, rules, d(start), d(end), name, asOf);
+    const bmc = rules.newLicensee?.totalByIssueMonth;
+    const issuedHere = !!profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === fyIndex(start, sm);
+    // NC: the year the certificate is issued needs fewer hours, by the month issued (courses earlier that year count).
+    const yrRules = bmc && issuedHere
+      ? { ...rules, requirements: rules.requirements.map(q => q.id === "total" ? { ...q, hours: bmc[Number(profile.licenseIssued!.slice(5, 7)) - 1] } : q) }
+      : rules;
+    const lines = evaluateWindow(records, profile, yrRules, d(start), d(end), name, asOf);
+    if (bmc && issuedHere && rules.newLicensee?.note) { const t = lines.find(l => l.id === "total"); if (t) t.note = rules.newLicensee.note; }
     // Neighbouring years for a yearly minimum (ID: last year, this year, next year — each needs 30).
     const cur = fyIndex(start, sm);
     const issued = profile.licenseIssued ? fyIndex(profile.licenseIssued, sm) : null;
@@ -800,11 +808,15 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         // CT: up to N hours over last year's requirement count toward this year. Last year's own carry-in doesn't.
         const y = fyIndex(iso(w.s), sm);
         const prev = sum(yearStart(y - 1), yearEnd(y - 1), q.categories);
-        const carry = round(Math.min(q.carryForwardMax, Math.max(0, prev - q.hours)));
+        // Excess is over what last year required (NC: a reduced licensure-year requirement).
+        const bmp = rules.newLicensee?.totalByIssueMonth;
+        const prevReq = bmp && q.id === "total" && profile.licenseIssued && fyIndex(profile.licenseIssued, sm) === y - 1
+          ? bmp[Number(profile.licenseIssued.slice(5, 7)) - 1] : q.hours;
+        const carry = round(Math.min(q.carryForwardMax, Math.max(0, prev - prevReq)));
         line.parts = [
           { label: `${yl(y)} courses`, logged: earned, counted: earned },
           { label: `Carried forward from ${yl(y - 1)}`, logged: prev, counted: carry,
-            why: `hours over ${q.hours} carry, up to ${q.carryForwardMax}` },
+            why: `hours over ${prevReq} carry, up to ${q.carryForwardMax}` },
         ];
         line.earned = round(earned + carry);
         line.remaining = round(Math.max(0, q.hours - line.earned));

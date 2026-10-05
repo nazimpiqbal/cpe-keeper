@@ -1824,4 +1824,75 @@ export const SCENARIOS: Scenario[] = [
     expect: [{ id: "total", earned: 0, required: 0, met: true }],
     stillNeeded: { total: 0, rows: [] },
   },
+  // ── North Carolina ── calendar year (as of Oct 2026: 2026): 40 hours incl. 1 ethics by Dec 31; up to 20 hours
+  // over last year's requirement carry forward. Year of certificate approval prorated by quarter.
+  {
+    id: "NC-1", state: "NC", title: "Clean slate",
+    checks: "40 hours this year, including 1 hour of ethics.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [],
+    expect: [
+      { id: "total", earned: 0, required: 40, remaining: 40 },
+      { id: "ethics", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 40, rows: ["Any time: Professional ethics 1", "Any time: Any subject 39"] },
+  },
+  {
+    id: "NC-2", state: "NC", title: "Carryforward from last year",
+    checks: "2025: 70 hours, so 20 carry (the max; 30 were over). 2026: 15 hours + 1 ethics → 16 + 20 carried = 36 of 40.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-05-01", hours: 70, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 15, field: "Accounting", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 1, field: "Behavioral Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 36, required: 40, remaining: 4 },
+      { id: "ethics", earned: 1, required: 1, met: true },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Any subject 4"] },
+  },
+  {
+    id: "NC-3", state: "NC", title: "Carryforward can't cover ethics",
+    checks: "2025: 60 hours including 2 ethics → 20 carry. 2026: 20 Tax. 40 of 40, but this year's ethics hour is still needed.",
+    license: { expiration: "2027-06-30", issued: "2010-05-01" },
+    courses: [
+      { title: "Tax Marathon", provider: P, date: "2025-05-01", hours: 58, field: "Taxes", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2025-06-01", hours: 2, field: "Regulatory Ethics", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 40, required: 40, met: true },
+      { id: "ethics", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 1, rows: ["Any time: Professional ethics 1"] },
+  },
+  {
+    id: "NC-4", state: "NC", title: "Certificate approved in August",
+    checks: "Approved 8/15/2026 (July–Sept): 20 hours this year, plus 1 ethics. A course in March, before approval, still counts.",
+    license: { expiration: "2027-06-30", issued: "2026-08-15" },
+    courses: [
+      { title: "Exam Review", provider: P, date: "2026-03-01", hours: 8, field: "Accounting", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 8, required: 20, remaining: 12 },
+      { id: "ethics", earned: 0, required: 1, remaining: 1 },
+    ],
+    stillNeeded: { total: 12, rows: ["Any time: Professional ethics 1", "Any time: Any subject 11"] },
+  },
+  {
+    id: "NC-5", state: "NC", title: "Year after approval, carry from the reduced year",
+    checks: "Approved 11/1/2025 (Oct–Dec): 2025 needed 10; 25 were done, so 15 carry into 2026. 2026: 20 + 1 ethics → 21 + 15 = 36 of 40.",
+    license: { expiration: "2027-06-30", issued: "2025-11-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-12-01", hours: 25, field: "Taxes", delivery: "Group Live" },
+      { title: "GAAP Update", provider: P, date: "2026-03-01", hours: 20, field: "Accounting", delivery: "Group Live" },
+      { title: "Ethics for CPAs", provider: P, date: "2026-04-01", hours: 1, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+    ],
+    expect: [
+      { id: "total", earned: 36, required: 40, remaining: 4 },
+      { id: "ethics", earned: 1, required: 1, met: true },
+    ],
+    stillNeeded: { total: 4, rows: ["Any time: Any subject 4"] },
+  },
 ];
