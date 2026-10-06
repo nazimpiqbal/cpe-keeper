@@ -48,7 +48,9 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
       .map(([c, formats]) => ({ title: label(c), text: `Delivery format: ${formats.join(", ")}` })),
   ];
   const limits = rules.requirements.filter(q => q.kind === "max");
-  const sources = [...(guide?.source ? [guide.source] : []), ...(rules.sourceUrls ?? []).map(u => ({ label: host(u), url: u }))];
+  // The board-wording source first; a page listed twice (CA: also in sourceUrls) shows once.
+  const sources = [...(guide?.source ? [guide.source] : []), ...(rules.sourceUrls ?? []).map(u => ({ label: host(u), url: u }))]
+    .filter((src, i, all) => all.findIndex(x => x.url === src.url) === i);
 
   const Section = ({ title, children, onLayout }: { title: string; children: React.ReactNode; onLayout?: (y: number) => void }) => (
     <View onLayout={e => onLayout?.(e.nativeEvent.layout.y)}>
@@ -57,8 +59,8 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
     </View>
   );
   const Bullets = ({ items }: { items: string[] }) => (
-    <>{items.map(t => (
-      <View key={t} style={s.bulletRow}><Text style={s.bullet}>•</Text><Text style={[s.body, { flex: 1 }]}>{t}</Text></View>
+    <>{items.map((t, i) => (
+      <View key={i} style={s.bulletRow}><Text style={s.bullet}>•</Text><Text style={[s.body, { flex: 1 }]}>{t}</Text></View>
     ))}</>
   );
 
@@ -125,7 +127,7 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
       {sources.length > 0 && (
         <Section title="Sources">
           {sources.map((src, i) => (
-            <Pressable key={src.url} onPress={() => WebBrowser.openBrowserAsync(src.url)} accessibilityRole="link"
+            <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(src.url)} accessibilityRole="link"
               style={({ pressed }) => [s.linkRow, i > 0 && s.border, pressed && { opacity: 0.6 }]}>
               <Text style={s.link} numberOfLines={1} ellipsizeMode="middle">{src.label}</Text>
               <Text style={{ color: C.muted }}>›</Text>
