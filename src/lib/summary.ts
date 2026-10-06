@@ -9,13 +9,20 @@ export type SummaryGroup = { key: string; title: string; deadline: string; rows:
 export type Summary = { total: number; groups: SummaryGroup[]; notes: string[] };
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
-const clean = (label: string) => label
+
+// States that split technical and non-technical (CA, TX, NJ…): leftover hours can be either, so say so.
+// Elsewhere every qualifying subject counts the same.
+export const splitsTechnical = (rules: Rules) => !!rules.fieldOfStudyMap?.technical && !!rules.fieldOfStudyMap?.non_technical;
+export const anyLabelFor = (rules: Rules) => rules.anyLabel ?? (splitsTechnical(rules) ? "Technical or non-technical" : "Any CPE subject");
+const ANY = "\u0000any"; // placeholder for a yearly-minimum row, renamed per state below
+const cleanBase = (label: string) => label
   .replace(/\s*\(.*\)$/, "")
   .replace(/ each (CE )?year$/i, "")
-  .replace(/^Minimum (this|each) year$/i, "Any subject")
+  .replace(/^Minimum (this|each) year$/i, ANY)
   .replace(/ subject matter$/i, "");
 
 export function stillNeeded(lines: Line[], rules: Rules): Summary {
+  const clean = (label: string) => cleanBase(label).split(ANY).join(anyLabelFor(rules));
   // (ID: the licensure-year course lives under newLicensee, not the main requirements.)
   const reqs = [...rules.requirements, ...(rules.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])];
   const reqOf = (l: Line): Req | undefined =>
@@ -44,7 +51,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
   const fullCaps = lines.filter(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
   const capFull = fullCaps.length > 0;
   // A full cap can name what further hours must be (TX: "Technical", once non-technical is used up).
-  const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || rules.anyLabel || "Any subject";
+  const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || anyLabelFor(rules);
   const flex = capFull ? lines.find(l => !l.sub && l.kind !== "max" && hasCats(l) &&
     lines.some(y => y.sub && key(reqOf(y)) === key(reqOf(l)))) : undefined;
   const yearShown = new Map<Line, number>(); // hours shown for a year's subject line (may absorb "any subject")
@@ -70,7 +77,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
       // No yearly subject line this year, but only the flex subject can count now.
       add(g, clean(flex.label), any); any = 0;
     }
-    if (capFull && anyLabel !== "Any subject" && any > 0) yearAnyAsOther += any;
+    if (capFull && anyLabel !== anyLabelFor(rules) && any > 0) yearAnyAsOther += any;
     add(g, anyLabel, any);
   }
 

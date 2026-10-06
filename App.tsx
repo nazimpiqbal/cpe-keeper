@@ -16,6 +16,7 @@ import CoursesScreen from "./src/screens/CoursesScreen";
 import ExportScreen from "./src/screens/ExportScreen";
 import ScenarioScreen from "./src/screens/ScenarioScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
+import StateRulesScreen from "./src/screens/StateRulesScreen";
 import { PremiumProvider } from "./src/lib/premium";
 import { CropProvider } from "./src/lib/crop";
 import { useAppTheme } from "./src/lib/theme";
@@ -23,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ACTIVE_KEY = "cpe-keeper:activeLicense";
 
-type View_ = "dashboard" | "addCourse" | "editLicense" | "addLicense" | "settings" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios";
+type View_ = "dashboard" | "addCourse" | "editLicense" | "addLicense" | "settings" | "scan" | "review" | "editCourse" | "bulk" | "certificates" | "courses" | "export" | "scenarios" | "stateRules";
 type Tab = "dashboard" | "courses" | "certificates";
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
   const goTab = (t: Tab) => { setTab(t); setView(t); };
   const [dashKey, setDashKey] = useState(0); // bump to reload dashboard data
   const [editing, setEditing] = useState<CpeRow | null>(null);
+  const [rulesFocus, setRulesFocus] = useState<"subjects" | undefined>(undefined);
   // Courses read from a scanned certificate, confirmed one at a time.
   const [queue, setQueue] = useState<{ courses: Extracted[]; index: number; path: string | null; saved: number }>({ courses: [], index: 0, path: null, saved: 0 });
 
@@ -132,6 +134,9 @@ export default function App() {
     <SettingsScreen email={session.user.email ?? ""} onClose={() => setView(tab)} onScenarios={() => setView("scenarios")} />
   );
   else if (view === "export") screen = <ExportScreen license={license} onClose={() => setView(tab)} />;
+  else if (view === "stateRules" && RULES[license.state]) screen = (
+    <StateRulesScreen state={license.state} rules={RULES[license.state]} focus={rulesFocus} onClose={() => setView(tab)} />
+  );
   else if (view === "certificates") screen = (
     <Tabs active="certificates" onChange={goTab}>
       <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle}
@@ -152,7 +157,8 @@ export default function App() {
         onAddCourse={() => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); setView("addCourse"); }}
         onScan={() => setView("scan")} onEditLicense={() => setView("editLicense")} onExport={() => setView("export")}
         licenses={licenses ?? []} onSwitchLicense={switchLicense} onAddLicense={() => setView("addLicense")}
-        onSettings={() => setView("settings")} />
+        onSettings={() => setView("settings")}
+        onStateRules={focus => { setRulesFocus(focus); setView("stateRules"); }} />
     </Tabs>
   );
 

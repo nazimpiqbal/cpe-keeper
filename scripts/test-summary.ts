@@ -15,8 +15,8 @@ const p = { licenseExpiration: "2028-01-31", practice: [] as string[], licenseIs
 let L = evaluate(ca, p, R("CA"), asOf);
 let s = stillNeeded(L, R("CA"));
 assert.deepEqual(rows(s), {
-  "Year 1: Technical": 3.5, "Year 2: Technical": 12, "Year 2: Any subject": 8,
-  "anytime: Technical": 12, "anytime: Ethics": 4, "anytime: Any subject": 19.2,
+  "Year 1: Technical": 3.5, "Year 2: Technical": 12, "Year 2: Technical or non-technical": 8,
+  "anytime: Technical": 12, "anytime: Ethics": 4, "anytime: Technical or non-technical": 19.2,
 });
 assert.equal(s.total, L.find(l => l.id === "total")!.remaining);
 assert.deepEqual(s.groups.map(g => g.title || "anytime"), ["Year 1", "Year 2", "anytime"]);

@@ -8,7 +8,7 @@ import { MULTI_LICENSE_PREMIUM, showUpgrade, usePremium } from "../lib/premium";
 import { planReminders } from "../lib/reminderPlan";
 import { nextReminder, scheduleReminders, setReminderPref, useReminderPref } from "../lib/reminders";
 import { useCourses } from "../lib/courses";
-import { stillNeeded } from "../lib/summary";
+import { anyLabelFor, splitsTechnical, stillNeeded } from "../lib/summary";
 
 export { RULES };
 
@@ -28,14 +28,20 @@ function deadlineText(l: Line) {
   return `${hrs(l.remaining)}${what}${when}`;
 }
 
-function Bar({ line, showNote, warning, shortNote }: { line: Line; showNote?: boolean; warning?: string; shortNote?: string }) {
+// ⓘ after a requirement's name (nested in its text so it wraps with it): opens the state's subject lists.
+function Info({ onPress }: { onPress?: () => void }) {
+  if (!onPress) return null;
+  return <Text onPress={onPress} style={s.info} accessibilityRole="button" accessibilityLabel="What counts toward this">  ⓘ</Text>;
+}
+
+function Bar({ line, showNote, warning, shortNote, onInfo }: { line: Line; showNote?: boolean; warning?: string; shortNote?: string; onInfo?: () => void }) {
   const pct = line.required ? Math.min(1, line.earned / line.required) : 1;
   if (line.kind === "max") {
     // A ceiling, not a goal: grey bar, no "to go", no checkmark.
     return (
       <View style={[s.req, s.maxBox]}>
         <View style={s.reqTop}>
-          <Text style={[s.reqLabel, { color: C.muted }]}>{line.label}</Text>
+          <Text style={[s.reqLabel, { color: C.muted }]}>{line.label}<Info onPress={onInfo} /></Text>
           <Text style={[s.reqNum, { color: C.muted }]}>{line.earned} of max {line.required}</Text>
         </View>
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
@@ -98,7 +104,7 @@ function Bar({ line, showNote, warning, shortNote }: { line: Line; showNote?: bo
   return (
     <View style={s.req}>
       <View style={s.reqTop}>
-        <Text style={s.reqLabel}>{line.met ? "✓ " : ""}{shortLabel(line)}</Text>
+        <Text style={s.reqLabel}>{line.met ? "✓ " : ""}{shortLabel(line)}<Info onPress={onInfo} /></Text>
         <Text style={s.reqNum}>{line.required ? `${line.earned} / ${line.required}` : "Not due"}</Text>
       </View>
       {!line.sub && <Text style={s.reqPeriod}>{line.period}</Text>}
@@ -117,9 +123,16 @@ function Bar({ line, showNote, warning, shortNote }: { line: Line; showNote?: bo
   );
 }
 
-function Requirements({ lines, groups, noteIds, warnings, rules }: {
+function Requirements({ lines, groups, noteIds, warnings, rules, onSubjects }: {
   lines: Line[]; groups?: { id: string; label: string }[]; noteIds: Set<string>; warnings: Map<string, string>; rules?: Rules;
+  onSubjects?: () => void;
 }) {
+  // Technical / non-technical lines get an ⓘ that opens the state's subject lists.
+  const infoFor = (l: Line) => {
+    if (!onSubjects || !rules || !(rules.subjectGuide || splitsTechnical(rules))) return undefined;
+    const q = rules.requirements.find(r => r.id === l.id) ?? rules.requirements.find(r => l.id.startsWith(r.id + "_"));
+    return q?.categories?.some(c => c === "technical" || c === "non_technical") ? onSubjects : undefined;
+  };
   // A year box belongs right under the whole-cycle requirement in the same subjects
   // (Total CE → Year 1 / Year 2 totals; Technical subject matter → Year 1 / Year 2 technical).
   const catKey = (l: Line) => {
@@ -144,7 +157,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
         const anchor = whole.findIndex(l => !l.covered && l.kind !== "max" && yearKeys.has(catKey(l)));
         const at = anchor === -1 ? whole.length : anchor + 1;
         const shortNoteOf = (l: Line) => (rules?.requirements.find(r => r.id === l.id) ?? rules?.requirements.find(r => l.id.startsWith(r.id + "_")))?.shortNote;
-        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} />;
+        const bar = (l: Line, i: number) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} onInfo={infoFor(l)} />;
         return (
           <View key={g.id}>
             <Text style={ui.h2}>{g.label}</Text>
@@ -161,7 +174,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
                       <Text style={[s.yearBadge, status === "Current" ? s.badgeNow : s.badgeOther]}>{status.toUpperCase()}</Text>
                     </View>
                     <Text style={s.yearDates}>{fmtDate(sub.start)} – {fmtDate(sub.end)}</Text>
-                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} />)}
+                    {yl.map((l, i) => <Bar key={l.id + i} line={l} showNote={noteIds.has(l.id)} warning={warnings.get(l.id) ?? l.warn} shortNote={shortNoteOf(l)} onInfo={infoFor(l)} />)}
                   </View>
                 );
               })}
@@ -175,7 +188,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules }: {
 }
 
 // "What you still need": remaining hours in buckets that add up, earliest deadline first.
-function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
+function StillNeeded({ lines, rules, onSubjects }: { lines: Line[]; rules: Rules; onSubjects?: () => void }) {
   const sum = stillNeeded(lines, rules);
   const onlyAnytime = sum.groups.length === 1 && sum.groups[0].key === "cycle";
   return (
@@ -197,7 +210,7 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
               {g.rows.map(r => (
                 <View key={r.label} style={{ marginTop: 4 }}>
                   <View style={s.sumRow}>
-                    <Text style={[s.sumLabel, (r.label === "Any subject" || r.label === rules?.anyLabel) && { color: C.muted }]}>{r.label}</Text>
+                    <Text style={[s.sumLabel, r.label === anyLabelFor(rules) && { color: C.muted }]}>{r.label}</Text>
                     <Text style={s.sumHrs}>{hrs(r.hours)}</Text>
                   </View>
                   {r.hint ? <Text style={[ui.hint, { marginTop: 0 }]}>{r.hint}</Text> : null}
@@ -207,15 +220,21 @@ function StillNeeded({ lines, rules }: { lines: Line[]; rules: Rules }) {
           ))}
           {sum.notes.map(n => <Text key={n} style={[ui.hint, { marginTop: 8 }]}>{n}</Text>)}
           <Text style={[ui.hint, { marginTop: 8 }]}>Each course counts once here. A course that fits two lines (say, ethics that's also technical) can cover both.</Text>
+          {onSubjects && (rules.subjectGuide || splitsTechnical(rules)) && (
+            <Pressable onPress={onSubjects} hitSlop={6} style={{ marginTop: 8 }} accessibilityRole="link">
+              <Text style={{ color: C.accent, fontWeight: "600", fontSize: 13 }}>Which subjects are technical? ›</Text>
+            </Pressable>
+          )}
         </>)}
       </Card>
     </>
   );
 }
 
-export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport, licenses = [], onSwitchLicense, onAddLicense, onSettings }: {
+export default function DashboardScreen({ license, onAddCourse, onScan, onEditLicense, onExport, licenses = [], onSwitchLicense, onAddLicense, onSettings, onStateRules }: {
   license: License; onAddCourse: () => void; onScan: () => void; onEditLicense: () => void; onExport: () => void;
   licenses?: License[]; onSwitchLicense?: (id: string) => void; onAddLicense?: () => void; onSettings?: () => void;
+  onStateRules?: (focus?: "subjects") => void;
 }) {
   const { premium } = usePremium();
   const addLicense = () => (MULTI_LICENSE_PREMIUM && !premium ? showUpgrade("licenses") : onAddLicense?.());
@@ -391,6 +410,11 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
           : cycle.end !== license.expiration_date
           ? `CPE due ${fmtDate(cycle.end)} · ${daysUntil(cycle.end)} days left`
           : `${daysUntil(license.expiration_date)} days left in this cycle`}</Text>
+        {rules && onStateRules && (
+          <Pressable onPress={() => onStateRules()} hitSlop={6} style={{ marginTop: 8 }} accessibilityRole="link">
+            <Text style={{ color: C.accent, fontWeight: "600" }}>📘 {STATE_NAMES[license.state] ?? license.state} CPE rules ›</Text>
+          </Pressable>
+        )}
         {licenses.length <= 1 && onAddLicense && (
           <Pressable onPress={addLicense} hitSlop={6} style={{ marginTop: 8 }}>
             <Text style={{ color: C.accent, fontWeight: "600" }}>+ Add another state license{MULTI_LICENSE_PREMIUM && !premium ? "  🔒" : ""}</Text>
@@ -454,9 +478,9 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
       <Button kind="secondary" title="+ Enter a course manually" onPress={onAddCourse} />
       <View style={{ height: 16 }} />
 
-      {rules && <StillNeeded lines={lines} rules={rules} />}
+      {rules && <StillNeeded lines={lines} rules={rules} onSubjects={onStateRules && (() => onStateRules("subjects"))} />}
 
-      <Requirements lines={lines} groups={rules?.requirementGroups} rules={rules}
+      <Requirements lines={lines} groups={rules?.requirementGroups} rules={rules} onSubjects={onStateRules && (() => onStateRules("subjects"))}
         noteIds={new Set([...(rules?.requirements ?? []), ...(rules?.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])]
           .filter(q => q.showNote).map(q => q.id))}
         warnings={new Map((rules?.requirements ?? []).filter(q => q.warning).map(q => [q.id, q.warning!]))} />
@@ -467,6 +491,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 }
 
 const s = themed(() => ({
+  info: { color: C.accent, fontSize: 15, fontWeight: "600" },
   optRow: { flexDirection: "row", alignItems: "stretch", marginTop: 8 },
   remindRow: { flexDirection: "row", alignItems: "center", backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: C.line },
   remindTitle: { color: C.ink, fontWeight: "700", fontSize: 15 },

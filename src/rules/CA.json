@@ -107,7 +107,7 @@
         "technical_total"
       ],
       "unless": "government_audit",
-      "note": "Financial statement preparation, auditing, reviews, compilations, attestation and assurance; governmental accounting and auditing courses count too. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A.",
+      "note": "Financial statement preparation, auditing, reviews, compilations, attestation and assurance; governmental accounting and auditing courses count too. Fraud courses don't count toward these hours. Not needed if you also do government audits \u2014 the government hours cover A&A.",
       "coveredNotes": {
         "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement.\""
       }
@@ -147,7 +147,7 @@
       ],
       "coveredNotes": {
         "attest": "CBA: \"If you fulfill the A&A CE requirement, you are deemed to have met the preparation engagement CE requirement.\"",
-        "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" — and A&A covers preparation engagements."
+        "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" \u2014 and A&A covers preparation engagements."
       }
     },
     {
@@ -237,7 +237,7 @@
           "accounting_auditing"
         ],
         "when": "attest",
-        "note": "6 hours for every 20 hours required. Fraud courses don't count toward these hours. Not needed if you also do government audits — the government hours cover A&A.",
+        "note": "6 hours for every 20 hours required. Fraud courses don't count toward these hours. Not needed if you also do government audits \u2014 the government hours cover A&A.",
         "group": "subject",
         "unless": "government_audit",
         "coveredNotes": {
@@ -273,7 +273,7 @@
         "group": "subject",
         "coveredNotes": {
           "attest": "CBA: \"If you fulfill the A&A CE requirement, you are deemed to have met the preparation engagement CE requirement.\"",
-          "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" — and A&A covers preparation engagements."
+          "government_audit": "CBA: \"If you fulfill the governmental auditing CE requirement, you are deemed to have met the A&A CE requirement\" \u2014 and A&A covers preparation engagements."
         }
       },
       {
@@ -415,5 +415,47 @@
     "fraud": {
       "requirement": "fraud"
     }
+  },
+  "subjectGuide": {
+    "intro": "The California Board of Accountancy's own lists. The app sorts each course by the NASBA field of study on its certificate: Information Technology counts as technical, Computer Software and Applications as non-technical, Regulatory Ethics as technical and Behavioral Ethics as non-technical.",
+    "source": {
+      "label": "CBA: Overview of the renewal process",
+      "url": "https://www.dca.ca.gov/cba/licensees/overview-of-renewal-process.pdf"
+    },
+    "groups": [
+      {
+        "category": "technical",
+        "title": "Technical subjects",
+        "items": [
+          "Accounting",
+          "Auditing",
+          "Fraud",
+          "Taxation",
+          "Consulting",
+          "Financial planning",
+          "Business law",
+          "Economics",
+          "Management services",
+          "Statistics",
+          "Ethics, as defined in CCR Title 16, section 87(b)",
+          "Regulatory Review, as defined in CCR section 87.8",
+          "Computer and information technology (except word processing)",
+          "Specialized industry or government practices that focus primarily on maintaining or enhancing the public accounting skills and knowledge needed to competently practice public accounting"
+        ]
+      },
+      {
+        "category": "non_technical",
+        "title": "Non-technical subjects",
+        "items": [
+          "Behavioral ethics (e.g. ethical decision-making; personal ethics; diversity, equity and inclusion)",
+          "Business management and organization (e.g. organization of a public accounting practice)",
+          "Communication and marketing (e.g. business presentations, business writing, social media, customer communications, marketing professional services)",
+          "Computer software and applications (e.g. general use of business software)",
+          "Personal development (e.g. career planning, leadership, time management)",
+          "Personnel/human resources (e.g. attracting, motivating, developing and retaining employees; social justice in staff recruitment and retention)",
+          "Production (e.g. operations management, inventory management, supply operations)"
+        ]
+      }
+    ]
   }
 }

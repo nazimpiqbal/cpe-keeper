@@ -81,6 +81,11 @@ export type Req = {
 export type Rules = {
   state: string;
   anyLabel?: string; // "What you still need": the name for hours in any subject (NY: "Any recognized subject area")
+  // "Your state's rules" screen: the board's own wording for which subjects are technical / non-technical (CA).
+  // Without it, states that split technical and non-technical list the NASBA fields from fieldOfStudyMap.
+  // Shown on the "Your state's rules" screen.
+  board?: string; sourceUrls?: string[]; limitsNotTracked?: string[]; recordRetention?: string;
+  subjectGuide?: { intro?: string; source?: { label: string; url: string }; groups: { category: string; title: string; items: string[] }[] };
   // calendar_year with yearStartMonth = a fixed yearly CPE period, e.g. CT: July 1 – June 30 (yearStartMonth 7).
   cycle: {
     type?: "ending_at_license_expiration" | "calendar_year"; lengthMonths?: number; subPeriods?: number; note?: string; label?: string; yearStartMonth?: number;
