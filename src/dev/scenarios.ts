@@ -325,6 +325,17 @@ export const SCENARIOS: Scenario[] = [
   // ---------- Texas: license renews yearly at the end of the birth month; 120 in the last 36 months, 20 in each
   // reporting year, Board ethics course every two years, non-technical and nano capped at 50% (22 TAC 523).
   // All but the new-licensee ones: renewal 03/31/2027 → look-back Apr 1, 2024 – Mar 31, 2027.
+  { id: "CA-19", state: "CA", title: "CBA quick-reference example (Jan 24, 2026 → Mar 31, 2027)",
+    checks: "The CBA's own example: licensed 1/24/2026, first expiration 3/31/2027 — more than 12 but under 18 months, so 40 hours, 20 technical including the 2-hour Regulatory Review. No ethics, fraud or yearly minimum.",
+    license: { expiration: "2027-03-31", issued: "2026-01-24", firstRenewal: true },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2026-05-01", hours: 12, field: "Taxes", delivery: "Group Live" },
+      { title: "Leadership Essentials", provider: P, date: "2026-06-01", hours: 8, field: "Personal Development", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 20, required: 40, remaining: 20 },
+      { id: "technical_total", earned: 12, required: 20, remaining: 8 },
+      { id: "regulatory_review", earned: 0, required: 2, remaining: 2 },
+    ],
+    stillNeeded: { total: 20, rows: ["Any time: Technical 6", "Any time: Board-approved Regulatory Review course 2", "Any time: Any subject 12"] } },
   {
     id: "TX-1", state: "TX", title: "Clean slate",
     checks: "120 hours over three reporting years, 20 in each, at least 60 technical. With no courses the two earlier reporting years show red 'short'; this year and the 120 are still to go; ethics 0 / 4.",
