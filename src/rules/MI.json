@@ -2,7 +2,7 @@
   "state": "MI",
   "board": "Michigan Board of Accountancy (LARA)",
   "sourceUrls": [
-    "https://codes.findlaw.com/mi/chapter-339-occupational-code/mi-comp-laws-339-729.html",
+    "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-339-729",
     "https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=R+338.5101++to+R+338.5503.pdf&ReturnHTML=True",
     "https://www.micpa.org/advocacy/licensure/cpe-requirements-for-licensure",
     "https://www.nasbaregistry.org/cpe-requirements/michigan"
@@ -15,7 +15,7 @@
     "cpeEndMonthDay": "06-30",
     "fiscalSubLabels": true,
     "label": "License cycle",
-    "note": "Two CE years per license cycle, each July 1 – June 30. Licenses renew July 31."
+    "note": "Two CE years per license cycle, each July 1 \u2013 June 30. Licenses renew July 31."
   },
   "carryover": true,
   "requirements": [
@@ -26,7 +26,7 @@
       "scope": "each_sub_period",
       "carryForwardMax": 40,
       "group": "overall",
-      "note": "40 hours each CE year (July 1 – June 30). Up to 40 extra hours carry into the next year."
+      "note": "40 hours each CE year (July 1 \u2013 June 30). Up to 40 extra hours carry into the next year."
     },
     {
       "id": "self_study_max",
@@ -85,12 +85,12 @@
   ],
   "newLicensee": {
     "exemptMonthsFromIssue": 12,
-    "note": "Not required yet — no CE is due for the first 12 months after your original license."
+    "note": "Not required yet \u2014 no CE is due for the first 12 months after your original license."
   },
   "practiceOptions": [],
   "licenseDateLabel": "License expiration date",
-  "licenseDateHint": "Michigan licenses renew July 31 every two years (e.g. 07/31/2027). CE years run July 1 – June 30.",
-  "issueDateHint": "Your original license date — no CE is due for the first 12 months.",
+  "licenseDateHint": "Michigan licenses renew July 31 every two years (e.g. 07/31/2027). CE years run July 1 \u2013 June 30.",
+  "issueDateHint": "Your original license date \u2014 no CE is due for the first 12 months.",
   "renewalMonths": 24,
   "expiresOnMonthDay": "07-31",
   "requirementGroups": [
@@ -168,7 +168,7 @@
   "toVerify": [
     "Carryforward (MCL 339.729): modelled as own excess hours of the previous CE year only (a carryover isn't carried again), max 40 total / 8 A&A / 2 ethics.",
     "New licensees: a CE year partly inside the first 12 months is prorated by days (the statute just says CE isn't required for 12 months).",
-    "Self-study/nano cap read as 20 per CE year ('per period', where R 338.5101 defines a CE period as July 1 – June 30).",
+    "Self-study/nano cap read as 20 per CE year ('per period', where R 338.5101 defines a CE period as July 1 \u2013 June 30).",
     "Both Regulatory and Behavioral Ethics count toward the ethics hours; the Michigan rules course is matched by title."
   ]
 }
