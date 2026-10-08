@@ -3,14 +3,13 @@
   "board": "Minnesota Board of Accountancy",
   "sourceUrls": [
     "https://mn.gov/boa/continuing-education/",
-    "https://mncpa.org/cpe/faq/minnesota-cpe-rules-requirements",
-    "https://www.surgentcpe.com/cpe-requirements/minnesota/"
+    "https://mncpa.org/cpe/faq/minnesota-cpe-rules-requirements"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
     "type": "calendar_year",
     "yearStartMonth": 7,
-    "note": "Minnesota CPE years run July 1 – June 30 and are reported by December 31. Each year needs 20 hours; the rolling three CPE years need 120, with 60 technical, 8 ethics and 24 group or blended."
+    "note": "Minnesota CPE years run July 1 \u2013 June 30 and are reported by December 31. Each year needs 20 hours; the rolling three CPE years need 120, with 60 technical, 8 ethics and 24 group or blended."
   },
   "carryover": false,
   "requirements": [
@@ -33,7 +32,7 @@
       "subLabel": "This CPE year",
       "group": "overall",
       "priorYears": 2,
-      "note": "At least 20 hours every CPE year (July 1 – June 30), reported by December 31."
+      "note": "At least 20 hours every CPE year (July 1 \u2013 June 30), reported by December 31."
     },
     {
       "id": "technical",
@@ -42,7 +41,9 @@
       "scope": "calendar_years_rolling",
       "years": 3,
       "waiveIfIssuedInWindow": true,
-      "categories": ["technical"],
+      "categories": [
+        "technical"
+      ],
       "group": "subject",
       "note": "At least 60 of the 120 from technical subjects (NASBA technical fields of study, including Regulatory Ethics)."
     },
@@ -53,7 +54,9 @@
       "scope": "calendar_years_rolling",
       "years": 3,
       "waiveIfIssuedInWindow": true,
-      "categories": ["group"],
+      "categories": [
+        "group"
+      ],
       "group": "subject",
       "summaryFormat": true,
       "note": "At least 24 of the 120 from group (live or online live) or blended programs. We use each course's delivery format."
@@ -65,7 +68,9 @@
       "scope": "calendar_years_rolling",
       "years": 3,
       "waiveIfIssuedInWindow": true,
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "note": "8 hours of regulatory or behavioral ethics in the rolling three CPE years."
     }
@@ -76,16 +81,25 @@
   },
   "practiceOptions": [],
   "licenseDateLabel": "License expiration date",
-  "licenseDateHint": "Minnesota licenses renew every year on December 31. CPE years run July 1 – June 30 regardless.",
+  "licenseDateHint": "Minnesota licenses renew every year on December 31. CPE years run July 1 \u2013 June 30 regardless.",
   "issueDateHint": "If you were licensed this CPE year (since July 1), no CPE is due until the next July 1.",
   "renewalMonths": 12,
   "expiresOnMonthDay": "12-31",
   "deadlineLabel": "License renews",
   "yearEndNote": "report by December 31",
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "subject", "label": "Subject requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "technical": "Technical",
@@ -93,21 +107,47 @@
     "group": "Group or blended",
     "non_technical": "Non-technical"
   },
-  "tagCategories": ["technical", "non_technical", "ethics"],
+  "tagCategories": [
+    "technical",
+    "non_technical",
+    "ethics"
+  ],
   "fieldOfStudyMap": {
     "technical": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Computer Software and Applications", "Production", "Regulatory Ethics"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Computer Software and Applications",
+      "Production",
+      "Regulatory Ethics"
     ],
     "non_technical": [
-      "Communications and Marketing", "Business Management and Organization", "Personnel/Human Resources",
-      "Personal Development", "Behavioral Ethics"
+      "Communications and Marketing",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Personal Development",
+      "Behavioral Ethics"
     ],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "deliveryMap": {
-    "group": ["Group Live", "Group Internet Based", "Blended"]
+    "group": [
+      "Group Live",
+      "Group Internet Based",
+      "Blended"
+    ]
   },
   "limitsNotTracked": [
     "At least 72 of the 120 from approved CPE sponsors (NASBA Registry sponsors, peer-reviewed firms, universities, professional organizations).",
