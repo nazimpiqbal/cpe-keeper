@@ -2,9 +2,8 @@
   "state": "MO",
   "board": "Missouri State Board of Accountancy",
   "sourceUrls": [
-    "https://www.sos.mo.gov/CMSImages/AdRules/csr/previous/20csr/20csr0423/20c2010-4.pdf",
-    "https://www.mocpa.org/about-cpe/mo",
-    "https://www.westerncpe.com/blog-post/missouri-cpe-requirements-stay-compliant-and-avoid-last-minute-stress/"
+    "https://www.sos.mo.gov/cmsimages/adrules/csr/current/20csr/20c2010-4.pdf",
+    "https://www.mocpa.org/about-cpe/mo"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
@@ -26,7 +25,9 @@
       "label": "Ethics",
       "hours": 2,
       "scope": "cycle",
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "note": "At least 2 of the 40 hours each year in ethics. Regulatory and behavioral ethics both count."
     }
@@ -43,30 +44,56 @@
   "deadlineLabel": "License renews",
   "yearEndNote": "make-up until March 1",
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "ethics": "Ethics",
     "general": "General CPE"
   },
-  "tagCategories": ["ethics", "general"],
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
   "fieldOfStudyMap": {
     "general": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
-      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
     ],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "limitsNotTracked": [
-    "Authorship: max 2 hours a calendar year (minimum 750 words).",
-    "March 1 grace: hours taken by March 1 to cure last year's shortage count for last year only — enter them in the year you report them."
+    "Authorship: max 2 hours a calendar year (20 CSR 2010-4.020).",
+    "March 1 grace: hours taken by March 1 to cure last year's shortage count for last year only \u2014 enter them in the year you report them."
   ],
-  "recordRetention": "Keep CPE documentation for at least 5 calendar years after the year completed.",
+  "recordRetention": "Keep CPE documentation for at least 5 calendar years after the year completed (20 CSR 2010-4.031).",
   "toVerify": [
     "New licensees: assumed exempt for the calendar year of initial licensure (the rule doesn't prorate).",
-    "License renewal timing (sources differ: annual vs. every two years) — the app only uses the date for the renewal reminder."
+    "License renewal timing (sources differ: annual vs. every two years) \u2014 the app only uses the date for the renewal reminder."
   ]
 }
