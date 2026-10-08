@@ -2,10 +2,8 @@
   "state": "OR",
   "board": "Oregon Board of Accountancy",
   "sourceUrls": [
-    "https://oregon.public.law/oar_801-040-0010",
-    "https://oregon.public.law/rules/oar_801-040-0050",
-    "https://oregon.public.law/rules/oar_801-040-0100",
-    "https://www.oregon.gov/boa/Pages/CPE.aspx"
+    "https://www.oregon.gov/boa/Pages/CPE.aspx",
+    "https://secure.sos.state.or.us/oard/displayDivisionRules.action?selectedDivision=3540"
   ],
   "lastVerified": "2026-10-05",
   "cycle": {
