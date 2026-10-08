@@ -122,6 +122,7 @@
   "recordRetention": "Keep CPE records in case of a Board audit.",
   "toVerify": [
     "Initial license issued 1\u20132 years before expiration: 40 hours with 20 in the second year; the 3 ethics hours kept (sources don't say).",
-    "Carryforward measured over 80 in the previous period."
+    "Carryforward measured over 80 in the previous period.",
+    "Board carry-forward guidance (2020): up to 3 extra ethics hours carry to the next period's ethics, and carried hours can count toward a year's 20-hour minimum. Not modelled yet (carry counts toward the 80 only) \u2014 Nazim to confirm."
   ]
 }
