@@ -16,7 +16,7 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
 
   function confirm(sc: Scenario) {
     Alert.alert(`Load ${sc.id}?`,
-      "This changes your license settings and DELETES all your courses and their certificate links. Use a test account.",
+      "This changes your license settings, removes any other state licenses, and DELETES all your courses and their certificate links. Use a test account.",
       [{ text: "Cancel", style: "cancel" }, { text: "Load", style: "destructive", onPress: () => load(sc) }]);
   }
 
@@ -28,6 +28,10 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
         practice: sc.license.practice ?? [], first_renewal: !!sc.license.firstRenewal,
         regulatory_review_due: sc.license.regulatoryReviewDue ?? null,
       };
+      // A scenario is one license: remove any other licenses on this test account first (one per state is enforced,
+      // and a leftover second license would show state chips on the dashboard).
+      const others = await supabase.from("licenses").delete().eq("user_id", userId).neq("id", license.id);
+      if (others.error) throw others.error;
       const up = await supabase.from("licenses").update(lic).eq("id", license.id);
       if (up.error) throw up.error;
       const del = await supabase.from("cpe_records").delete().eq("user_id", userId);
@@ -52,7 +56,7 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
     <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
       <Pressable onPress={onClose} hitSlop={10}><Text style={{ color: C.accent, fontWeight: "600", marginBottom: 12 }}>‹ Back</Text></Pressable>
       <Text style={[ui.brand, { marginBottom: 4 }]}>Test scenarios</Text>
-      <Text style={[ui.muted, { marginBottom: 16 }]}>Development only. Loading one replaces your license settings and all courses — use a test account.</Text>
+      <Text style={[ui.muted, { marginBottom: 16 }]}>Development only. Loading one replaces your license settings, other state licenses and all courses — use a test account.</Text>
       <ErrorText msg={err} />
       {states.map(st => (
         <View key={st}>
