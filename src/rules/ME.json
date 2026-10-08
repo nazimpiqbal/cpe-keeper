@@ -3,7 +3,7 @@
   "state": "ME",
   "board": "Maine Board of Accountancy (Office of Professional and Occupational Regulation)",
   "sourceUrls": [
-    "https://www11.maine.gov/sos/cec/rules/02/280/280c005.docx",
+    "https://www.maine.gov/sos/sites/maine.gov.sos/files/inline-files/280c005%20-%20JUL%202025.docx",
     "https://legislature.maine.gov/statutes/32/title32sec12233.html"
   ],
   "cycle": {
@@ -33,7 +33,7 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than half (20 hours) from communication arts, mathematics and statistics, economics, business law, personnel and software applications (Ch. 5 \u00a79(D)).",
+      "note": "Maximum, not a target. No more than half (20 hours) from communication arts, mathematics and statistics, economics, business law, personnel and software applications (Ch. 5 \u00a79(C)(4)(b)).",
       "otherLabel": "Accounting, auditing, tax, ethics, management services or industry topics"
     },
     {
