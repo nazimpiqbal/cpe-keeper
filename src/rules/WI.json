@@ -2,9 +2,9 @@
   "state": "WI",
   "board": "Wisconsin Accounting Examining Board",
   "sourceUrls": [
-    "https://nasbaregistry.org/cpe-requirements/wisonsin",
-    "https://www.cchcpelink.com/cpe-requirements/Wisconsin/",
-    "https://docs.legis.wisconsin.gov/code/admin_code/accy/2"
+    "https://docs.legis.wisconsin.gov/code/admin_code/accy/2",
+    "https://dsps.wi.gov/Documents/BoardCouncils/ACC/ACCGuidanceDocumentCarryForwardCPECredits.pdf",
+    "https://nasbaregistry.org/cpe-requirements/wisonsin"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
@@ -13,7 +13,7 @@
     "subPeriods": 2,
     "fiscalSubLabels": true,
     "label": "Reporting period",
-    "note": "Wisconsin licenses expire December 14 of odd-numbered years. CPE runs December 15 – December 14: 80 hours over the two years, at least 20 in each year, 3 of ethics."
+    "note": "Wisconsin licenses expire December 14 of odd-numbered years. CPE runs December 15 \u2013 December 14: 80 hours over the two years, at least 20 in each year, 3 of ethics."
   },
   "carryover": true,
   "requirements": [
@@ -23,7 +23,9 @@
       "hours": 80,
       "scope": "cycle",
       "group": "overall",
-      "carryFromPreviousPeriod": { "max": 40 },
+      "carryFromPreviousPeriod": {
+        "max": 40
+      },
       "showNote": true,
       "note": "80 hours each two-year period. Up to 40 hours over the 80 from your previous period carry forward."
     },
@@ -39,15 +41,25 @@
       "label": "Ethics",
       "hours": 3,
       "scope": "cycle",
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "note": "3 hours of ethics from formal learning activities each period. Regulatory and behavioral ethics both count."
     }
   ],
   "newLicensee": {
     "byIssueYearInPeriod": [
-      { "hours": { "total": 40 }, "note": "Initial license issued 1–2 years before it expires: 40 hours, with 20 in the second year." },
-      { "none": true, "note": "Initial license issued less than a year before it expires: no CPE is due at this renewal." }
+      {
+        "hours": {
+          "total": 40
+        },
+        "note": "Initial license issued 1\u20132 years before it expires: 40 hours, with 20 in the second year."
+      },
+      {
+        "none": true,
+        "note": "Initial license issued less than a year before it expires: no CPE is due at this renewal."
+      }
     ]
   },
   "practiceOptions": [],
@@ -58,30 +70,58 @@
   "expiresOnMonthDay": "12-14",
   "expiresYearParity": "odd",
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "ethics": "Ethics",
     "general": "General CPE"
   },
-  "tagCategories": ["ethics", "general"],
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
   "fieldOfStudyMap": {
     "general": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
-      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
     ],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "limitsNotTracked": [
-    "At least 40 of the 80 from formal learning activities (programs from qualifying sponsors — most courses with certificates qualify).",
-    "Carryback: hours earned in the first 12 months of a period can instead count for the previous period."
+    "At least 40 of the 80 from formal learning activities (programs from qualifying sponsors \u2014 most courses with certificates qualify).",
+    "Carryback: hours earned in the first 12 months of a period can instead count for the previous period.",
+    "Up to 3 ethics hours over the previous period's requirement can carry forward toward this period's ethics (Board guidance, 2020); the app carries hours toward the 80 only.",
+    "Carried hours can also count toward a year's 20-hour minimum (Board guidance); the app counts them toward the 80 only."
   ],
   "recordRetention": "Keep CPE records in case of a Board audit.",
   "toVerify": [
-    "Initial license issued 1–2 years before expiration: 40 hours with 20 in the second year; the 3 ethics hours kept (sources don't say).",
+    "Initial license issued 1\u20132 years before expiration: 40 hours with 20 in the second year; the 3 ethics hours kept (sources don't say).",
     "Carryforward measured over 80 in the previous period."
   ]
 }
