@@ -4,7 +4,7 @@
   "sourceUrls": [
     "https://www.dllr.state.md.us/license/cpa/cpacperep.shtml",
     "https://labor.maryland.gov/license/cpa/cpapolicy.shtml",
-    "https://www.surgentcpe.com/cpe-requirements/maryland/"
+    "https://regs.maryland.gov/us/md/exec/comar/09.24.02.04"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
@@ -21,7 +21,9 @@
       "hours": 80,
       "scope": "cycle",
       "group": "overall",
-      "carryFromPreviousPeriod": { "max": 80 },
+      "carryFromPreviousPeriod": {
+        "max": 80
+      },
       "showNote": true,
       "note": "80 hours each license period. Up to 80 hours over the 80 from your previous period carry forward (they count toward the total, not toward ethics)."
     },
@@ -30,14 +32,16 @@
       "label": "Professional ethics",
       "hours": 4,
       "scope": "cycle",
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "note": "4 hours of professional ethics every license period. Extra ethics hours count as general CPE but can't carry forward as ethics."
     }
   ],
   "newLicensee": {
     "exemptIfIssuedInCycle": true,
-    "note": "First renewal: no CPE is due. Report what you took anyway — only reported hours can carry forward to your next period."
+    "note": "First renewal: no CPE is due. Report what you took anyway \u2014 only reported hours can carry forward to your next period."
   },
   "practiceOptions": [],
   "licenseDateLabel": "License expiration date",
@@ -45,28 +49,55 @@
   "issueDateHint": "If your license was issued during this period, no CPE is due at your first renewal.",
   "renewalMonths": 24,
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "ethics": "Ethics",
     "general": "General CPE"
   },
-  "tagCategories": ["ethics", "general"],
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
   "fieldOfStudyMap": {
     "general": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
-      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development",
-      "Regulatory Ethics", "Behavioral Ethics"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development",
+      "Regulatory Ethics",
+      "Behavioral Ethics"
     ],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "limitsNotTracked": [
-    "Instruction: max 45 hours per period.",
-    "Published material: max 40 hours per period.",
-    "Peer review: max 16 hours per period."
+    "Instruction: max 45 hours per period, first presentation only (COMAR 09.24.02.04G).",
+    "Published material: max 10 hours per publication, 40 per period (COMAR 09.24.02.04F).",
+    "Peer review: max 16 hours per period (12 for an engagement review, 16 for a system review) (COMAR 09.24.02.04E)."
   ],
   "recordRetention": "Keep CPE documentation for four years.",
   "toVerify": [
