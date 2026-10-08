@@ -4,7 +4,7 @@
   "sourceUrls": [
     "https://www.law.cornell.edu/regulations/massachusetts/252-CMR-2-14",
     "https://www.mass.gov/info-details/frequently-asked-questions-public-accountancy",
-    "https://www.cchcpelink.com/cpe-requirements/Massachusetts/"
+    "https://www.nasbaregistry.org/cpe-requirements/massachusetts"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
@@ -27,14 +27,29 @@
       "label": "Professional ethics",
       "hours": 4,
       "scope": "cycle",
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "note": "4 hours of professional ethics each renewal (252 CMR 2.14). Massachusetts doesn't require a state-specific course."
     }
   ],
   "newLicensee": {
-    "totalByIssueMonth": [60, 60, 60, 50, 50, 50, 80, 80, 80, 70, 70, 70],
-    "note": "First renewal prorated by the month your license was issued: July–Sept 80, Oct–Dec 70, Jan–Mar 60, Apr–June 50. The 4 ethics hours still apply."
+    "totalByIssueMonth": [
+      60,
+      60,
+      60,
+      50,
+      50,
+      50,
+      80,
+      80,
+      80,
+      70,
+      70,
+      70
+    ],
+    "note": "First renewal prorated by the month your license was issued: July\u2013Sept 80, Oct\u2013Dec 70, Jan\u2013Mar 60, Apr\u2013June 50. The 4 ethics hours still apply."
   },
   "practiceOptions": [],
   "licenseDateLabel": "License expiration date",
@@ -43,25 +58,51 @@
   "renewalMonths": 24,
   "expiresOnMonthDay": "06-30",
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "ethics": "Ethics",
     "general": "General CPE"
   },
-  "tagCategories": ["ethics", "general"],
+  "tagCategories": [
+    "ethics",
+    "general"
+  ],
   "fieldOfStudyMap": {
     "general": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
-      "Business Management and Organization", "Personnel/Human Resources", "Production", "Personal Development"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production",
+      "Personal Development"
     ],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "limitsNotTracked": [
-    "Instruction: no more than 40 hours per renewal period.",
+    "Instruction: no more than 50% of the requirement (40 of 80 hours) (NASBA summary of Massachusetts rules).",
     "Published articles and books: no more than 20 hours (25% of 80).",
     "University courses: 15 CPE per semester hour (credit set by the course)."
   ],
@@ -69,6 +110,6 @@
   "toVerify": [
     "Both Regulatory and Behavioral Ethics count toward the 4 ethics hours (the rule says 'professional ethics').",
     "First renewal: inferred when the issue date falls inside the current renewal period; hours by issue month per the Board FAQ.",
-    "The 4 ethics hours are still required in a prorated first renewal (CCH; the Board FAQ doesn't say)."
+    "The 4 ethics hours are kept in a prorated first renewal as a cautious default: 252 CMR 2.14 and the Board FAQ don't say whether ethics is prorated."
   ]
 }
