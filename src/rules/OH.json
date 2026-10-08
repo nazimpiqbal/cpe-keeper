@@ -3,7 +3,7 @@
   "board": "Accountancy Board of Ohio",
   "sourceUrls": [
     "https://www.law.cornell.edu/regulations/ohio/Ohio-Admin-Code-4701-15-02",
-    "https://codes.ohio.gov/ohio-administrative-code/rule-4701-15-11 (full text provided by user)",
+    "https://codes.ohio.gov/ohio-administrative-code/rule-4701-15-11",
     "https://acc.ohio.gov/maintaining-your-license/renewal-requirements",
     "https://www.nasbaregistry.org/cpe-requirements/ohio"
   ],
@@ -31,7 +31,7 @@
       "hours": 20,
       "scope": "each_sub_period",
       "group": "overall",
-      "note": "At least 20 credits by December 31 each year — $10 fine per missing credit.",
+      "note": "At least 20 credits by December 31 each year \u2014 $10 fine per missing credit.",
       "shortNote": "$10 fine per missing credit"
     },
     {
@@ -68,7 +68,7 @@
       ],
       "group": "special",
       "showNote": true,
-      "note": "3 credits each three-year period from a course approved by the Board as Professional Standards and Responsibilities — it can cover Ohio accountancy law and rules, professional ethics, ethical philosophy, or another state's accountancy laws. We count courses with \"PSR\", \"Professional Standards and Responsibilities\", or \"Ohio\" and \"ethics\" in the title — edit the title if your approved course isn't picked up."
+      "note": "3 credits each three-year period from a course approved by the Board as Professional Standards and Responsibilities \u2014 it can cover Ohio accountancy law and rules, professional ethics, ethical philosophy, or another state's accountancy laws. We count courses with \"PSR\", \"Professional Standards and Responsibilities\", or \"Ohio\" and \"ethics\" in the title \u2014 edit the title if your approved course isn't picked up."
     }
   ],
   "newLicensee": {
@@ -76,7 +76,7 @@
       "years": 2,
       "hours": 40
     },
-    "note": "Initial period: 40 credits from January 1 of the year you were certified through December 31 of the next year — no yearly minimum or subject requirements."
+    "note": "Initial period: 40 credits from January 1 of the year you were certified through December 31 of the next year \u2014 no yearly minimum or subject requirements."
   },
   "practiceOptions": [
     {
@@ -90,7 +90,7 @@
   ],
   "licenseDateLabel": "CPE reporting period ends",
   "licenseDateHint": "Ohio reporting periods end December 31 (e.g. 12/31/2027). New licensees: Dec 31 of the year after you were certified.",
-  "issueDateHint": "The date on your CPA certificate — sets your initial two-year period.",
+  "issueDateHint": "The date on your CPA certificate \u2014 sets your initial two-year period.",
   "deadlineLabel": "CPE period ends",
   "renewalMonths": 36,
   "expiresOnMonthDay": "12-31",

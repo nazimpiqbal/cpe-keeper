@@ -2,7 +2,6 @@
   "state": "PA",
   "board": "Pennsylvania State Board of Accountancy (Department of State)",
   "sourceUrls": [
-    "49 Pa. Code §§ 11.61–11.68 (text provided by user)",
     "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/accountancy-board/renewal-information",
     "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/049/chapter11/chap11toc.html&d=reduce",
     "https://www.nasbaregistry.org/cpe-requirements/pennsylvania"
@@ -43,7 +42,7 @@
       "kind": "max",
       "group": "subject",
       "showNote": true,
-      "note": "Maximum, not a target. No more than 40 hours of individual (self) study count per reporting period, including when combined with authorship (§ 11.64(2)(iv)). Nano counts as self-study. We use each course's delivery format — set it on each course.",
+      "note": "Maximum, not a target. No more than 40 hours of individual (self) study count per reporting period, including when combined with authorship (\u00a7 11.64(2)(iv)). Nano counts as self-study. We use each course's delivery format \u2014 set it on each course.",
       "alsoReduces": [
         "aa",
         "ethics"
@@ -60,7 +59,7 @@
       ],
       "when": "attest",
       "group": "subject",
-      "note": "24 hours in accounting and attest if you participate in attest activity (§ 11.63(a)(1)). If you supervise attest services and sign the report, § 11.23a may require additional CPE."
+      "note": "24 hours in accounting and attest if you participate in attest activity (\u00a7 11.63(a)(1)). If you supervise attest services and sign the report, \u00a7 11.23a may require additional CPE."
     },
     {
       "id": "ethics",
@@ -75,7 +74,7 @@
   ],
   "newLicensee": {
     "exemptIfIssuedInCycle": true,
-    "note": "Passed the CPA exam during this reporting period? You're exempt from CPE for your first renewal (Department of State renewal guidance; § 11.62(a) applies the same exemption to the initial license)."
+    "note": "Passed the CPA exam during this reporting period? You're exempt from CPE for your first renewal (Department of State renewal guidance; \u00a7 11.62(a) applies the same exemption to the initial license)."
   },
   "practiceOptions": [
     {
@@ -85,7 +84,7 @@
   ],
   "licenseDateLabel": "License expiration date",
   "licenseDateHint": "Pennsylvania licenses expire December 31 of odd-numbered years (e.g. 12/31/2027).",
-  "issueDateHint": "Enter the date you passed the CPA exam — if it's in this reporting period, no CPE is due for your first renewal.",
+  "issueDateHint": "Enter the date you passed the CPA exam \u2014 if it's in this reporting period, no CPE is due for your first renewal.",
   "renewalMonths": 24,
   "expiresOnMonthDay": "12-31",
   "expiresYearParity": "odd",
@@ -168,10 +167,10 @@
     "Authorship: 20 per publication, 40 total (shares the 40-hour self-study cap)."
   ],
   "toVerify": [
-    "First-renewal exemption: § 11.62(a) exempts exam-passers from CPE for the initial license application; the Department of State's renewal page extends it to the first renewal. Keyed to the date entered as the issue date.",
-    "Mapping of NASBA fields to the § 11.63 subject areas is for display only (only A&A for attest and ethics have minimums).",
+    "First-renewal exemption: \u00a7 11.62(a) exempts exam-passers from CPE for the initial license application; the Department of State's renewal page extends it to the first renewal. Keyed to the date entered as the issue date.",
+    "Mapping of NASBA fields to the \u00a7 11.63 subject areas is for display only (only A&A for attest and ethics have minimums).",
     "Both Regulatory and Behavioral Ethics count toward the 4 professional ethics hours.",
-    "Nano counted as individual study toward the § 11.64 40-hour cap; blended isn't."
+    "Nano counted as individual study toward the \u00a7 11.64 40-hour cap; blended isn't."
   ],
-  "recordRetention": "Keep certificates for 5 years after each program (§ 11.68(b))."
+  "recordRetention": "Keep certificates for 5 years after each program (\u00a7 11.68(b))."
 }

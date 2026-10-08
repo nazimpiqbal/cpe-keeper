@@ -2,7 +2,6 @@
   "state": "FL",
   "board": "Florida Board of Accountancy (DBPR)",
   "sourceUrls": [
-    "Rule 61H1-33.003, F.A.C., as amended effective 9/30/2026 (text provided by user from flrules.org)",
     "https://www2.myfloridalicense.com/certified-public-accounting/general-cpe-information/",
     "https://www2.myfloridalicense.com/certified-public-accounting/licensure/continuing-professional-education/",
     "https://www2.myfloridalicense.com/cpa/documents/CPEGuidelines.pdf",
@@ -14,7 +13,7 @@
     "type": "ending_at_license_expiration",
     "lengthMonths": 24,
     "label": "Reporting period",
-    "note": "Florida CPE periods run July 1 – June 30, every two years."
+    "note": "Florida CPE periods run July 1 \u2013 June 30, every two years."
   },
   "carryover": false,
   "requirements": [
@@ -48,7 +47,7 @@
       ],
       "kind": "max",
       "group": "subject",
-      "note": "Maximum, not a target. No more than 20 behavioral hours count toward the 80. Under the rule, anything that isn't accounting & auditing, technical business or Florida-approved ethics is behavioral — including communications, personal development and general (non-Florida) ethics courses.",
+      "note": "Maximum, not a target. No more than 20 behavioral hours count toward the 80. Under the rule, anything that isn't accounting & auditing, technical business or Florida-approved ethics is behavioral \u2014 including communications, personal development and general (non-Florida) ethics courses.",
       "otherLabel": "Accounting, auditing or technical business"
     },
     {
@@ -72,7 +71,7 @@
         "fl_ethics"
       ],
       "group": "special",
-      "note": "4 hours from a Florida Board-approved ethics provider, covering Chapters 455 and 473, F.S. We count courses with \"Florida\" and \"ethics\" (or \"473\") in the title — edit the title if yours isn't picked up.",
+      "note": "4 hours from a Florida Board-approved ethics provider, covering Chapters 455 and 473, F.S. We count courses with \"Florida\" and \"ethics\" (or \"473\") in the title \u2014 edit the title if yours isn't picked up.",
       "showNote": true
     }
   ],
@@ -167,8 +166,8 @@
   ],
   "toVerify": [
     "Economics, Business Law and Statistics treated as technical business per the Board's CPE Guidelines ('general business'); the rule text itself doesn't name them.",
-    "Production (operations/supply chain) treated as behavioral under the rule's catch-all — conservative; confirm.",
-    "First period: full 80 hours from issue date to the third June 30 — the rule has no proration."
+    "Production (operations/supply chain) treated as behavioral under the rule's catch-all \u2014 conservative; confirm.",
+    "First period: full 80 hours from issue date to the third June 30 \u2014 the rule has no proration."
   ],
   "categoryExcludes": {
     "fl_ethics": [

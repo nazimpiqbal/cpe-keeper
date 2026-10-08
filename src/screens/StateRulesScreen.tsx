@@ -49,7 +49,7 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
   ];
   const limits = rules.requirements.filter(q => q.kind === "max");
   // The board-wording source first; a page listed twice (CA: also in sourceUrls) shows once.
-  const sources = [...(guide?.source ? [guide.source] : []), ...(rules.sourceUrls ?? []).map(u => ({ label: host(u), url: u }))]
+  const sources = [...(guide?.source ? [guide.source] : []), ...(rules.sourceUrls ?? []).filter(u => /^https?:\/\//.test(u)).map(u => ({ label: host(u), url: u }))]
     .filter((src, i, all) => all.findIndex(x => x.url === src.url) === i);
 
   const Section = ({ title, children, onLayout }: { title: string; children: React.ReactNode; onLayout?: (y: number) => void }) => (
