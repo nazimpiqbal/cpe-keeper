@@ -883,6 +883,16 @@ export const SCENARIOS: Scenario[] = [
     ],
     stillNeeded: { total: 40, rows: ["Any time: Ethics 4", "Any time: Any CPE subject 36"] },
   },
+  { id: "CO-5", state: "CO", title: "Only 2 CR&R hours count as ethics",
+    checks: "Colorado Rules & Regulations 4 hours + Tax 76 = 80 of 80, but only 2 CR&R hours count toward the 4 ethics hours (the other 2 count as Specialized Knowledge), so 2 more ethics hours are needed.",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+      { title: "Colorado Rules & Regulations (CR&R)", provider: P, date: "2026-03-01", hours: 4, field: "Regulatory Ethics", delivery: "Group Internet Based" },
+      { title: "Tax Update", provider: P, date: "2026-06-01", hours: 76, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 80, required: 80, met: true },
+      { id: "crr_max", earned: 4, required: 2, over: 2 },
+      { id: "ethics", earned: 2, required: 4, remaining: 2 },
+    ],
+    stillNeeded: { total: 2, rows: ["Any time: Ethics 2"] } },
   {
     id: "CT-2", state: "CT", title: "Year done",
     checks: "36 Taxes + 4 Regulatory Ethics in 2026–27: 40 of 40 and ethics met.",

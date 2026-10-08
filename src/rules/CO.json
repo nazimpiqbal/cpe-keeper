@@ -3,8 +3,7 @@
   "board": "Colorado State Board of Accountancy",
   "sourceUrls": [
     "https://dpo.colorado.gov/Accountancy/CPEFAQ",
-    "https://dpo.colorado.gov/Accountancy_CPE",
-    "https://www.becker.com/cpe/requirements/colorado"
+    "https://dpo.colorado.gov/Accountancy_CPE"
   ],
   "lastVerified": "2026-10-04",
   "cycle": {
@@ -21,32 +20,58 @@
       "hours": 80,
       "scope": "cycle",
       "group": "overall",
-      "note": "10 hours for every full quarter your certificate is active — 80 for a full reporting period."
+      "note": "10 hours for every full quarter your certificate is active \u2014 80 for a full reporting period."
     },
     {
       "id": "pd_max",
       "label": "Personal development",
       "hours": 16,
       "scope": "cycle",
-      "categories": ["personal_development"],
+      "categories": [
+        "personal_development"
+      ],
       "kind": "max",
       "group": "subject",
       "note": "Maximum, not a target. No more than 20% of your CPE (16 of 80) can be personal development.",
       "otherLabel": "Any course except personal development"
     },
     {
+      "id": "crr_max",
+      "label": "Colorado Rules & Regulations (CR&R)",
+      "hours": 2,
+      "scope": "cycle",
+      "categories": [
+        "crr"
+      ],
+      "kind": "max",
+      "group": "special",
+      "keepsTotal": true,
+      "alsoReduces": [
+        "ethics"
+      ],
+      "note": "Up to 2 CR&R hours count toward the 4 ethics hours. CR&R beyond 2 hours counts as Specialized Knowledge, not ethics (Board CPE page). We count courses with \"Colorado\" and \"rules\" or \"ethics\", or \"CR&R\", in the title."
+    },
+    {
       "id": "ethics",
       "label": "Ethics",
       "hours": 4,
       "scope": "cycle",
-      "categories": ["ethics"],
+      "categories": [
+        "ethics"
+      ],
       "group": "special",
       "showNote": true,
-      "note": "4 hours of ethics; up to 2 of them can be Colorado Rules & Regulations (CR&R). Regulatory and behavioral ethics both count."
+      "note": "4 hours of ethics; up to 2 of them can be Colorado Rules & Regulations (CR&R) \u2014 more CR&R doesn't count as ethics. Regulatory and behavioral ethics both count."
     }
   ],
   "newLicensee": {
-    "prorateByQuarter": { "except": ["ethics"], "fullCalendarQuarters": true },
+    "prorateByQuarter": {
+      "except": [
+        "ethics",
+        "crr_max"
+      ],
+      "fullCalendarQuarters": true
+    },
     "note": "First period: 10 hours for each full calendar quarter after your certificate was issued"
   },
   "practiceOptions": [],
@@ -58,28 +83,69 @@
   "expiresYearParity": "odd",
   "deadlineLabel": "CPE period ends",
   "requirementGroups": [
-    { "id": "overall", "label": "Overall requirements" },
-    { "id": "subject", "label": "Subject requirements" },
-    { "id": "special", "label": "Special requirements" }
+    {
+      "id": "overall",
+      "label": "Overall requirements"
+    },
+    {
+      "id": "subject",
+      "label": "Subject requirements"
+    },
+    {
+      "id": "special",
+      "label": "Special requirements"
+    }
   ],
   "categoryLabels": {
     "ethics": "Ethics",
     "personal_development": "Personal development",
-    "general": "General CPE"
+    "general": "General CPE",
+    "crr": "Colorado Rules & Regulations"
   },
-  "tagCategories": ["ethics", "personal_development", "general"],
+  "tagCategories": [
+    "ethics",
+    "personal_development",
+    "general"
+  ],
   "fieldOfStudyMap": {
     "general": [
-      "Accounting", "Accounting (Governmental)", "Auditing", "Auditing (Governmental)", "Taxes",
-      "Management Advisory Services", "Economics", "Finance", "Information Technology", "Business Law",
-      "Statistics", "Specialized Knowledge", "Communications and Marketing", "Computer Software and Applications",
-      "Business Management and Organization", "Personnel/Human Resources", "Production"
+      "Accounting",
+      "Accounting (Governmental)",
+      "Auditing",
+      "Auditing (Governmental)",
+      "Taxes",
+      "Management Advisory Services",
+      "Economics",
+      "Finance",
+      "Information Technology",
+      "Business Law",
+      "Statistics",
+      "Specialized Knowledge",
+      "Communications and Marketing",
+      "Computer Software and Applications",
+      "Business Management and Organization",
+      "Personnel/Human Resources",
+      "Production"
     ],
-    "personal_development": ["Personal Development"],
-    "ethics": ["Regulatory Ethics", "Behavioral Ethics"]
+    "personal_development": [
+      "Personal Development"
+    ],
+    "ethics": [
+      "Regulatory Ethics",
+      "Behavioral Ethics"
+    ]
   },
   "titleKeywordMap": {
-    "ethics": ["colorado+rules", "colorado+ethics", "cr&r"]
+    "ethics": [
+      "colorado+rules",
+      "colorado+ethics",
+      "cr&r"
+    ],
+    "crr": [
+      "colorado+rules",
+      "colorado+ethics",
+      "cr&r"
+    ]
   },
   "limitsNotTracked": [
     "Teaching and publishing combined: max 50% (40 hours).",
@@ -88,6 +154,6 @@
   "recordRetention": "Keep CPE documentation for at least 5 years from the end of the year the CPE was completed.",
   "toVerify": [
     "First period: full calendar quarters after the issue date; the 4 ethics hours aren't prorated.",
-    "CR&R (Colorado Rules & Regulations) counted as ethics by title (\"Colorado\"+\"rules\"/\"ethics\", \"CR&R\")."
+    "CR&R matched by title (\"Colorado\"+\"rules\"/\"ethics\", \"CR&R\"); only 2 hours count as ethics, the rest as Specialized Knowledge."
   ]
 }

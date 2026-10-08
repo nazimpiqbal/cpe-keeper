@@ -67,6 +67,8 @@ export type Req = {
   summaryFormat?: boolean;
   // max lines: excess hours also come off these lines (WA/TX: nano over the cap doesn't count toward Technical either).
   alsoReduces?: string[];
+  // max lines (CO CR&R): the cap only limits the alsoReduces lines; hours over it still count toward the total.
+  keepsTotal?: boolean;
   otherLabel?: string;     // max lines: what further hours must be once this cap is full ("Technical") // a delivery-format minimum (AZ live) — overlaps subjects, so it's a note, not a bucket
   warning?: string;   // shown on its own line in dark red, e.g. FL missed-deadline extensions
   shortNote?: string; // added to a past year's "N hrs short" line (OH: "$10 fine per missing credit")
@@ -182,6 +184,7 @@ export type Line = {
   over?: number;    // for "max" lines: hours above the ceiling, which don't count toward the total
   overIn?: { [lineId: string]: number }; // of those, hours that also sat in these lines (alsoReduces)
   overLabels?: string[];  // names of those lines, for the dashboard
+  keepsTotal?: boolean;   // max line whose excess still counts toward the total (only the alsoReduces lines lose it)
   reserved?: { hours: number; label: string }; // hours that must still come from specific years
   // Set when the requirement can also be met by concentrating hours in one area (NY 24-hour option).
   alt?: { label: string; area: string; earned: number; required: number; remaining: number; plus?: { hours: number; label: string } };
@@ -915,7 +918,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
         }
         lines.push({
           id: q.id, label: q.label, period: w.name, required: q.hours, earned, kind: "max",
-          over, remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub,
+          over, remaining: 0, met: true, note: q.note, deadline: iso(w.e), sub: w.sub, ...(q.keepsTotal ? { keepsTotal: true } : {}),
           ...(Object.keys(overIn).length ? { overIn, overLabels: Object.keys(overIn).map(t => rules.requirements.find(x => x.id === t)?.label ?? t) } : {}),
         });
         continue;
@@ -1065,7 +1068,7 @@ function applyMaximums(lines: Line[], rules: Rules) {
   if (!total) return;
   // Caps over a rolling window already took their excess off the total (evaluateWindow).
   const rollingMax = new Set(rules.requirements.filter(r => r.kind === "max" && r.scope === "calendar_years_rolling").map(r => r.id));
-  const excess = round(lines.filter(l => l.kind === "max" && !rollingMax.has(l.id)).reduce((a, l) => a + (l.over ?? 0), 0));
+  const excess = round(lines.filter(l => l.kind === "max" && !rollingMax.has(l.id) && !l.keepsTotal).reduce((a, l) => a + (l.over ?? 0), 0));
   if (excess > 0) {
     total.earned = round(total.earned - excess);
     total.remaining = round(Math.max(0, total.required - total.earned));

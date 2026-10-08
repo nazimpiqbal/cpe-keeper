@@ -48,7 +48,7 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
 
   // When a cap is already full (CA: 40 non-technical), every further hour must be in the capped-out subject's
   // counterpart — the cycle subject that also has yearly minimums (CA technical). "Any subject" becomes that subject.
-  const fullCaps = lines.filter(l => l.kind === "max" && !l.sub && l.required > 0 && l.earned >= l.required);
+  const fullCaps = lines.filter(l => l.kind === "max" && !l.sub && !l.keepsTotal && l.required > 0 && l.earned >= l.required);
   const capFull = fullCaps.length > 0;
   // A full cap can name what further hours must be (TX: "Technical", once non-technical is used up).
   const anyLabel = fullCaps.map(l => reqOf(l)?.otherLabel).filter(Boolean).join(", ") || anyLabelFor(rules);

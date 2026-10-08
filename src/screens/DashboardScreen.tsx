@@ -45,9 +45,13 @@ function Bar({ line, showNote, warning, shortNote, onInfo }: { line: Line; showN
           <Text style={[s.reqNum, { color: C.muted }]}>{line.earned} of max {line.required}</Text>
         </View>
         <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
-        <Text style={s.reqPeriod}>Up to {line.required} {line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.</Text>
+        <Text style={s.reqPeriod}>{line.keepsTotal
+          ? `Up to ${line.required} ${line.label.toLowerCase()} hours count toward ${line.overLabels?.join(" or ") ?? "the requirement"}. More still count toward your total.`
+          : `Up to ${line.required} ${line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.`}</Text>
         <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : C.neutralBar }]} /></View>
-        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{hrs(line.over ?? 0)} over the maximum — they won't count toward the total{line.overLabels?.length ? ` or ${line.overLabels.join(" or ")}` : ""}</Text>}
+        {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{line.keepsTotal
+          ? `${hrs(line.over ?? 0)} over — they count toward your total, not ${line.overLabels?.join(" or ") ?? "this requirement"}`
+          : `${hrs(line.over ?? 0)} over the maximum — they won't count toward the total${line.overLabels?.length ? ` or ${line.overLabels.join(" or ")}` : ""}`}</Text>}
       </View>
     );
   }
