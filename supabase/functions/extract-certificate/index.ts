@@ -30,7 +30,7 @@ const TOOL = {
             title: { type: "string" },
             provider: { type: ["string", "null"], description: "Sponsor / provider organization name." },
             sponsor_id: { type: ["string", "null"], description: "NASBA National Registry sponsor ID, if printed (often labelled 'NASBA Sponsor #', 'National Registry of CPE Sponsors ID' or 'Sponsor ID'; usually 5–6 digits). Digits only, no label." },
-            state_sponsor_id: { type: ["string", "null"], description: "A state board sponsor number, if printed separately from the NASBA ID — e.g. 'Texas Sponsor #' / 'TSBPA Sponsor No.' or 'NYS Sponsor #' / 'New York State Sponsor'. Number only." },
+            state_sponsor_id: { type: ["string", "null"], description: "The state number described in the instructions, if printed separately from the NASBA ID. Number only; null if not printed." },
             completed_on: { type: ["string", "null"], description: "Completion date as YYYY-MM-DD." },
             hours: { type: ["number", "null"], description: "CPE credits earned." },
             field_of_study: { type: ["string", "null"], enum: [...FIELDS, null] },
@@ -51,7 +51,8 @@ Rules:
 - hours = CPE credits as printed (e.g. 2.5).
 - field_of_study must be one of the allowed NASBA fields. Map close wording (e.g. "Accounting and Auditing" → pick the best single field; "Tax" → "Taxes"; "Ethics" → "Regulatory Ethics" unless it says behavioral). If no field is printed, make your best guess from the course title and set field_confident=false.
 - delivery_method: map "Live"/"Group Live" → "Group Live", "Group Internet Based"/"Webinar"/"Virtual live" → "Group Internet Based", "QAS Self Study"/"Self-study" → "QAS Self Study".
-- sponsor_id = the NASBA National Registry sponsor ID; state_sponsor_id = a separate state board sponsor number (Texas, New York). Never guess either; use null if not printed.
+- sponsor_id = the NASBA National Registry sponsor ID. Never guess; use null if not printed.
+- {STATE_RULE}
 - Dates must be YYYY-MM-DD. Use null for anything not shown.`;
 
 const SHEET_PROMPT = `This is a CPE transcript/log exported from a spreadsheet (each sheet shown as CSV).
@@ -62,8 +63,28 @@ Rules:
 - If the sheet only gives a broad category (e.g. "Technical Subject Areas", "Non-Technical Subject Areas", "Accounting and Attestation (A&A)", "Ethics", "Fraud"), choose the best NASBA field_of_study from the course title and that category, and set field_confident=false. Set field_confident=true only if a specific NASBA field is given.
 - "Ethics" category → "Regulatory Ethics"; "Board-Approved Regulatory Review Course" → "Regulatory Ethics"; "Accounting and Attestation" → "Accounting" or "Auditing" by title.
 - delivery_method: "Live Presentation" → "Group Live", "Group Internet-based programs" → "Group Internet Based", "Interactive Self-Study" → "QAS Self Study", "Nano Learning Program" → "Nano Learning", "Blended Learning Program" → "Blended".
-- sponsor_id from a "Sponsor ID", "NASBA ID" or "Registry #" column; state_sponsor_id from a "Texas sponsor #" / "NYS sponsor #" column. Never guess; null if blank.
+- sponsor_id from a "Sponsor ID", "NASBA ID" or "Registry #" column. Never guess; null if blank.
+- {STATE_RULE}
 - Dates must be YYYY-MM-DD (US spreadsheets use MM/DD/YYYY). Use null for anything not shown.`;
+
+// The one state number to read (certificates often list several states' sponsor numbers). Matches STATE_SPONSOR
+// in the app's src/lib/sponsor.ts.
+const STATE_NUMBER: { [state: string]: string } = {
+  TX: "the Texas sponsor number ('Texas Sponsor #', 'TSBPA Sponsor No.')",
+  NY: "the New York State sponsor number ('NYS Sponsor #', 'New York State Sponsor')",
+  NJ: "the New Jersey sponsor number ('NJ Sponsor #', usually starting 20CE00)",
+  PA: "the Pennsylvania sponsor number ('Pennsylvania Sponsor #', 'PA Sponsor', starting PX-)",
+  FL: "the 7-digit Florida DBPR ethics course approval number ('DBPR Course #', 'Course Approval Number'), which appears only on a Florida Board-approved ethics course; never the DBPR provider number",
+  IL: "the Illinois IDFPR sponsor license number ('Illinois Sponsor #', 'IL License', starting 158-)",
+};
+function stateRule(state?: unknown): string {
+  const want = typeof state === "string" ? STATE_NUMBER[state] : undefined;
+  if (typeof state !== "string") // older app versions: no state sent
+    return "state_sponsor_id = a separate Texas or New York State sponsor number if printed. Never guess; null otherwise.";
+  return want
+    ? `state_sponsor_id = ${want}. If the document lists several states' numbers, take only this one. Never guess; null if it isn't printed.`
+    : "state_sponsor_id = null.";
+}
 
 // Spreadsheets are turned into plain CSV text per sheet; the model reads them as text.
 function spreadsheetToText(bytes: Uint8Array, isCsv: boolean): string {
@@ -113,7 +134,7 @@ Deno.serve(async req => {
     const { data: { user }, error: userErr } = await supabase.auth.getUser(auth.replace("Bearer ", ""));
     if (userErr || !user) return json({ error: "Not signed in." }, 401);
 
-    const { path } = await req.json();
+    const { path, state } = await req.json();
     if (typeof path !== "string" || !path.startsWith(`${user.id}/`)) return json({ error: "Invalid file." }, 400);
 
     // The path is already checked to be inside this user's own folder (above).
@@ -127,14 +148,14 @@ Deno.serve(async req => {
     const isSheet = /\.(xlsx|xls|csv)$/.test(lower);
     const isPdf = lower.endsWith(".pdf") || file.type === "application/pdf";
     let block: unknown;
-    let prompt = PROMPT;
+    let prompt = PROMPT.replace("{STATE_RULE}", stateRule(state));
     if (isSheet) {
       let text: string;
       try { text = spreadsheetToText(bytes, lower.endsWith(".csv")); }
       catch { return json({ error: "Couldn't open this spreadsheet. Try saving it as .xlsx or .csv." }, 422); }
       if (text.length > 200_000) return json({ error: "This spreadsheet is too large. Try splitting it into smaller files." }, 413);
       block = { type: "text", text };
-      prompt = SHEET_PROMPT;
+      prompt = SHEET_PROMPT.replace("{STATE_RULE}", stateRule(state));
     } else {
       const mediaType = isPdf ? "application/pdf" : (file.type?.startsWith("image/") ? file.type : "image/jpeg");
       block = isPdf

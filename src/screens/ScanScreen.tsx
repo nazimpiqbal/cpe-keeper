@@ -23,8 +23,9 @@ const SHEET_TYPES = [
 ];
 
 
-export default function ScanScreen({ userId, onExtracted, onManual, onCancel, onAttached }: {
+export default function ScanScreen({ userId, state, onExtracted, onManual, onCancel, onAttached }: {
   userId: string;
+  state?: string; // the license state: its sponsor number is the one read from certificates
   onAttached: (courseTitle: string) => void;   // certificate linked to an existing course
   onExtracted: (courses: Extracted[], certificatePath: string) => void;
   onManual: (certificatePath: string | null) => void;
@@ -76,7 +77,7 @@ export default function ScanScreen({ userId, onExtracted, onManual, onCancel, on
       setUploadedPath(path);
 
       setStatus("reading");
-      const courses = await readCertificate(path);
+      const courses = await readCertificate(path, state);
 
       // One course: is it one the user already has? Offer to attach instead of adding a copy.
       // (Multi-course files go to the review list, which handles existing courses itself.)

@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 import { categoriesOf, Line, Rules } from "../engine/engine";
 import { toEngineRecord, CpeRow, License } from "./records";
 import { normalizeDelivery } from "./delivery";
+import { STATE_SPONSOR } from "./sponsor";
 
 export type TranscriptInput = {
   name: string;               // licensee name as it should appear (optional, may be "")
@@ -106,7 +107,7 @@ export function transcriptHtml(t: TranscriptInput, certs: CertPage[], cssMargins
       const cert = r.certificate_path ? t.certNumber.get(r.certificate_path) : undefined;
       return `<tr><td class="num">${usDate(r.completed_on)}</td><td>${esc(r.title)}</td>` +
         `<td>${esc(r.provider)}${r.sponsor_id ? `<div class="muted">NASBA ID ${esc(r.sponsor_id)}</div>` : ""}` +
-        `${r.state_sponsor_id ? `<div class="muted">${esc(t.license.state)} sponsor ${esc(r.state_sponsor_id)}</div>` : ""}` +
+        `${r.state_sponsor_id ? `<div class="muted">${esc(STATE_SPONSOR[t.license.state]?.short ?? `${t.license.state} sponsor`)} ${esc(r.state_sponsor_id)}</div>` : ""}` +
         `${r.not_on_registry ? `<div class="short">Not on NASBA Registry</div>` : !r.sponsor_id ? `<div class="short">No sponsor ID</div>` : ""}</td>` +
         `<td>${esc(r.field_of_study)}${area ? `<div class="muted">${esc(area)}</div>` : ""}</td>` +
         (showDelivery ? `<td>${esc(normalizeDelivery(r.delivery_method) ?? "")}</td>` : "") +

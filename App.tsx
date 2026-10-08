@@ -101,7 +101,7 @@ export default function App() {
     );
   }
   else if (view === "scan") screen = (
-    <ScanScreen userId={session.user.id}
+    <ScanScreen userId={session.user.id} state={license.state}
       onExtracted={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }}
       onManual={path => { setQueue({ courses: [], index: 0, path, saved: 0 }); setView("addCourse"); }}
       onCancel={() => backToDashboard(false)}
@@ -139,7 +139,7 @@ export default function App() {
   );
   else if (view === "certificates") screen = (
     <Tabs active="certificates" onChange={goTab}>
-      <CertificatesScreen key={dashKey} userId={session.user.id} cycle={cycle}
+      <CertificatesScreen key={dashKey} userId={session.user.id} state={license.state} cycle={cycle}
         onAddCourses={(courses, path) => { setQueue({ courses, index: 0, path, saved: 0 }); setView(courses.length > 1 ? "bulk" : "review"); }} />
     </Tabs>
   );

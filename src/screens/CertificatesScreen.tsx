@@ -21,8 +21,9 @@ const kindOf = (name: string) => {
 const icon = (k: string) => (k === "PDF" ? "📄" : k === "Spreadsheet" ? "📊" : "🖼️");
 const fmtSize = (b: number | null) => (b == null ? "" : b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`);
 
-export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
+export default function CertificatesScreen({ userId, state, cycle, onAddCourses }: {
   userId: string;
+  state?: string; // the license state: its sponsor number is the one read from certificates
   cycle?: { start: string; end: string; calendarYear?: boolean; label?: string };
   onAddCourses: (courses: Extracted[], certificatePath: string) => void; // open review screen, pre-filled
 }) {
@@ -96,7 +97,7 @@ export default function CertificatesScreen({ userId, cycle, onAddCourses }: {
     setBusyLabel("Checking…");
     let read: Extracted[];
     try {
-      read = await readCertificate(path);
+      read = await readCertificate(path, state);
     } catch {
       if (!target) { setError("Couldn't read this file to match it. You can attach it from a course's Attach button instead."); return; }
       const choice = await ask("Couldn't check this certificate", `We couldn't read it to confirm it's for ${describe(target)}. Attach it anyway?`,
