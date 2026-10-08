@@ -2,15 +2,14 @@
   "state": "LA",
   "board": "Louisiana State Board of Certified Public Accountants",
   "sourceUrls": [
+    "https://cpaboard.state.la.us/cpe/#CPE-reporting",
     "https://state-rules.com/louisiana/lac/XIX.1301/",
-    "https://lumiqlearn.com/blog/louisiana-cpa-cpe-requirements",
-    "https://www.mypescpe.com/louisiana-cpe-requirements",
     "https://www.louisiana.cpa/cpe/038542imp:2026-ethics-course-for-louisiana-c-p-as-in-public-practice-a-case-study-approach"
   ],
   "lastVerified": "2026-10-05",
   "cycle": {
     "type": "calendar_year",
-    "note": "Louisiana CPE runs by calendar year, due December 31 and reported by January 31: at least 20 hours a year and 80 over the last two calendar years, plus a Board-approved ethics course in even-numbered years."
+    "note": "Louisiana CPE runs by calendar year, completed by December 31 and reported online by January 31: at least 20 hours a year and 80 over the rolling two calendar years, plus a Board-approved ethics course in even-numbered years. No carryover; nano-learning doesn't count."
   },
   "carryover": false,
   "requirements": [
@@ -62,6 +61,20 @@
       "otherLabel": "Any course except personal development"
     },
     {
+      "id": "nano_max",
+      "label": "Nano-learning",
+      "hours": 0,
+      "scope": "cycle",
+      "categories": [
+        "nano"
+      ],
+      "kind": "max",
+      "group": "subject",
+      "subLabel": "This year",
+      "note": "Nano-learning isn't accepted for CPE credit in Louisiana (Board CPE page).",
+      "otherLabel": "Any course except nano-learning"
+    },
+    {
       "id": "la_ethics",
       "label": "Louisiana ethics",
       "hours": 3,
@@ -111,7 +124,8 @@
     "aa": "Accounting & auditing",
     "la_ethics": "Louisiana ethics",
     "personal_development": "Personal development",
-    "general": "General CPE"
+    "general": "General CPE",
+    "nano": "Nano-learning"
   },
   "tagCategories": [
     "aa",
@@ -157,13 +171,21 @@
     ]
   },
   "limitsNotTracked": [
-    "Published materials: max 10 hours a year; teaching/speaking: max 20; credentialing exams: max 20.",
+    "Published materials: max 10 hours a year; teaching/speaking (with preparation): max 20; credentialing exams: max 20.",
     "Self-study must be interactive (most NASBA QAS courses are).",
-    "Personal development over 20 in a year is shown as over the cap but isn't taken off the two-year total."
+    "Personal development and nano-learning over the limit come off this year's hours; earlier years' excess isn't re-checked.",
+    "Credit is in 50-minute hours, rounded down to the nearest half hour.",
+    "Louisiana ethics isn't needed if you mainly practice in another state that has its own ethics requirement and hold an active license there.",
+    "Non-residents can instead meet their principal-place-of-business state's CPE rules (signed statement at renewal)."
   ],
-  "recordRetention": "Keep CPE documentation in case the Board asks for it.",
+  "recordRetention": "Keep CPE documentation (and course materials showing content and instructors) for five full calendar years after each program.",
   "toVerify": [
     "Louisiana ethics hours in future even years (3 in 2026; earlier years were 2).",
     "Licensure year counted as 20 toward the two-year 80 (sources: '60 the following year')."
-  ]
+  ],
+  "deliveryMap": {
+    "nano": [
+      "Nano Learning"
+    ]
+  }
 }

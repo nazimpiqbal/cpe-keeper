@@ -1062,7 +1062,8 @@ function applyMaximums(lines: Line[], rules: Rules) {
     }
   }
   // Calendar-year states can have a rolling total (OK, WY): a yearly cap's excess comes off it too.
-  const totalReq = rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when)
+  const totalReq = (isCalendarYear(rules) ? rules.requirements.find(r => r.id === "total" && r.scope === "calendar_years_rolling" && !r.categories && !r.when) : undefined)
+    ?? rules.requirements.find(r => r.scope === "cycle" && !r.categories && !r.when)
     ?? (isCalendarYear(rules) ? rules.requirements.find(r => r.scope === "calendar_years_rolling" && !r.categories && !r.when && r.kind !== "max") : undefined);
   const total = totalReq && lines.find(l => l.id === totalReq.id && !l.sub);
   if (!total) return;
@@ -1073,6 +1074,13 @@ function applyMaximums(lines: Line[], rules: Rules) {
     total.earned = round(total.earned - excess);
     total.remaining = round(Math.max(0, total.required - total.earned));
     total.met = total.remaining === 0;
+    // …and off this year's own minimum (LA/OK: "at least 20 each year" — hours over a yearly cap don't count there either).
+    if (totalReq.scope === "calendar_years_rolling") {
+      for (const q of rules.requirements.filter(r => r.scope === "cycle" && !r.categories && !r.when && r.kind !== "max")) {
+        const y = lines.find(l => l.id === q.id && l.kind !== "max");
+        if (y) { y.earned = round(Math.max(0, y.earned - excess)); y.remaining = round(Math.max(0, y.required - y.earned)); y.met = y.remaining === 0; }
+      }
+    }
   }
 }
 

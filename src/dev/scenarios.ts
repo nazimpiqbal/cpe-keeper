@@ -2410,6 +2410,20 @@ export const SCENARIOS: Scenario[] = [
   },
   // ── Oregon ── period 7/1/2025 – 6/30/2027: 80 hours, 20 each July–June year, 4 Oregon ethics, non-technical max 16,
   // nano max 8, up to 20 carry forward.
+  { id: "LA-6", state: "LA", title: "Nano-learning doesn't count",
+    checks: "2025: Tax 40. 2026: Tax 20 + nano 10 + Louisiana ethics 3. Nano isn't accepted, so 2026 counts 23 (20 met) and the two-year total is 63 of 80 (17 to go).",
+    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+      { title: "Tax Update", provider: P, date: "2025-05-01", hours: 40, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Nanos", provider: P, date: "2026-04-01", hours: 10, field: "Taxes", delivery: "Nano Learning" },
+      { title: "2026 Ethics Course for Louisiana CPAs", provider: P, date: "2026-05-01", hours: 3, field: "Regulatory Ethics", delivery: "Group Internet Based" }], expect: [
+      { id: "total", earned: 63, required: 80, remaining: 17 },
+      { id: "annual_min", y: 5, earned: 23, required: 20, met: true },
+      { id: "nano_max", earned: 10, required: 0, over: 10 },
+      { id: "la_ethics", y: 5, earned: 3, required: 3, met: true },
+      { id: "annual_min_2025", y: 4, earned: 40, required: 20, met: true },
+    ],
+    stillNeeded: { total: 17, rows: ["Any time: Any CPE subject 17"] } },
   { id: "OR-1", state: "OR", title: "Clean slate", checks: "80; 20 in 2025–26 and 2026–27; Oregon ethics 4.",
     license: { expiration: "2027-06-30", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 80, remaining: 80 },

@@ -42,16 +42,18 @@ function Bar({ line, showNote, warning, shortNote, onInfo }: { line: Line; showN
       <View style={[s.req, s.maxBox]}>
         <View style={s.reqTop}>
           <Text style={[s.reqLabel, { color: C.muted }]}>{line.label}<Info onPress={onInfo} /></Text>
-          <Text style={[s.reqNum, { color: C.muted }]}>{line.earned} of max {line.required}</Text>
+          <Text style={[s.reqNum, { color: C.muted }]}>{line.required === 0 ? `${line.earned} logged` : `${line.earned} of max ${line.required}`}</Text>
         </View>
-        <Text style={s.maxTag}>MAXIMUM — NOT A TARGET</Text>
-        <Text style={s.reqPeriod}>{line.keepsTotal
+        <Text style={s.maxTag}>{line.required === 0 ? "NOT ACCEPTED" : "MAXIMUM — NOT A TARGET"}</Text>
+        <Text style={s.reqPeriod}>{line.required === 0
+          ? "These don't count toward your CPE in this state."
+          : line.keepsTotal
           ? `Up to ${line.required} ${line.label.toLowerCase()} hours count toward ${line.overLabels?.join(" or ") ?? "the requirement"}. More still count toward your total.`
           : `Up to ${line.required} ${line.label.toLowerCase()} hours can count toward the total. You don't need to reach it.`}</Text>
         <View style={[s.track, s.maxTrack]}><View style={[s.fill, { width: `${pct * 100}%`, backgroundColor: (line.over ?? 0) > 0 ? C.danger : C.neutralBar }]} /></View>
         {(line.over ?? 0) > 0 && <Text style={[s.need, { color: C.danger }]}>{line.keepsTotal
           ? `${hrs(line.over ?? 0)} over — they count toward your total, not ${line.overLabels?.join(" or ") ?? "this requirement"}`
-          : `${hrs(line.over ?? 0)} over the maximum — they won't count toward the total${line.overLabels?.length ? ` or ${line.overLabels.join(" or ")}` : ""}`}</Text>}
+          : `${hrs(line.over ?? 0)} ${line.required === 0 ? "" : "over the maximum "}— they won't count toward the total${line.overLabels?.length ? ` or ${line.overLabels.join(" or ")}` : ""}`}</Text>}
       </View>
     );
   }
@@ -322,7 +324,10 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
     );
     if (total?.parts) {
       // Rolling multi-year total (ID): one row per year, showing any yearly cap or credit.
-      const sumCounted = r2(total.parts.reduce((a, p) => a + p.counted, 0));
+      // Hours over a yearly cap (LA personal development, WY nano) come off the rolling total too.
+      const rollingCaps = new Set((rules?.requirements ?? []).filter(q => q.kind === "max" && q.scope === "calendar_years_rolling").map(q => q.id));
+      const capOff = r2(lines.filter(l => l.kind === "max" && !l.sub && !l.keepsTotal && !rollingCaps.has(l.id)).reduce((a, l) => a + (l.over ?? 0), 0));
+      const sumCounted = r2(total.parts.reduce((a, p) => a + p.counted, 0) - capOff);
       return (
         <>
           <Text style={ui.h2}>How your hours add up</Text>
@@ -332,6 +337,7 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
               <Row key={p.label} label={p.label} value={p.counted !== p.logged ? `${p.logged} → ${p.counted}` : `${p.counted}`}
                 hint={p.why ? `${p.logged} logged — ${p.why}` : undefined} />
             ))}
+            {capOff > 0 && <Row label="Over a limit (doesn't count)" value={`−${capOff}`} muted />}
             <View style={{ height: 1, backgroundColor: C.line, marginVertical: 6 }} />
             <Row label={`Counted toward ${total.label}`} value={`${sumCounted}`} strong />
             <Text style={[ui.hint, { color: Math.abs(sumCounted - total.earned) < 0.01 ? C.ok : C.danger, fontWeight: "700" }]}>
