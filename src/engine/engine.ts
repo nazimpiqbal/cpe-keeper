@@ -39,6 +39,8 @@ export type Req = {
   minRenewal?: number; // only applies from the Nth full license year after initial licensure (TX ethics)
   lookbackYears?: number; years?: number;
   waiveIfIssuedInWindow?: boolean;
+  // LA: note shown while waived; {licensed} = year licensed, {first} = first year it applies to (window end).
+  waiveNote?: string;
   licensedYearCredit?: number;
   // KY/AR: hours depend on the practice (KY: 80 if you worked at a CPA firm, otherwise 60). Highest that applies wins.
   whenHours?: { [practice: string]: number };
@@ -822,7 +824,7 @@ function evaluateWindow(records: Record[], profile: Profile, rules: Rules, start
       if (q.waiveIfIssuedInWindow && fi != null && fi >= y - n + 1 && fi <= y) {
         lines.push({
           id: q.id, label: q.label, period: sm === 1 ? `${y - n + 1}–${y}` : `${yl(y - n + 1)} to ${yl(y)}`, required: 0, earned, remaining: 0, met: true,
-          note: `Not required yet — you were licensed in ${yl(fi)}, so this first applies to the ${n} years ending ${yl(fi + n)}.`,
+          note: q.waiveNote ? q.waiveNote.replace(/\{licensed\}/g, yl(fi)).replace(/\{first\}/g, yl(fi + n)).replace(/\{prevFirst\}/g, yl(fi + n - 1)) : `Not required yet — you were licensed in ${yl(fi)}, so this first applies to the ${n} years ending ${yl(fi + n)}.`,
           deadline: iso(yearEnd(y)), group: q.group, parts,
         });
         continue;

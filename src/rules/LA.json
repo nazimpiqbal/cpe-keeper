@@ -4,10 +4,10 @@
   "sourceUrls": [
     "https://cpaboard.state.la.us/cpe/#CPE-reporting"
   ],
-  "lastVerified": "2026-10-05",
+  "lastVerified": "2026-10-09",
   "cycle": {
     "type": "calendar_year",
-    "note": "Louisiana CPE runs by calendar year, completed by December 31 and reported online by January 31: at least 20 hours a year and 80 over the rolling two calendar years, plus a Board-approved ethics course in even-numbered years. No carryover; nano-learning doesn't count."
+    "note": "Louisiana CPE runs by calendar year, completed by December 31 and reported online by January 31: at least 20 hours a year and 80 over the rolling two calendar years, plus a Board-approved ethics course in even-numbered years. New licensees: nothing in the year licensed, 20 the first full year, then the 80. No carryover; nano-learning doesn't count."
   },
   "carryover": false,
   "requirements": [
@@ -17,10 +17,11 @@
       "hours": 80,
       "scope": "calendar_years_rolling",
       "years": 2,
-      "licensedYearCredit": 20,
       "group": "overall",
       "showNote": true,
-      "note": "Last year plus this year must reach 80 hours (LAC 46:XIX.1301). The year you were licensed counts as 20."
+      "note": "Last year plus this year must reach 80 hours (LAC 46:XIX.1301).",
+      "waiveIfIssuedInWindow": true,
+      "waiveNote": "Not required yet. You were licensed in {licensed}, so this first applies to {prevFirst} and {first} together. The Board recommends at least 40 hours in {prevFirst}: anything over 20 reduces what {first} needs, and if you do only 20 in {prevFirst}, {first} needs 60."
     },
     {
       "id": "annual_min",
@@ -89,7 +90,7 @@
   ],
   "newLicensee": {
     "exemptIfIssuedInCycle": true,
-    "note": "No CPE is due in the calendar year you were licensed; it starts the next full calendar year."
+    "note": "No CPE is due in the calendar year you were licensed. Your first full year needs at least 20 hours; the two-year 80 starts the year after (Louisiana Board, Oct 2026)."
   },
   "practiceOptions": [
     {
@@ -99,7 +100,7 @@
   ],
   "licenseDateLabel": "License expiration date",
   "licenseDateHint": "Louisiana certificates renew every year by December 31. CPE is tracked by calendar year.",
-  "issueDateHint": "If you were licensed this year, no CPE is due until next year.",
+  "issueDateHint": "If you were licensed this year, no CPE is due until next year, when the minimum is 20 hours.",
   "renewalMonths": 12,
   "expiresOnMonthDay": "12-31",
   "deadlineLabel": "License renews",
@@ -178,8 +179,7 @@
   ],
   "recordRetention": "Keep CPE documentation (and course materials showing content and instructors) for five full calendar years after each program.",
   "toVerify": [
-    "Louisiana ethics hours in future even years (3 in 2026; earlier years were 2).",
-    "Licensure year counted as 20 toward the two-year 80 (sources: '60 the following year')."
+    "Louisiana ethics hours in future even years (3 in 2026; earlier years were 2)."
   ],
   "deliveryMap": {
     "nano": [

@@ -2387,18 +2387,33 @@ export const SCENARIOS: Scenario[] = [
     stillNeeded: { total: 8, rows: ["2026: Accounting & auditing 8"] },
   },
   {
-    id: "LA-4", state: "LA", title: "Licensed last year",
-    checks: "Licensed 6/1/2025: 2025 counts as 20 toward the 80, so 2026 needs 60 (and its own 20 and the ethics course).",
+    id: "LA-4", state: "LA", title: "First full year after licensing",
+    checks: "Licensed 6/1/2025: 2026 is the first full year, so only its 20-hour minimum and the ethics course apply. The two-year 80 first covers 2026–2027 (Board, Oct 2026).",
     license: { expiration: "2026-12-31", issued: "2025-06-01" },
     courses: [
       { title: "Tax Update", provider: P, date: "2026-03-01", hours: 30, field: "Taxes", delivery: "Group Live" },
     ],
     expect: [
-      { id: "total", earned: 50, required: 80, remaining: 30 },
+      { id: "total", earned: 30, required: 0, met: true },
       { id: "annual_min", y: 5, earned: 30, required: 20, met: true },
       { id: "annual_min_2025", y: 4, absent: true, earned: 0, required: 0 },
     ],
-    stillNeeded: { total: 30, rows: ["2026: Louisiana ethics 3", "Any time: Any CPE subject 27"] },
+    stillNeeded: { total: 3, rows: ["2026: Louisiana ethics 3"] },
+  },
+  {
+    id: "LA-7", state: "LA", title: "Second full year after only 20",
+    checks: "Licensed 8/1/2024. 2025 (first full year): Tax 20, the minimum. 2026: Tax 10 + Louisiana ethics 3. 2025–2026 must reach 80, so 2026 needs 60 in all: 47 to go.",
+    license: { expiration: "2026-12-31", issued: "2024-08-01" },
+    courses: [
+      { title: "Tax Update", provider: P, date: "2025-04-01", hours: 20, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Planning", provider: P, date: "2026-03-01", hours: 10, field: "Taxes", delivery: "Group Live" },
+      { title: "2026 Ethics Course for Louisiana CPAs", provider: P, date: "2026-04-01", hours: 3, field: "Regulatory Ethics", delivery: "Group Live" },
+    ],
+    expect: [
+      { id: "total", earned: 33, required: 80, remaining: 47 },
+      { id: "annual_min", y: 5, earned: 13, required: 20, remaining: 7 },
+    ],
+    stillNeeded: { total: 47, rows: ["2026: Any CPE subject 7", "Any time: Any CPE subject 40"] },
   },
   {
     id: "LA-5", state: "LA", title: "Licensed this year",
