@@ -107,7 +107,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "technical_total", earned: 14, required: 40, remaining: 26 },
       { id: "total", earned: 24, required: 80, remaining: 56 },
     ],
-    stillNeeded: { total: 56, rows: ["Year 2: Technical 6", "Year 2: Technical or non-technical 8", "Any time: Technical 16", "Any time: Ethics 4", "Any time: Technical or non-technical 22"] },
+    stillNeeded: { total: 56, rows: ["Year 2: Technical 22", "Year 2: Ethics 4", "Year 2: Technical or non-technical 30"] },
   },
   {
     id: "CA-6", state: "CA", title: "Audit/attest work with a fraud course",
@@ -351,7 +351,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "non_technical_max", earned: 0, required: 60 },
       { id: "nano_max", earned: 0, required: 60 },
     ],
-    stillNeeded: { total: 120, rows: ["This reporting year: Technical or non-technical 20", "Any time: Technical 56", "Any time: Board-approved Texas ethics course 4", "Any time: Technical or non-technical 40"] },
+    stillNeeded: { total: 120, rows: ["This reporting year: Technical 56", "This reporting year: Board-approved Texas ethics course 4", "This reporting year: Technical or non-technical 60"] },
   },
   {
     id: "TX-2", state: "TX", title: "Typical three years",
@@ -465,7 +465,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "technical_total", earned: 44, required: 30, met: true },
       { id: "non_technical_max", earned: 0, required: 30 },
     ],
-    stillNeeded: { total: 16, rows: ["This reporting year: Technical or non-technical 1", "Any time: Technical or non-technical 15"] },
+    stillNeeded: { total: 16, rows: ["This reporting year: Technical or non-technical 16"] },
   },
   {
     id: "TX-8", state: "TX", title: "New licensee, under 12 months",
@@ -621,7 +621,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2025", y: 4, earned: 0, required: 30, remaining: 30, past: true },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 50, rows: ["2026: Any CPE subject 30", "Any time: Ethics 4", "Any time: Any CPE subject 16"] },
+    stillNeeded: { total: 50, rows: ["2026: Ethics 4", "2026: Any CPE subject 46"] },
   },
   {
     id: "ID-2", state: "ID", title: "Typical two years",
@@ -638,7 +638,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2025", y: 4, earned: 45, required: 30, met: true },
       { id: "ethics", earned: 4, required: 4, met: true },
     ],
-    stillNeeded: { total: 10, rows: ["2026: Any CPE subject 5", "Any time: Any CPE subject 5"] },
+    stillNeeded: { total: 10, rows: ["2026: Any CPE subject 10"] },
   },
   {
     id: "ID-3", state: "ID", title: "Over 50 in one year; Behavioral Ethics",
@@ -745,7 +745,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2025", y: 4, earned: 20, required: 30, remaining: 10, past: true },
       { id: "annual_min", y: 5, earned: 0, required: 30, remaining: 30 },
     ],
-    stillNeeded: { total: 50, rows: ["2026: Any CPE subject 30", "Any time: Ethics 4", "Any time: Any CPE subject 16"] },
+    stillNeeded: { total: 50, rows: ["2026: Ethics 4", "2026: Any CPE subject 46"] },
   },
   // ── Washington ── license expires 6/30/2028: CPE period 1/1/2025 – 12/31/2027, 120 hours, 20 each calendar year,
   // at most 60 non-technical (so at least 60 technical), 4-hour Washington Board-approved ethics.
@@ -1108,7 +1108,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
       { id: "aa", earned: 0, required: 0, absent: true },
     ],
-    stillNeeded: { total: 120, rows: ["2026: Technical or non-technical 20", "Any time: Technical subjects 56", "Any time: New Jersey Law & Ethics 4", "Any time: Technical or non-technical 40"] },
+    stillNeeded: { total: 120, rows: ["2026: Technical subjects 56", "2026: New Jersey Law & Ethics 4", "2026: Technical or non-technical 60"] },
   },
   {
     id: "NJ-2", state: "NJ", title: "Everything met",
@@ -1155,7 +1155,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "total", earned: 70, required: 120, remaining: 50 },
       { id: "aa", earned: 10, required: 24, remaining: 14 },
     ],
-    stillNeeded: { total: 50, rows: ["2026: Technical or non-technical 10", "Any time: Accounting & auditing 14", "Any time: New Jersey Law & Ethics 4", "Any time: Technical or non-technical 22"] },
+    stillNeeded: { total: 50, rows: ["2026: Accounting & auditing 14", "2026: New Jersey Law & Ethics 4", "2026: Technical or non-technical 32"] },
   },
   {
     id: "NJ-5", state: "NJ", title: "A short year",
@@ -1170,7 +1170,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total", y: 1, earned: 10, required: 20, remaining: 10, past: true },
       { id: "technical", earned: 40, required: 60, remaining: 20 },
     ],
-    stillNeeded: { total: 80, rows: ["2026: Technical or non-technical 20", "Any time: Technical subjects 16", "Any time: New Jersey Law & Ethics 4", "Any time: Technical or non-technical 40"] },
+    stillNeeded: { total: 80, rows: ["2026: Technical subjects 16", "2026: New Jersey Law & Ethics 4", "2026: Technical or non-technical 60"] },
   },
   {
     id: "NJ-6", state: "NJ", title: "First renewal",
@@ -1197,7 +1197,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "technical", earned: 24, required: 60, remaining: 36 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 76, rows: ["2026: Technical or non-technical 16", "Any time: Technical subjects 32", "Any time: New Jersey Law & Ethics 4", "Any time: Technical or non-technical 24"] },
+    stillNeeded: { total: 76, rows: ["2026: Technical subjects 32", "2026: New Jersey Law & Ethics 4", "2026: Technical or non-technical 40"] },
   },
   // ── Pennsylvania ── reporting period 1/1/2026 – 12/31/2027: 80 hours, 20 each year, 4 ethics, 24 accounting & attest
   // for attest activity, no more than 40 self-study (nano counts as self-study).
@@ -1761,7 +1761,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "ethics", y: 5, earned: 0, required: 2, remaining: 2 },
       { id: "ethics_2024", y: 3, earned: 0, required: 2, past: true },
     ],
-    stillNeeded: { total: 120, rows: ["2026: VBOA-approved ethics 2", "2026: Any CPE subject 18", "Any time: Any CPE subject 100"] },
+    stillNeeded: { total: 120, rows: ["2026: VBOA-approved ethics 2", "2026: Any CPE subject 118"] },
   },
   {
     id: "VA-2", state: "VA", title: "Every year met",
@@ -1801,7 +1801,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min", y: 5, earned: 24, required: 20, met: true },
       { id: "ethics", y: 5, earned: 0, required: 2, remaining: 2 },
     ],
-    stillNeeded: { total: 12, rows: ["2026: VBOA-approved ethics 2", "Any time: Any CPE subject 10"] },
+    stillNeeded: { total: 12, rows: ["2026: VBOA-approved ethics 2", "2026: Any CPE subject 10"] },
   },
   {
     id: "VA-4", state: "VA", title: "Attest services",
@@ -1820,7 +1820,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "attest_2025", y: 4, earned: 40, required: 8, met: true },
       { id: "total", earned: 106, required: 120, remaining: 14 },
     ],
-    stillNeeded: { total: 14, rows: ["2026: Attest, compilation or financial statement preparation 8", "Any time: Any CPE subject 6"] },
+    stillNeeded: { total: 14, rows: ["2026: Attest, compilation or financial statement preparation 8", "2026: Any CPE subject 6"] },
   },
   {
     id: "VA-5", state: "VA", title: "Licensed last year",
@@ -1981,7 +1981,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min", y: 5, earned: 0, required: 20, remaining: 20 },
       { id: "annual_min_2025", y: 4, earned: 0, required: 20, past: true },
     ],
-    stillNeeded: { total: 120, rows: ["2026–27: Technical or non-technical 20", "Any time: Technical 60", "Any time: Ethics 8", "Any time: Technical or non-technical 32"] },
+    stillNeeded: { total: 120, rows: ["2026–27: Technical 60", "2026–27: Ethics 8", "2026–27: Technical or non-technical 52"] },
   },
   {
     id: "MN-2", state: "MN", title: "Everything met",
@@ -2291,7 +2291,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "aa", earned: 0, required: 12, remaining: 12 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 120, rows: ["2026: Any CPE subject 20", "Any time: Accounting & auditing 12", "Any time: Ethics 4", "Any time: Any CPE subject 84"] },
+    stillNeeded: { total: 120, rows: ["2026: Accounting & auditing 12", "2026: Ethics 4", "2026: Any CPE subject 104"] },
   },
   {
     id: "IN-2", state: "IN", title: "Too much self-study",
@@ -2329,7 +2329,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
       { id: "self_study_max", earned: 0, required: 35 },
     ],
-    stillNeeded: { total: 45, rows: ["2026: Any CPE subject 20", "Any time: Ethics 4", "Any time: Any CPE subject 21"] },
+    stillNeeded: { total: 45, rows: ["2026: Ethics 4", "2026: Any CPE subject 41"] },
   },
   {
     id: "IN-4", state: "IN", title: "Certificate issued in the last quarter",
@@ -2352,7 +2352,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2025", y: 4, earned: 0, required: 20, past: true },
       { id: "la_ethics", y: 5, earned: 0, required: 3, remaining: 3 },
     ],
-    stillNeeded: { total: 80, rows: ["2026: Louisiana ethics 3", "2026: Any CPE subject 17", "Any time: Any CPE subject 60"] },
+    stillNeeded: { total: 80, rows: ["2026: Louisiana ethics 3", "2026: Any CPE subject 77"] },
   },
   {
     id: "LA-2", state: "LA", title: "General ethics isn't the Louisiana course",
@@ -2413,7 +2413,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "total", earned: 33, required: 80, remaining: 47 },
       { id: "annual_min", y: 5, earned: 13, required: 20, remaining: 7 },
     ],
-    stillNeeded: { total: 47, rows: ["2026: Any CPE subject 7", "Any time: Any CPE subject 40"] },
+    stillNeeded: { total: 47, rows: ["2026: Any CPE subject 47"] },
   },
   {
     id: "LA-5", state: "LA", title: "Licensed this year",
@@ -2446,7 +2446,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "or_ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 80, rows: ["2026–27: Technical or non-technical 20", "Any time: Oregon ethics 4", "Any time: Technical or non-technical 56"] } },
+    stillNeeded: { total: 80, rows: ["2026–27: Oregon ethics 4", "2026–27: Technical or non-technical 76"] } },
   { id: "OR-2", state: "OR", title: "Non-technical over 16", checks: "30 personal development — only 16 count. 16 + 30 Tax + Oregon ethics 4 = 50 of 80.",
     license: { expiration: "2027-06-30", issued: "2010-05-01" }, courses: [
       { title: "Leadership Summit", provider: P, date: "2025-09-01", hours: 30, field: "Personal Development", delivery: "Group Live" },
@@ -2458,7 +2458,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "non_technical_max", earned: 30, required: 16, over: 14 },
       { id: "or_ethics", earned: 4, required: 4, met: true },
     ],
-    stillNeeded: { total: 30, rows: ["2026–27: Technical 20", "Any time: Technical 10"] } },
+    stillNeeded: { total: 30, rows: ["2026–27: Technical 30"] } },
   { id: "OR-3", state: "OR", title: "Carry forward 20", checks: "Previous period: 100 hours → 20 carry. This period: 20 Tax + Oregon ethics 4 = 24 + 20 = 44 of 80; carried hours don't help the yearly minimums.",
     license: { expiration: "2027-06-30", issued: "2010-05-01" }, courses: [
       { title: "Tax Marathon", provider: P, date: "2024-03-01", hours: 100, field: "Taxes", delivery: "Group Live" },
@@ -2478,7 +2478,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "or_ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 43.5, rows: ["2026–27: Technical or non-technical 20", "Any time: Oregon ethics 4", "Any time: Technical or non-technical 19.5"] } },
+    stillNeeded: { total: 43.5, rows: ["2026–27: Oregon ethics 4", "2026–27: Technical or non-technical 39.5"] } },
   // ── South Carolina ── calendar year (2026): 40 hours, 2 ethics, personal development max 8, nano max 4, carry up to 20.
   { id: "SC-1", state: "SC", title: "Clean slate", checks: "40 hours, 2 ethics.", license: { expiration: "2027-01-31", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 40, remaining: 40 },
@@ -2530,7 +2530,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "pd_max", earned: 10, required: 8, over: 2 },
       { id: "ethics", earned: 2, required: 2, met: true },
     ],
-    stillNeeded: { total: 20, rows: ["2026: Accounting & auditing 8", "Any time: Any course except personal development 12"] } },
+    stillNeeded: { total: 20, rows: ["2026: Accounting & auditing 8", "2026: Any course except personal development 12"] } },
   { id: "KY-3", state: "KY", title: "Licensed mid-period", checks: "Licensed 3/15/2026: 9 full months (April – December) × 2 = 18 hours, 9 technical; ethics waived.",
     license: { expiration: "2026-12-31", issued: "2026-03-15" }, courses: [
       { title: "Tax Update", provider: P, date: "2026-05-01", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
@@ -2570,7 +2570,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2024", y: 3, earned: 0, required: 20, remaining: 20, past: true },
       { id: "annual_min_2025", y: 4, earned: 0, required: 20, remaining: 20, past: true },
     ],
-    stillNeeded: { total: 120, rows: ["2026: Technical or non-technical 20", "Any time: Ethics 4", "Any time: Technical or non-technical 96"] } },
+    stillNeeded: { total: 120, rows: ["2026: Ethics 4", "2026: Technical or non-technical 116"] } },
   { id: "OK-2", state: "OK", title: "Permit holder short on technical", checks: "Permit. 2024: 40 Tax; 2025: 40 Tax; 2026: 20 personal development + 4 behavioral ethics. 104 of 120; 2026 technical 0 of 20.",
     license: { expiration: "2027-03-31", issued: "2010-05-01", practice: ["permit"] }, courses: [
       { title: "Tax Update", provider: P, date: "2024-04-01", hours: 40, field: "Taxes", delivery: "Group Live" },
@@ -2818,7 +2818,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "technical", earned: 0, required: 96, remaining: 96 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 120, rows: ["2026–27: Technical or non-technical 20", "Any time: Technical 96", "Any time: Ethics 4"] } },
+    stillNeeded: { total: 120, rows: ["2026–27: Technical 96", "2026–27: Ethics 4", "2026–27: Technical or non-technical 20"] } },
   { id: "NM-2", state: "NM", title: "Not enough technical", checks: "40 personal development + 40 communications + 40 Tax + 4 Regulatory Ethics: 124 hours, but only 44 technical of 96.",
     license: { expiration: "2027-03-31", issued: "2010-05-01" }, courses: [
       { title: "Leadership Summit", provider: P, date: "2024-06-01", hours: 40, field: "Personal Development", delivery: "Group Live" },
@@ -2845,7 +2845,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 80, rows: ["2026–27: Any CPE subject 20", "Any time: Professional ethics 4", "Any time: Any CPE subject 56"] } },
+    stillNeeded: { total: 80, rows: ["2026–27: Professional ethics 4", "2026–27: Any CPE subject 76"] } },
   { id: "NH-2", state: "NH", title: "Carry forward 40", checks: "Previous period: 150 → 40 carry. This period: 20 + 4 ethics in the first year = 24 + 40 = 64 of 80; the second year still needs its own 20.",
     license: { expiration: "2027-05-14", issued: "2010-05-01" }, courses: [
       { title: "Tax Marathon", provider: P, date: "2024-06-01", hours: 150, field: "Taxes", delivery: "Group Live" },
@@ -2865,7 +2865,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_total", y: 2, earned: 0, required: 20, remaining: 20 },
       { id: "ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 20, rows: ["2026–27: Any CPE subject 16", "Any time: Professional ethics 4"] } },
+    stillNeeded: { total: 20, rows: ["2026–27: Professional ethics 4", "2026–27: Any CPE subject 16"] } },
   // ── Hawaii ── biennium 2026–2027: 80, 20 each year, 4 ethics, carry up to 40.
   { id: "HI-1", state: "HI", title: "Clean slate", checks: "80, 20 in 2026 and 2027, 4 ethics.", license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 80, remaining: 80 },
@@ -2932,7 +2932,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "tax", earned: 20, required: 8, met: true },
       { id: "de_ethics", earned: 0, required: 4, remaining: 4 },
     ],
-    stillNeeded: { total: 60, rows: ["2026–27: Any CPE subject 20", "Any time: Accounting, auditing or tax 8", "Any time: Accounting or auditing 8", "Any time: Delaware ethics 4", "Any time: Any CPE subject 20"] } },
+    stillNeeded: { total: 60, rows: ["2026–27: Accounting, auditing or tax 8", "2026–27: Accounting or auditing 8", "2026–27: Delaware ethics 4", "2026–27: Any CPE subject 40"] } },
   { id: "DE-2", state: "DE", title: "Self-study over 30%", checks: "Tax 20 + Auditing 10 + Delaware ethics 4 + self-study ethics 30 (only 24 count) = 58 of 80; A/A/tax 30 of 36.",
     license: { expiration: "2027-06-30", issued: "2010-05-01" }, courses: [
       { title: "Tax Update", provider: P, date: "2025-09-01", hours: 20, field: "Taxes", delivery: "Group Live" },
@@ -3037,7 +3037,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2024", y: 3, earned: 40, required: 20, met: true },
       { id: "annual_min_2025", y: 4, earned: 40, required: 20, met: true },
     ],
-    stillNeeded: { total: 40, rows: ["2026–27: Any CPE subject 20", "Any time: Ethics 6", "Any time: Any CPE subject 14"] } },
+    stillNeeded: { total: 40, rows: ["2026–27: Ethics 6", "2026–27: Any CPE subject 34"] } },
   { id: "ND-2", state: "ND", title: "Certified last reporting year", checks: "Issued 8/1/2025: no three-year total or ethics yet; 20 this year (10 done).",
     license: { expiration: "2027-06-30", issued: "2025-08-01" }, courses: [
       { title: "Tax Update", provider: P, date: "2026-09-01", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
@@ -3156,7 +3156,7 @@ export const SCENARIOS: Scenario[] = [
       { id: "annual_min_2024", y: 3, earned: 40, required: 20, met: true },
       { id: "annual_min_2025", y: 4, earned: 40, required: 20, met: true },
     ],
-    stillNeeded: { total: 26, rows: ["2026: Any CPE subject 6", "Any time: Any CPE subject 20"] } },
+    stillNeeded: { total: 26, rows: ["2026: Any CPE subject 26"] } },
   { id: "WV-2", state: "WV", title: "First full year after licensure", checks: "Issued 5/1/2025: 2026 needs 40 (25 done); no three-year total or ethics yet.",
     license: { expiration: "2027-06-30", issued: "2025-05-01" }, courses: [
       { title: "Tax Update", provider: P, date: "2026-04-01", hours: 25, field: "Taxes", delivery: "Group Live" }], expect: [

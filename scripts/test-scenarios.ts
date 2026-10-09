@@ -46,7 +46,7 @@ for (const sc of SCENARIOS.filter(s => !only || s.id.startsWith(only))) {
     if (e.over != null && got.over !== e.over) problems.push(`${name}: expected ${e.over} over, got ${got.over}`);
   }
   if (sc.stillNeeded) {
-    const s = stillNeeded(lines, rules);
+    const s = stillNeeded(lines, rules, asOf);
     const rows = s.groups.flatMap(g => g.rows.map(r => `${g.key === "cycle" ? "Any time" : g.title}: ${r.label} ${r.hours}`));
     if (s.total !== sc.stillNeeded.total) problems.push(`still needed total: expected ${sc.stillNeeded.total}, got ${s.total}`);
     if (JSON.stringify(rows) !== JSON.stringify(sc.stillNeeded.rows)) problems.push(`still needed rows:\n      expected ${JSON.stringify(sc.stillNeeded.rows)}\n      got      ${JSON.stringify(rows)}`);

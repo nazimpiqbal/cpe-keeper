@@ -195,7 +195,7 @@ function Requirements({ lines, groups, noteIds, warnings, rules, onSubjects }: {
 
 // "What you still need": remaining hours in buckets that add up, earliest deadline first.
 function StillNeeded({ lines, rules, onSubjects }: { lines: Line[]; rules: Rules; onSubjects?: () => void }) {
-  const sum = stillNeeded(lines, rules);
+  const sum = stillNeeded(lines, rules, new Date().toISOString().slice(0, 10));
   const onlyAnytime = sum.groups.length === 1 && sum.groups[0].key === "cycle";
   return (
     <>

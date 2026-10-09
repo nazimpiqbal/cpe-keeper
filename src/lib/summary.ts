@@ -21,7 +21,7 @@ const cleanBase = (label: string) => label
   .replace(/^Minimum (this|each) year$/i, ANY)
   .replace(/ subject matter$/i, "");
 
-export function stillNeeded(lines: Line[], rules: Rules): Summary {
+export function stillNeeded(lines: Line[], rules: Rules, today?: string): Summary {
   const clean = (label: string) => cleanBase(label).split(ANY).join(anyLabelFor(rules));
   // (ID: the licensure-year course lives under newLicensee, not the main requirements.)
   const reqs = [...rules.requirements, ...(rules.newLicensee?.licensureYear ? [rules.newLicensee.licensureYear.requirement] : [])];
@@ -166,6 +166,22 @@ export function stillNeeded(lines: Line[], rules: Rules): Summary {
     const within = Math.min(l.remaining, listed);
     if (within > 0) notes.unshift(`At least ${within} more of these must be ${clean(l.label).toLowerCase()}.`);
     if (l.remaining > listed) add(anytime, clean(l.label), l.remaining - listed);
+  }
+  // The year that ends on the same day as the whole cycle (LA 2026: the year's 20 and the two-year 80 both due
+  // Dec 31) is one deadline, so its rows and the "any time" rows are one list: 7 + 40 any subject shows as 47.
+  // Only when that year is the current one: earlier in the cycle, "any time" hours can still go in an earlier year.
+  const startOf = (g: SummaryGroup) => yearLines.find(l => `y${l.sub!.index}` === g.key)?.sub!.start ?? "";
+  const lastYear = today ? [...groups.values()].find(g => g !== anytime && g.rows.length && g.deadline === anytime.deadline && startOf(g) <= today) : undefined;
+  if (lastYear && anytime.rows.length) {
+    for (const r of anytime.rows) {
+      const same = lastYear.rows.find(x => x.label === r.label);
+      if (same) { same.hours = r2(same.hours + r.hours); same.hint = same.hint ?? r.hint; } else lastYear.rows.push(r);
+    }
+    anytime.rows = [];
+    // Specific subjects first, the catch-all "any subject" row last.
+    lastYear.rows.sort((a, b) => Number(a.label === anyLabel) - Number(b.label === anyLabel));
+    // The "taken in <year>" note no longer applies once the rows are one list.
+    if (trimNote) notes.splice(notes.indexOf(trimNote), 1);
   }
   const out = [...groups.values()].filter(g => g.rows.length);
   // Deadline order: earlier years first, then the anytime group.
