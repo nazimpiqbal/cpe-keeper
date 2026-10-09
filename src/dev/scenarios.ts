@@ -2540,14 +2540,14 @@ export const SCENARIOS: Scenario[] = [
     stillNeeded: { total: 8, rows: ["Any time: Technical or non-technical 8"] } },
   // ── Alabama ── CPE year 10/1/2026 – 9/30/2027: 40 hours, 8 A&A, 2 ethics.
   { id: "AL-1", state: "AL", title: "Clean slate", checks: "40 hours, 8 accounting & auditing, 2 ethics.",
-    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [], expect: [
+    license: { expiration: "2027-09-30", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 40, remaining: 40 },
       { id: "aa", earned: 0, required: 8, remaining: 8 },
       { id: "ethics", earned: 0, required: 2, remaining: 2 },
     ],
     stillNeeded: { total: 40, rows: ["Any time: Accounting & auditing 8", "Any time: Ethics 2", "Any time: Any CPE subject 30"] } },
   { id: "AL-2", state: "AL", title: "No accounting & auditing yet", checks: "30 Tax + 2 ethics in October 2026: 32 of 40; A&A 0 of 8. A course in September 2026 belongs to the previous CPE year.",
-    license: { expiration: "2027-12-31", issued: "2010-05-01" }, courses: [
+    license: { expiration: "2027-09-30", issued: "2010-05-01" }, courses: [
       { title: "Last Year's Update", provider: P, date: "2026-09-15", hours: 20, field: "Auditing", delivery: "Group Live" },
       { title: "Tax Update", provider: P, date: "2026-10-05", hours: 30, field: "Taxes", delivery: "Group Live" },
       { title: "Ethics for CPAs", provider: P, date: "2026-10-06", hours: 2, field: "Regulatory Ethics", delivery: "Group Live" }], expect: [
@@ -2556,12 +2556,21 @@ export const SCENARIOS: Scenario[] = [
       { id: "ethics", earned: 2, required: 2, met: true },
     ],
     stillNeeded: { total: 8, rows: ["Any time: Accounting & auditing 8"] } },
-  { id: "AL-3", state: "AL", title: "Registered this CPE year", checks: "Licensed 10/3/2026: CPE starts next October 1.",
-    license: { expiration: "2027-12-31", issued: "2026-10-03" }, courses: [], expect: [
+  { id: "AL-3", state: "AL", title: "Went active this CPE year", checks: "Active 10/3/2026: nothing due for 2026–27; the first 40 are due September 30, 2028 (30-X-5-.02(2)).",
+    license: { expiration: "2027-09-30", issued: "2026-10-03" }, courses: [], expect: [
       { id: "total", earned: 0, required: 0, met: true },
     ],
     stillNeeded: { total: 0, rows: [] } },
-  // ── Oklahoma ── calendar years, window 2024–2026: 120 and 4 ethics over three years, 20 every year; permit holders 20 technical a year.
+    { id: "AL-4", state: "AL", title: "Went active last CPE year", checks: "Active 6/1/2026. 2026–27 is the first full CPE year: 40 due September 30, 2027. The August 2026 course was before October 1, so it doesn't count (Nazim: count from October 1). October: Tax 10.",
+    license: { expiration: "2027-09-30", issued: "2026-06-01" }, courses: [
+      { title: "Summer Tax Seminar", provider: P, date: "2026-08-01", hours: 8, field: "Taxes", delivery: "Group Live" },
+      { title: "Tax Update", provider: P, date: "2026-10-05", hours: 10, field: "Taxes", delivery: "Group Live" }], expect: [
+      { id: "total", earned: 10, required: 40, remaining: 30 },
+      { id: "aa", earned: 0, required: 8, remaining: 8 },
+      { id: "ethics", earned: 0, required: 2, remaining: 2 },
+    ],
+    stillNeeded: { total: 30, rows: ["Any time: Accounting & auditing 8", "Any time: Ethics 2", "Any time: Any CPE subject 20"] } },
+// ── Oklahoma ── calendar years, window 2024–2026: 120 and 4 ethics over three years, 20 every year; permit holders 20 technical a year.
   { id: "OK-1", state: "OK", title: "Clean slate", checks: "120 and 4 ethics over 2024–2026; 20 this year (2024–25 short).",
     license: { expiration: "2027-03-31", issued: "2010-05-01" }, courses: [], expect: [
       { id: "total", earned: 0, required: 120, remaining: 120 },
