@@ -8,7 +8,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.nazimiqbal.cpekeeper"
+      "bundleIdentifier": "com.sinclabs.cpekeeper"
     },
     "android": {
       "adaptiveIcon": {
