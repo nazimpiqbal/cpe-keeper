@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, friendlyError, License, CpeRow } from "./src/lib/supabase";
@@ -17,7 +17,8 @@ import ExportScreen from "./src/screens/ExportScreen";
 import ScenarioScreen from "./src/screens/ScenarioScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import StateRulesScreen from "./src/screens/StateRulesScreen";
-import { PremiumProvider } from "./src/lib/premium";
+import { PremiumProvider, setUpgradeOpener, UpgradeReason, useSubscription } from "./src/lib/premium";
+import PaywallScreen from "./src/screens/PaywallScreen";
 import { CropProvider } from "./src/lib/crop";
 import { useAppTheme } from "./src/lib/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -165,9 +166,27 @@ export default function App() {
   return (
     <>
       <CropProvider>
-        {session ? <PremiumProvider key={session.user.id} userId={session.user.id}>{screen}</PremiumProvider> : screen}
+        {session ? <PremiumProvider key={session.user.id} userId={session.user.id}><Paywall>{screen}</Paywall></PremiumProvider> : screen}
       </CropProvider>
       <StatusBar style={theme.dark ? "light" : "dark"} />
+    </>
+  );
+}
+
+// Hard paywall: right after sign-up, and whenever there's no active plan, the app shows the plan picker
+// instead of the screens. Premium features open the same screen as an upgrade sheet.
+function Paywall({ children }: { children: React.ReactNode }) {
+  const sub = useSubscription();
+  const [upgrade, setUpgrade] = useState<UpgradeReason | null>(null);
+  useEffect(() => { setUpgradeOpener(setUpgrade); return () => setUpgradeOpener(null); }, []);
+  if (sub.loading) return <Loading />;
+  if (!sub.access) return <PaywallScreen mode="required" />;
+  return (
+    <>
+      {children}
+      <Modal visible={!!upgrade} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setUpgrade(null)}>
+        {upgrade && <PaywallScreen mode="upgrade" reason={upgrade} onClose={() => setUpgrade(null)} />}
+      </Modal>
     </>
   );
 }

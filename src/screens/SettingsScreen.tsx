@@ -7,6 +7,8 @@ import { supabase } from "../lib/supabase";
 import { Button, C, Card, Chip, ui } from "../lib/ui";
 import { setThemePref, useThemePref } from "../lib/theme";
 import { clearReminders, sendTestReminder } from "../lib/reminders";
+import { showUpgrade, useSubscription } from "../lib/premium";
+import { manageSubscription, restore } from "../lib/purchases";
 
 export const SITE = "https://cpekeeper.com";
 export const SUPPORT_EMAIL = "hello@cpekeeper.com";
@@ -34,6 +36,24 @@ function LinkRow({ title, onPress, last }: { title: string; onPress: () => void;
 export default function SettingsScreen({ email, onClose, onScenarios }: { email: string; onClose: () => void; onScenarios?: () => void }) {
   const themePref = useThemePref();
   const [deleting, setDeleting] = useState(false);
+  const sub = useSubscription();
+  const [restoring, setRestoring] = useState(false);
+  const planName = sub.plan === "premium" ? "Premium" : sub.plan === "base" ? "Base" : sub.granted ? "Premium (complimentary)" : "No plan";
+  const until = sub.status?.expires
+    ? new Date(sub.status.expires).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null;
+  const planLine = !until ? null
+    : sub.status?.trial ? (sub.status.willRenew ? `Free trial ends ${until}, then renews yearly.` : `Free trial ends ${until}. It won't renew.`)
+    : sub.status?.willRenew ? `Renews ${until}.` : `Ends ${until}. It won't renew.`;
+  const doRestore = async () => {
+    setRestoring(true);
+    try {
+      const s = await restore();
+      sub.apply(s); await sub.refresh();
+      Alert.alert(s.plan === "none" ? "Nothing to restore" : "Purchases restored",
+        s.plan === "none" ? "We couldn't find an active CPE Keeper subscription for your Apple ID." : `Your ${s.plan === "premium" ? "Premium" : "Base"} plan is active.`);
+    } catch (e) { Alert.alert("Couldn't restore", (e as Error).message); }
+    finally { setRestoring(false); }
+  };
 
   const confirmDelete = () => Alert.alert(
     "Delete your account?",
@@ -63,6 +83,17 @@ export default function SettingsScreen({ email, onClose, onScenarios }: { email:
           ))}
         </View>
         <Text style={[ui.hint, { marginTop: 0 }]}>Match system follows your iPhone's light or dark setting.</Text>
+      </Card>
+
+      <Text style={ui.h2}>Subscription</Text>
+      <Card>
+        <Text style={ui.muted}>Your plan</Text>
+        <Text style={{ color: C.ink, fontSize: 16, fontWeight: "600", marginTop: 2 }}>{planName}</Text>
+        {planLine && <Text style={ui.hint}>{planLine}</Text>}
+        {sub.plan === "base" && <Button title="Upgrade to Premium" onPress={() => showUpgrade("certificates")} />}
+        {sub.plan !== "none" && <Button kind="secondary" title="Manage subscription" onPress={manageSubscription} />}
+        <Button kind="link" title={restoring ? "Restoring…" : "Restore purchases"} disabled={restoring} onPress={doRestore} />
+        {sub.plan !== "none" && <Text style={[ui.hint, { marginTop: 0 }]}>Change plans or cancel in Manage subscription. Upgrades start right away with a refund for the unused part of Base; downgrades start at your renewal date.</Text>}
       </Card>
 
       <Text style={ui.h2}>Account</Text>
