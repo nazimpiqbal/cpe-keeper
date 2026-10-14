@@ -14,7 +14,6 @@ import BulkReviewScreen from "./src/screens/BulkReviewScreen";
 import CertificatesScreen from "./src/screens/CertificatesScreen";
 import CoursesScreen from "./src/screens/CoursesScreen";
 import ExportScreen from "./src/screens/ExportScreen";
-import ScenarioScreen from "./src/screens/ScenarioScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import StateRulesScreen from "./src/screens/StateRulesScreen";
 import { PremiumProvider, setUpgradeOpener, UpgradeReason, useSubscription } from "./src/lib/premium";
@@ -22,6 +21,9 @@ import PaywallScreen from "./src/screens/PaywallScreen";
 import { CropProvider } from "./src/lib/crop";
 import { useAppTheme } from "./src/lib/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// Test tools: loaded only in development builds, so they never ship in the App Store version.
+const ScenarioScreen: typeof import("./src/screens/ScenarioScreen").default | null =
+  __DEV__ ? require("./src/screens/ScenarioScreen").default : null;
 
 const ACTIVE_KEY = "cpe-keeper:activeLicense";
 
@@ -127,7 +129,7 @@ export default function App() {
     <AddCourseScreen userId={session.user.id} state={license.state} certificatePath={queue.path} cycle={cycle}
       onDone={saved => { setQueue({ courses: [], index: 0, path: null, saved: 0 }); backToDashboard(saved); }} />
   );
-  else if (view === "scenarios" && __DEV__) screen = (
+  else if (view === "scenarios" && ScenarioScreen) screen = (
     <ScenarioScreen userId={session.user.id} license={license} onClose={() => setView("settings")}
       onLoaded={() => { setTab("dashboard"); setView("dashboard"); setDashKey(k => k + 1); loadLicense(); }} />
   );

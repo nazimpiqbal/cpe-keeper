@@ -15,7 +15,8 @@ import { buy, loadPlans, PlanId, PlanOption, restore, storeAvailable } from "../
 import { UpgradeReason, useSubscription } from "../lib/premium";
 import { SITE } from "./SettingsScreen";
 
-const TERMS_URL = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
+// Our terms; they incorporate Apple's standard EULA and link to it.
+const termsUrl = () => `${SITE}/terms.html`;
 
 const FEATURES: Record<PlanId, string[]> = {
   base: [
@@ -136,7 +137,7 @@ export default function PaywallScreen({ mode, reason = "certificates", onClose }
       <View style={s.links}>
         <Pressable onPress={doRestore} disabled={!!busy} hitSlop={6}><Text style={s.link}>{busy === "restore" ? "Restoring…" : "Restore purchases"}</Text></Pressable>
         <Text style={s.sep}>·</Text>
-        <Pressable onPress={() => WebBrowser.openBrowserAsync(TERMS_URL)} hitSlop={6}><Text style={s.link}>Terms of Use</Text></Pressable>
+        <Pressable onPress={() => WebBrowser.openBrowserAsync(termsUrl())} hitSlop={6}><Text style={s.link}>Terms of Use</Text></Pressable>
         <Text style={s.sep}>·</Text>
         <Pressable onPress={() => WebBrowser.openBrowserAsync(`${SITE}/privacy.html`)} hitSlop={6}><Text style={s.link}>Privacy Policy</Text></Pressable>
       </View>

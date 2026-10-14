@@ -1,7 +1,6 @@
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
-import { categoriesOf, cycleBounds, Profile } from "../engine/engine";
+import { categoriesOf, cycleBounds, Profile, Record } from "../engine/engine";
 import { RULES } from "../rules";
-import { sampleRecords } from "../data/sampleRecords";
 import { supabase, friendlyError, toEngineRecord, CpeRow, License } from "../lib/supabase";
 import { Button, C, Card, Chip, ErrorText, fmtDate, ui, themed } from "../lib/ui";
 import { normalizeDelivery } from "../lib/delivery";
@@ -97,6 +96,8 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
   };
 
   async function loadTestRecords() {
+    // Loaded only in development builds, so these real records never ship in the App Store version.
+    const sampleRecords: Record[] = __DEV__ ? require("../data/sampleRecords").sampleRecords : [];
     const { error } = await supabase.from("cpe_records").insert(sampleRecords.map(r => ({
       user_id: userId, title: r.title, provider: r.provider, completed_on: r.date, hours: r.hours,
       field_of_study: r.fieldOfStudy, delivery_method: r.delivery ?? null, needs_review: !!r.needsReview, source: "import",

@@ -107,7 +107,8 @@ export default function SettingsScreen({ email, onClose, onScenarios }: { email:
       <Card>
         <LinkRow title="Support" onPress={() => WebBrowser.openBrowserAsync(`${SITE}/support.html`)} />
         <LinkRow title={`Email ${SUPPORT_EMAIL}`} onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=CPE%20Keeper%20help`)} />
-        <LinkRow title="Privacy policy" last onPress={() => WebBrowser.openBrowserAsync(`${SITE}/privacy.html`)} />
+        <LinkRow title="Privacy policy" onPress={() => WebBrowser.openBrowserAsync(`${SITE}/privacy.html`)} />
+        <LinkRow title="Terms of use" last onPress={() => WebBrowser.openBrowserAsync(`${SITE}/terms.html`)} />
       </Card>
 
       <Text style={ui.h2}>Delete account</Text>
