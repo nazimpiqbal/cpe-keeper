@@ -1103,8 +1103,8 @@ function capByAnnualMinimums(lines: Line[], rules: Rules, asOf: string) {
     const countable = round(Math.max(0, Math.min(total.earned, total.required - owed)));
     if (countable < total.earned) {
       const owing = years.filter(y => y.remaining > 0).map(y => y.period.split(" (")[0]).join(" and ");
-      total.logged = total.earned;
-      total.reserved = { hours: owed, label: owing };
+      // Only explain the cap when hours are actually held for a later year (not when the total is simply exceeded).
+      if (owed > 0) { total.logged = total.earned; total.reserved = { hours: owed, label: owing }; }
       total.earned = countable;
       total.remaining = round(Math.max(0, total.required - countable));
       total.met = total.remaining === 0;
