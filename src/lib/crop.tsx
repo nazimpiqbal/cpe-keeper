@@ -132,7 +132,7 @@ function CropView({ photo, onDone }: { photo: Photo; onDone: (uri: string | null
           </>
         )}
       </View>
-      <View style={[s.bar, { paddingBottom: Math.max(insets.bottom, 16) + 8, width: "100%", maxWidth: 680, alignSelf: "center" }]}>
+      <View style={[s.bar, { paddingBottom: Math.max(insets.bottom, 16) + 8, width: "100%", maxWidth: 900, alignSelf: "center" }]}>
         <Pressable onPress={() => onDone(null)} style={s.btn}><Text style={s.btnText}>Cancel</Text></Pressable>
         <Pressable onPress={() => onDone(photo.uri)} style={s.btn}><Text style={s.btnText}>Use full photo</Text></Pressable>
         <Pressable onPress={done} disabled={saving} style={[s.btn, s.primary, saving && { opacity: 0.6 }]}>

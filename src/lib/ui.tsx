@@ -138,9 +138,9 @@ export const fmtDate = (iso: string) =>
 
 export const ui = themed(() => ({
   screen: { flex: 1, backgroundColor: C.bg },
-  // A centered column up to 680pt wide: full width on iPhones, a readable column on the iPhone Duo's
-  // inner display and in landscape.
-  wrap: { padding: 16, paddingBottom: 48, width: "100%", maxWidth: 680, alignSelf: "center" },
+  // A centered column up to 900pt wide: fills iPhones and the iPhone Duo (both displays, both orientations)
+  // and only caps very wide windows, where lines would get too long to read.
+  wrap: { padding: 16, paddingBottom: 48, width: "100%", maxWidth: 900, alignSelf: "center" },
   brand: { fontSize: 28, fontWeight: "800", color: C.ink },
   h1: { fontSize: 24, fontWeight: "700", color: C.ink, marginBottom: 6 },
   h2: { fontSize: 17, fontWeight: "700", color: C.ink, marginBottom: 8 },

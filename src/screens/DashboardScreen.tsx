@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { Alert, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { FLAGS } from "../lib/flags";
 import { evaluate, checkExpiration, categoriesOf, cycleBounds, newLicenseePlan, Line, Profile, Rules } from "../engine/engine";
 import { RULES, STATE_NAMES } from "../rules";
 import { toEngineRecord, CpeRow, License } from "../lib/supabase";
@@ -412,7 +413,13 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
 
       <Card>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1 }}>
+            {FLAGS[license.state] && (
+              <Image source={FLAGS[license.state].src} accessibilityIgnoresInvertColors
+                style={{ height: 14, width: 14 * FLAGS[license.state].ratio, marginRight: 8, borderRadius: 2, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line }} />
+            )}
+            <Text style={s.kicker}>{(STATE_NAMES[license.state] ?? license.state).toUpperCase()} · CPA</Text>
+          </View>
           <Pressable onPress={onEditLicense}><Text style={{ color: C.accent, fontWeight: "600" }}>Edit</Text></Pressable>
         </View>
         <Text style={s.title}>{rules?.deadlineLabel ?? (cycle.calendarYear ? "Registration renews" : "Renews")} {fmtDate(license.expiration_date)}</Text>
