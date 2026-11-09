@@ -73,6 +73,7 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
       <Section title="How it works">
         {rules.cycle.note ? <Text style={s.body}>{rules.cycle.note}</Text> : null}
         {rules.newLicensee?.note ? <Text style={[s.body, { marginTop: 8 }]}><Text style={s.bold}>New licensees: </Text>{rules.newLicensee.note}</Text> : null}
+        <Text style={[s.body, { marginTop: 8 }]}><Text style={s.bold}>Licensed in more than one state? </Text>Many boards let CPAs whose main office is in another state meet CPE through their home state's rules instead, sometimes with extras such as a state ethics course. CPE Keeper always applies {name}'s full rules, so check with {rules.board ? `the ${rules.board.replace(/^the /i, "")}` : `the ${name} board`} whether that applies to you.</Text>
       </Section>
 
       <Section title={guide ? "Technical and non-technical subjects" : "Which subjects count"}

@@ -433,6 +433,10 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
             <Text style={{ color: C.accent, fontWeight: "600" }}>📘 {STATE_NAMES[license.state] ?? license.state} CPE rules ›</Text>
           </Pressable>
         )}
+        {licenses.length > 1 && (
+          // Not yet modeled: many boards accept a non-resident's home-state CPE. Until it is, say so.
+          <Text style={[ui.hint, { marginTop: 6 }]}>If your main office is in another state, {STATE_NAMES[license.state] ?? license.state} may accept your home state's CPE instead. See the rules page.</Text>
+        )}
         {licenses.length <= 1 && onAddLicense && (
           <Pressable onPress={addLicense} hitSlop={6} style={{ marginTop: 8 }}>
             <Text style={{ color: C.accent, fontWeight: "600" }}>+ Add another state license{MULTI_LICENSE_PREMIUM && !premium ? "  🔒" : ""}</Text>
