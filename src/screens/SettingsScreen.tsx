@@ -71,7 +71,7 @@ export default function SettingsScreen({ email, onClose, onScenarios }: { email:
   );
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       <Pressable onPress={onClose} hitSlop={10}><Text style={{ color: C.accent, fontWeight: "600", marginBottom: 12 }}>‹ Back</Text></Pressable>
       <Text style={[ui.brand, { marginBottom: 16 }]}>Settings</Text>
 

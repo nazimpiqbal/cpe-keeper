@@ -87,7 +87,7 @@ export default function SetupScreen({ userId, existing, onSaved, onCancel, other
 
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 16 }]} keyboardShouldPersistTaps="handled">
         <Text style={ui.h1}>{existing ? "Edit license" : adding ? "Add a state license" : "Your CPA license"}</Text>
         <Text style={[ui.muted, { marginBottom: 16 }]}>We use this to work out your renewal period and requirements.</Text>
 

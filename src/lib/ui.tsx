@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { parseDateInput } from "./dates";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle, TextStyle, ImageStyle } from "react-native";
 
 // ---------- Light / dark theme ----------
 // C holds the current palette. Screens read C at render time, and stylesheets made with themed() rebuild
@@ -38,7 +38,9 @@ export function applyTheme(dark: boolean) {
 }
 
 // StyleSheet.create, rebuilt on first use after each theme change.
-export function themed<T extends StyleSheet.NamedStyles<T>>(make: () => T): T {
+// (RN 0.88 dropped StyleSheet.NamedStyles from its types, so it's defined here.)
+type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
+export function themed<T extends NamedStyles<T>>(make: () => T): T {
   let cache: T | null = null, built = -1;
   const get = () => { if (built !== themeVersion || !cache) { cache = StyleSheet.create(make()); built = themeVersion; } return cache; };
   return new Proxy({} as T, {
@@ -136,7 +138,9 @@ export const fmtDate = (iso: string) =>
 
 export const ui = themed(() => ({
   screen: { flex: 1, backgroundColor: C.bg },
-  wrap: { padding: 16, paddingBottom: 48 },
+  // A centered column up to 680pt wide: full width on iPhones, a readable column on the iPhone Duo's
+  // inner display and in landscape.
+  wrap: { padding: 16, paddingBottom: 48, width: "100%", maxWidth: 680, alignSelf: "center" },
   brand: { fontSize: 28, fontWeight: "800", color: C.ink },
   h1: { fontSize: 24, fontWeight: "700", color: C.ink, marginBottom: 6 },
   h2: { fontSize: 17, fontWeight: "700", color: C.ink, marginBottom: 8 },

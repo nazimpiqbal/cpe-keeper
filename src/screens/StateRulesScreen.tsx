@@ -1,7 +1,7 @@
 // "Your state's rules": what counts as technical / non-technical, the limits, record keeping and sources —
 // the reference behind the dashboard, in plain words. Opened from the dashboard (and the ⓘ on subject lines).
 import { useRef } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, ScrollViewInstance, Text, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import type { Rules } from "../engine/engine";
 import { STATE_NAMES } from "../rules";
@@ -30,7 +30,7 @@ const host = (u: string) => u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/,
 export default function StateRulesScreen({ state, rules, focus, onClose }: {
   state: string; rules: Rules; focus?: "subjects"; onClose: () => void;
 }) {
-  const scroll = useRef<ScrollView>(null);
+  const scroll = useRef<ScrollViewInstance>(null);
   const name = STATE_NAMES[state] ?? state;
   const guide = subjectGroups(rules);
   // A category's name: the board label if set, else the requirement that uses it alone (CA "Ethics"), else tidied.
@@ -65,7 +65,7 @@ export default function StateRulesScreen({ state, rules, focus, onClose }: {
   );
 
   return (
-    <ScrollView ref={scroll} style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView ref={scroll} style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       <Pressable onPress={onClose} hitSlop={10}><Text style={s.back}>‹ Back</Text></Pressable>
       <Text style={[ui.brand, { marginBottom: 2 }]}>{name} CPE rules</Text>
       {rules.board ? <Text style={[ui.muted, { marginBottom: 16 }]}>{rules.board}</Text> : null}

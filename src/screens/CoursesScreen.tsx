@@ -119,7 +119,7 @@ export default function CoursesScreen({ userId, email, license, onAddCourse, onS
   );
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <Text style={[ui.brand, { marginBottom: 4 }]}>Courses</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>Tap a course to edit it. Press and hold to delete.</Text>

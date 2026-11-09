@@ -91,7 +91,7 @@ export default function PaywallScreen({ mode, reason = "certificates", onClose }
     : `${chosen.price} per year. Renews automatically unless you cancel at least 24 hours before the renewal date.`;
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       {mode === "upgrade" && onClose && (
         <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button">
           <Text style={{ color: C.accent, fontWeight: "600", marginBottom: 12 }}>‹ Back</Text>

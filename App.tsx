@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, friendlyError, License, CpeRow } from "./src/lib/supabase";
 import { Button, C, ui, themed } from "./src/lib/ui";
@@ -166,12 +167,26 @@ export default function App() {
   );
 
   return (
-    <>
-      <CropProvider>
-        {session ? <PremiumProvider key={session.user.id} userId={session.user.id}><Paywall>{screen}</Paywall></PremiumProvider> : screen}
-      </CropProvider>
+    <SafeAreaProvider>
+      <Shell>
+        <CropProvider>
+          {session ? <PremiumProvider key={session.user.id} userId={session.user.id}><Paywall>{screen}</Paywall></PremiumProvider> : screen}
+        </CropProvider>
+      </Shell>
       <StatusBar style={theme.dark ? "light" : "dark"} />
-    </>
+    </SafeAreaProvider>
+  );
+}
+
+// Keeps every screen clear of the status bar, Dynamic Island and side insets (on iPhone Duo the status
+// bar is a strip down the right edge). Insets change as the window does (folding, unfolding, rotating),
+// so they're read live rather than hard-coded.
+function Shell({ children }: { children: React.ReactNode }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ flex: 1, backgroundColor: C.bg, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+      {children}
+    </View>
   );
 }
 
@@ -201,10 +216,15 @@ function Tabs({ active, onChange, children }: { active: Tab; onChange: (t: Tab) 
       <Text style={[t.label, active === id && { color: C.accent, fontWeight: "700" }]}>{label}</Text>
     </Pressable>
   );
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <View style={{ flex: 1 }}>{children}</View>
-      <View style={t.bar}>
+      <View style={[t.bar, {
+        paddingBottom: Math.max(insets.bottom, 10),
+        // The bar's background runs under side insets (iPhone Duo's status strip) while its buttons stay clear.
+        marginLeft: -insets.left, marginRight: -insets.right, paddingLeft: insets.left, paddingRight: insets.right,
+      }]}>
         {tab("dashboard", "📊", "Dashboard")}
         {tab("courses", "📚", "Courses")}
         {tab("certificates", "🗂️", "Certificates")}
@@ -214,8 +234,8 @@ function Tabs({ active, onChange, children }: { active: Tab; onChange: (t: Tab) 
 }
 
 const t = themed(() => ({
-  bar: { flexDirection: "row", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.card, paddingBottom: 26, paddingTop: 8 },
-  tab: { flex: 1, alignItems: "center" },
+  bar: { flexDirection: "row", justifyContent: "center", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.card, paddingTop: 8 },
+  tab: { flex: 1, maxWidth: 220, alignItems: "center" },
   icon: { fontSize: 20 },
   label: { fontSize: 11, color: C.muted, marginTop: 2 },
 }));

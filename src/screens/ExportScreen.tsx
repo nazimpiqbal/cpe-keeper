@@ -69,7 +69,7 @@ export default function ExportScreen({ license, onClose }: { license: License; o
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]} keyboardShouldPersistTaps="handled">
         <Pressable onPress={onClose} hitSlop={10}><Text style={{ color: C.accent, fontWeight: "600", marginBottom: 12 }}>‹ Back</Text></Pressable>
         <Text style={[ui.brand, { marginBottom: 4 }]}>Audit report</Text>
         <Text style={[ui.muted, { marginBottom: 16 }]}>A transcript of your courses, ready to send if the board asks for proof of your CPE.</Text>

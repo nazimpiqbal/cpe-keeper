@@ -116,7 +116,7 @@ export default function AddCourseScreen({ userId, onDone, initial, certificatePa
 
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 64 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 16 }]} keyboardShouldPersistTaps="handled">
         <Text style={ui.h1}>{existing ? "Edit course" : initial ? "Check the details" : "Add a course"}</Text>
         <Text style={[ui.muted, { marginBottom: 16 }]}>
           {existing ? "Update anything that's wrong, then save." : initial ? "Read from your certificate. Fix anything that looks wrong, then save." : "Copy the details from your certificate."}

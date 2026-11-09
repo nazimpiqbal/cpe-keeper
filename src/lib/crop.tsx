@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
 import { Image, LayoutChangeEvent, Modal, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 
 // Crop step for certificate photos. Any rectangle (not square-only like iOS's built-in editor).
@@ -34,13 +35,15 @@ export function CropProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={crop}>
       {children}
       <Modal visible={!!photo} animationType="slide" onRequestClose={() => finish(null)}>
-        {photo && <CropView photo={photo} onDone={finish} />}
+        {/* A full-screen modal gets its own safe-area measurements. */}
+        <SafeAreaProvider>{photo && <CropView photo={photo} onDone={finish} />}</SafeAreaProvider>
       </Modal>
     </Ctx.Provider>
   );
 }
 
 function CropView({ photo, onDone }: { photo: Photo; onDone: (uri: string | null) => void }) {
+  const insets = useSafeAreaInsets();
   // Where the photo sits on screen ("contain" fit inside the available area).
   const [frame, setFrame] = useState<{ x: number; y: number; w: number; h: number; scale: number } | null>(null);
   const [rect, setRect] = useState<Rect | null>(null);
@@ -103,7 +106,7 @@ function CropView({ photo, onDone }: { photo: Photo; onDone: (uri: string | null
   }
 
   return (
-    <View style={s.screen}>
+    <View style={[s.screen, { paddingTop: insets.top + 12, paddingLeft: insets.left, paddingRight: insets.right }]}>
       <Text style={s.title}>Crop to the certificate</Text>
       <Text style={s.help}>Drag the corners so only the certificate is inside the frame.</Text>
       <View style={{ flex: 1 }} onLayout={onLayout}>
@@ -129,7 +132,7 @@ function CropView({ photo, onDone }: { photo: Photo; onDone: (uri: string | null
           </>
         )}
       </View>
-      <View style={s.bar}>
+      <View style={[s.bar, { paddingBottom: Math.max(insets.bottom, 16) + 8, width: "100%", maxWidth: 680, alignSelf: "center" }]}>
         <Pressable onPress={() => onDone(null)} style={s.btn}><Text style={s.btnText}>Cancel</Text></Pressable>
         <Pressable onPress={() => onDone(photo.uri)} style={s.btn}><Text style={s.btnText}>Use full photo</Text></Pressable>
         <Pressable onPress={done} disabled={saving} style={[s.btn, s.primary, saving && { opacity: 0.6 }]}>
@@ -141,14 +144,14 @@ function CropView({ photo, onDone }: { photo: Photo; onDone: (uri: string | null
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#000", paddingTop: 60 },
+  screen: { flex: 1, backgroundColor: "#000" },
   title: { color: "#fff", fontSize: 18, fontWeight: "700", textAlign: "center" },
   help: { color: "#bbb", fontSize: 13, textAlign: "center", marginTop: 4, marginBottom: 12, paddingHorizontal: 24 },
   dim: { position: "absolute", backgroundColor: "rgba(0,0,0,0.55)" },
   box: { position: "absolute", borderWidth: 2, borderColor: "#fff" },
   handleHit: { position: "absolute", width: HANDLE, height: HANDLE, alignItems: "center", justifyContent: "center" },
   handle: { width: 22, height: 22, borderRadius: 11, backgroundColor: "#fff", borderWidth: 3, borderColor: "#2563EB" },
-  bar: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 12, paddingBottom: 36, gap: 10 },
+  bar: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 12, gap: 10 },
   btn: { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: "center", backgroundColor: "#1F2937" },
   primary: { backgroundColor: "#2563EB" },
   btnText: { color: "#fff", fontSize: 15, fontWeight: "600" },

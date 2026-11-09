@@ -91,7 +91,7 @@ export default function AuthScreen() {
 
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 80 }]} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[ui.wrap, { paddingTop: 32 }]} keyboardShouldPersistTaps="handled">
         <Text style={ui.brand}>CPE Keeper</Text>
         <Text style={[ui.muted, { fontSize: 15, marginBottom: 24 }]}>Every CPE credit, every state, in one place.</Text>
         <Card>

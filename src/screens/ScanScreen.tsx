@@ -111,7 +111,7 @@ export default function ScanScreen({ userId, state, onExtracted, onManual, onCan
 
   const busy = status !== "idle";
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       <Text style={ui.h1}>Upload certificate or transcript</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>
         Take a photo, pick a PDF, or import a spreadsheet of courses. We'll read the details — you confirm before anything is saved.

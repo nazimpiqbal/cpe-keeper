@@ -383,11 +383,12 @@ export default function DashboardScreen({ license, onAddCourse, onScan, onEditLi
     .sort((a, b) => a.deadline.localeCompare(b.deadline) || b.remaining - a.remaining)[0];
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <View style={s.topRow}>
-        <Text style={ui.brand}>CPE Keeper</Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        {/* On narrow screens (iPhone Duo cover display, large text sizes) the title shrinks so the buttons stay on screen. */}
+        <Text style={[ui.brand, { flexShrink: 1, marginRight: 10 }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>CPE Keeper</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <Pressable onPress={onExport} style={s.auditBtn} accessibilityRole="button" accessibilityLabel="Audit report — PDF or Excel">
             <Text style={s.auditText}>🧾 Audit report</Text>
           </Pressable>

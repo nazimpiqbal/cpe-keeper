@@ -53,7 +53,7 @@ export default function ScenarioScreen({ userId, license, onLoaded, onClose }: {
   }
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       <Pressable onPress={onClose} hitSlop={10}><Text style={{ color: C.accent, fontWeight: "600", marginBottom: 12 }}>‹ Back</Text></Pressable>
       <Text style={[ui.brand, { marginBottom: 4 }]}>Test scenarios</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>Development only. Loading one replaces your license settings, other state licenses and all courses — use a test account.</Text>

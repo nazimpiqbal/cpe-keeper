@@ -125,7 +125,7 @@ export default function BulkReviewScreen({ userId, courses, certificatePath, cyc
   const attachCount = new Set([...selected].filter(i => flags[i].willAttach).map(i => flags[i].loggedAs!.id)).size;
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}>
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}>
       <Text style={ui.h1}>Review {items.length} courses</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>
         Untick anything you don't want. Tap a course to check or fix its details.

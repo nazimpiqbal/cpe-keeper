@@ -215,7 +215,7 @@ export default function CertificatesScreen({ userId, state, cycle, onAddCourses 
   };
 
   return (
-    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 64 }]}
+    <ScrollView style={ui.screen} contentContainerStyle={[ui.wrap, { paddingTop: 16 }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <Text style={[ui.brand, { marginBottom: 4 }]}>Certificates</Text>
       <Text style={[ui.muted, { marginBottom: 16 }]}>
